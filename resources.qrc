@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/plugins/sensum_plugin" >
+        <file>icons/pansharp.png</file>
+        <file>icons/classification.png</file>
+        <file>icons/segmentation.png</file>
+        <file>icons/features.png</file>
+        <file>icons/buildingsheight.png</file>
+        <file>icons/coregistration.png</file>
+    </qresource>
+</RCC>

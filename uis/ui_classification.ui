@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Classification</class>
+ <widget class="QDialog" name="Classification">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>319</width>
+    <height>415</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>319</width>
+    <height>415</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>319</width>
+    <height>415</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Sensum</string>
+  </property>
+  <widget class="QWidget" name="widget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>50</y>
+     <width>261</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_input">
+      <property name="text">
+       <string>Input File:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QPushButton" name="pushButton_input">
+      <property name="text">
+       <string>...</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QPushButton" name="pushButton_output">
+      <property name="text">
+       <string>...</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLineEdit" name="lineEdit_input"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label_output">
+      <property name="text">
+       <string>Output File:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLineEdit" name="lineEdit_output"/>
+    </item>
+    <item row="4" column="0">
+     <widget class="QComboBox" name="comboBox_supervised">
+      <item>
+       <property name="text">
+        <string>Supervised</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Unsupervised</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>210</y>
+     <width>301</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Options</string>
+   </property>
+   <widget class="QFrame" name="frame_supervised">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>26</y>
+      <width>279</width>
+      <height>114</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <layout class="QFormLayout" name="formLayout_2">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_supervised_type">
+       <property name="text">
+        <string>Supervised Type</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_training_type">
+       <property name="text">
+        <string>Discriminant Field</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QComboBox" name="comboBox_supervised_type">
+       <item>
+        <property name="text">
+         <string>libsvm</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>svm</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>dt</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>gbt</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>bayes</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>rf</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>knn</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="lineEdit_training_field"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_training">
+       <property name="text">
+        <string>Input Training File:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLineEdit" name="lineEdit_training"/>
+     </item>
+     <item row="3" column="1">
+      <widget class="QPushButton" name="pushButton_training">
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QFrame" name="frame_unsupervised">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>50</y>
+      <width>266</width>
+      <height>64</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Raised</enum>
+    </property>
+    <layout class="QFormLayout" name="formLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_nclasses">
+       <property name="text">
+        <string>Number of classes</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_niteration">
+       <property name="text">
+        <string>Number of Iterations</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QSpinBox" name="spinBox_nclasses"/>
+     </item>
+     <item row="1" column="1">
+      <widget class="QSpinBox" name="spinBox_niteration"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>80</x>
+     <y>370</y>
+     <width>160</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_title">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>20</y>
+     <width>201</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;CLASSIFICATION&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>Classification</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>Classification</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
