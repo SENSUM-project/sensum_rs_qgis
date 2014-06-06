@@ -917,13 +917,15 @@ class Sensum:
             idfield = str(ui.lineEdit_shadow_field.text())
             window_resize = float(ui.doubleSpinBox_window_paramater.text())
             date = str(ui.dateTimeEdit.text())
-            tmp_shadow_processed = tempfile.mkstemp()[1]
-            os.remove(tmp_shadow_processed)
+            #tmp_shadow_processed = tempfile.mkstemp()[1]
+            #os.remove(tmp_shadow_processed)
             if os.path.isfile(output_shape):
                 os.remove(output_shape)
-            height(input_shadow,0.5,0.5,outShape=tmp_shadow_processed,ui_progress=dlgProgress.ui)
-            shadow_checker(input_buildings,tmp_shadow_processed, date, outputShape=output_shape, idfield=idfield, resize=window_resize,ui_progress=dlgProgress.ui)
-            shutil.rmtree(tmp_shadow_processed)
+            #height(input_shadow,0.5,0.5,outShape=tmp_shadow_processed,ui_progress=dlgProgress.ui)
+            #shadow_checker(input_buildings,tmp_shadow_processed, date, outputShape=output_shape, idfield=idfield, resize=window_resize,ui_progress=dlgProgress.ui)
+            print input_shadow,input_buildings,date,output_shape,idfield,window_resize
+            os.system("{}/height.py \"{}\" \"{}\" \"{}\" \"{}\" \"{}\" \"{}\"".format(os.path.dirname(os.path.abspath(__file__)),input_shadow,input_buildings,date,output_shape,idfield,window_resize))
+            #shutil.rmtree(tmp_shadow_processed)
             QMessageBox.information(None, "Info", 'Done!')
 
     def coregistration(self):
@@ -962,8 +964,8 @@ class Sensum:
                 print time_total
             QMessageBox.information(None, "Info", 'Done!')
 
-#if __name__ == "__main__":
-    '''
+if __name__ == "__main__":
+    
     tmp_shadow_processed = tempfile.mkstemp()[1]
     os.remove(tmp_shadow_processed)
     if os.path.isfile("/home/gale/Izmir/final_building/prova.shp"):
@@ -971,7 +973,7 @@ class Sensum:
     height("/home/gale/Izmir/final_building/shadows.shp",0.5,0.5,outShape=tmp_shadow_processed)
     shadow_checker("/home/gale/Izmir/final_building/pan_class_6.shp",tmp_shadow_processed,'2012/8/11 7:35:00', outputShape="/home/gale/Izmir/final_building/prova.shp", idfield="ID", resize=1)
     shutil.rmtree(tmp_shadow_processed)
-    '''
+
 
     '''
     e = segmentation_optimizer("/home/gale/pansharp.TIF","/home/gale/reference_polygon_2.shp","Felzenszwalb",4,10)
