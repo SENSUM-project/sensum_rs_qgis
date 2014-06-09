@@ -128,11 +128,13 @@ class SegmentationDialog(QtGui.QDialog, Ui_Segmentation):
                 else:
                     self.ui.radioButton_floaters.hide()
                     self.ui.radioButton_integers.hide()
+                '''
                 if seg_method == "Meanshift" or seg_method == "Morphological Profiles":
                     self.ui.checkBox_optimizer.setChecked(0)
                     self.ui.checkBox_optimizer.hide()
                 else:
                     self.ui.checkBox_optimizer.show()
+                '''
                 frame.show()
                 return
     def setPath_input(self):

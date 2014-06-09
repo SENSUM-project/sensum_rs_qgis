@@ -787,18 +787,17 @@ class Sensum:
                 select_criteria = int(ui.spinBox_criteria.text())
                 floaters = bool(ui.radioButton_floaters.isChecked())
                 segm_mode_optimazer = segm_mode
-                if floaters and segm_mode == Baatz:
+                if floaters and segm_mode == "Baatz":
                     segm_mode_optimazer = "Baatz"
-                elif floaters == 0 and segm_mode == Baatz:
+                elif floaters == 0 and segm_mode == "Baatz":
                     segm_mode_optimazer = "Baatz_integers"
-                if floaters and segm_mode == "Region Growing":
+                elif floaters and segm_mode == "Region Growing":
                     segm_mode_optimazer = "Region_growing"
                 elif floaters == 0 and segm_mode == "Region Growing":
                     segm_mode_optimazer = "Region_growing_integers"
-                print "START OPTIMIZER"
-                #('Felzenszwalb','Edison','Watershed','Baatz','Baatz_integers','Region_growing','Region_growing_integers')
+                elif segm_mode == "Morphological Profiles":
+                    segm_mode_optimazer = "Mprofiles"
                 e = segmentation_optimizer(input_image,optimizer_shape,segm_mode_optimazer,select_criteria,nloops)
-                print "FINISHED OPTIMIZER"
                 if segm_mode == 'Felzenszwalb':
                     input_band_list = read_image(input_image,0,0)
                     felzenszwalb_skimage(input_band_list, float(e[0]), float(e[1]), 0)
@@ -808,7 +807,7 @@ class Sensum:
                     meanshift_otb(input_image,output_image,'vector',int(round(e[0])),float(e[1]),0,0,0)
                 if segm_mode == 'Watershed':
                     watershed_otb(input_image,'vector',output_image,0,float(e[0]))
-                if segm_mode == 'Morphological_Profiles':
+                if segm_mode == 'Morphological Profiles':
                     mprofiles_otb(input_image,output_image,'vector',0,int(round(e[0])),0,0)
                 if segm_mode == 'Baatz':
                     if floaters:
