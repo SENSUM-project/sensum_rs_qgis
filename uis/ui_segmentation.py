@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_segmentation.ui'
 #
-# Created: Thu Jun  5 14:40:01 2014
+# Created: Tue Jun 10 14:51:02 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -66,10 +66,10 @@ class Ui_Segmentation(object):
         self.label_method.setGeometry(QtCore.QRect(20, 150, 151, 17))
         self.label_method.setObjectName(_fromUtf8("label_method"))
         self.label_title = QtGui.QLabel(Segmentation)
-        self.label_title.setGeometry(QtCore.QRect(172, 8, 171, 21))
+        self.label_title.setGeometry(QtCore.QRect(140, 20, 171, 21))
         self.label_title.setObjectName(_fromUtf8("label_title"))
         self.groupBox_optimizer = QtGui.QGroupBox(Segmentation)
-        self.groupBox_optimizer.setGeometry(QtCore.QRect(10, 210, 381, 112))
+        self.groupBox_optimizer.setGeometry(QtCore.QRect(30, 210, 381, 112))
         self.groupBox_optimizer.setObjectName(_fromUtf8("groupBox_optimizer"))
         self.lineEdit_optimizer_input = QtGui.QLineEdit(self.groupBox_optimizer)
         self.lineEdit_optimizer_input.setGeometry(QtCore.QRect(12, 30, 271, 21))
@@ -99,7 +99,7 @@ class Ui_Segmentation(object):
         self.radioButton_integers.setChecked(False)
         self.radioButton_integers.setObjectName(_fromUtf8("radioButton_integers"))
         self.groupBox_options = QtGui.QGroupBox(Segmentation)
-        self.groupBox_options.setGeometry(QtCore.QRect(10, 210, 381, 201))
+        self.groupBox_options.setGeometry(QtCore.QRect(30, 210, 381, 201))
         self.groupBox_options.setObjectName(_fromUtf8("groupBox_options"))
         self.frame_edison = QtGui.QFrame(self.groupBox_options)
         self.frame_edison.setGeometry(QtCore.QRect(50, 60, 301, 91))
