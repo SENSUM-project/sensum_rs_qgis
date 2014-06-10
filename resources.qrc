@@ -6,5 +6,6 @@
         <file>icons/features.png</file>
         <file>icons/buildingsheight.png</file>
         <file>icons/coregistration.png</file>
+        <file>icons/footprints.png</file>
     </qresource>
 </RCC>

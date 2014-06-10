@@ -31,6 +31,7 @@ from uis.ui_segmentation import Ui_Segmentation
 from uis.ui_features import Ui_Features
 from uis.ui_build_height import Ui_BuildHeight
 from uis.ui_coregistration import Ui_Coregistration
+from uis.ui_footprints import Ui_Footprints
 
 class ProgressDialog(QtGui.QDialog, Ui_Progress):
     def __init__(self):
@@ -216,3 +217,31 @@ class CoregistrationDialog(QtGui.QDialog, Ui_Coregistration):
         fileName = QFileDialog.getExistingDirectory(self,"Select Folder", "~");
         if fileName !="":
             self.ui.lineEdit_tobechange.setText(fileName)
+
+class FootprintsDialog(QtGui.QDialog, Ui_Footprints):
+    def __init__(self):
+        QtGui.QDialog.__init__(self)
+        self.ui = Ui_Footprints()
+        self.ui.setupUi(self)
+        QObject.connect(self.ui.pushButton_pansharp, SIGNAL("clicked()"), self.setPath_pansharp)
+        QObject.connect(self.ui.pushButton_training, SIGNAL("clicked()"), self.setPath_training)
+        QObject.connect(self.ui.pushButton_add, SIGNAL("clicked()"), self.addItem_classes)
+        QObject.connect(self.ui.pushButton_clear, SIGNAL("clicked()"), self.clear_selected)
+        QObject.connect(self.ui.pushButton_clear_all, SIGNAL("clicked()"), self.clear_all)
+    def setPath_pansharp(self):
+        fileName = QFileDialog.getExistingDirectory(self,"Open Image", "~/","Image Files (*.tiff *.tif)");
+        if fileName !="":
+            self.ui.lineEdit_reference.setText(fileName)
+    def setPath_training(self):
+        fileName = QFileDialog.getExistingDirectory(self,"Input Shapefile", "~/","ESRI Shapefile Files (*.shp)");
+        if fileName !="":
+            self.ui.lineEdit_tobechange.setText(fileName)
+    def addItem_classes(self):
+        value = str(self.ui.lineEdit_classes.text())
+        self.ui.listWidget.addItem(value)
+        self.ui.lineEdit_classes.clear()
+    def clear_selected(self):
+        for SelectedItem in self.ui.listWidget.selectedItems():
+            self.ui.listWidget.takeItem(self.ui.listWidget.row(SelectedItem))
+    def clear_all(self):
+        self.ui.listWidget.clear()
