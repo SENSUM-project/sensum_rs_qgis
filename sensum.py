@@ -35,10 +35,9 @@ import tempfile
 import osgeo.gdal, gdal
 import osgeo.ogr
 import numpy as np
-import pylab,math
+import math
 import scipy.signal
 import cv2
-import matplotlib.pyplot as plt
 from osgeo.gdalconst import *
 from sensum_library.preprocess import *
 from sensum_library.classification import *
@@ -623,6 +622,9 @@ class Sensum:
                 QCoreApplication.installTranslator(self.translator)
 
     def initGui(self):
+
+        self.toolBar = self.iface.addToolBar("SENSUM")
+
         ######################
         ## PANSHARP
         ######################
@@ -633,8 +635,8 @@ class Sensum:
         # connect the action to the run method
         self.action_pansharp.triggered.connect(self.pansharp)
         # Add toolbar button and menu item
-        self.iface.addToolBarIcon(self.action_pansharp)
-        self.iface.addPluginToMenu(u"&Pansharping", self.action_pansharp)
+        self.toolBar.addAction(self.action_pansharp)
+        self.iface.addPluginToMenu(u"&SENSUM", self.action_pansharp)
         
         ######################
         ## CLASSIFICATION
@@ -646,8 +648,8 @@ class Sensum:
         # connect the action to the run method
         self.action_classification.triggered.connect(self.classification)
         # Add toolbar button and menu item
-        self.iface.addToolBarIcon(self.action_classification)
-        self.iface.addPluginToMenu(u"&Classification", self.action_classification)
+        self.toolBar.addAction(self.action_classification)
+        self.iface.addPluginToMenu(u"&SENSUM", self.action_classification)
 
         ######################
         ## SEGMENTATION
@@ -659,8 +661,8 @@ class Sensum:
         # connect the action to the run method
         self.action_segmentation.triggered.connect(self.segmentation)
         # Add toolbar button and menu item
-        self.iface.addToolBarIcon(self.action_segmentation)
-        self.iface.addPluginToMenu(u"&Segmentation", self.action_segmentation)
+        self.toolBar.addAction(self.action_segmentation)
+        self.iface.addPluginToMenu(u"&SENSUM", self.action_segmentation)
 
         ######################
         ## FEATURES
@@ -672,8 +674,8 @@ class Sensum:
         # connect the action to the run method
         self.action_features.triggered.connect(self.features)
         # Add toolbar button and menu item
-        self.iface.addToolBarIcon(self.action_features)
-        self.iface.addPluginToMenu(u"&Features", self.action_features)
+        self.toolBar.addAction(self.action_features)
+        self.iface.addPluginToMenu(u"&SENSUM", self.action_features)
 
         ######################
         ## BUILDING HEIGHT
@@ -685,8 +687,8 @@ class Sensum:
         # connect the action to the run method
         self.action_building_height.triggered.connect(self.build_height)
         # Add toolbar button and menu item
-        self.iface.addToolBarIcon(self.action_building_height)
-        self.iface.addPluginToMenu(u"&Building Height", self.action_building_height)
+        self.toolBar.addAction(self.action_building_height)
+        self.iface.addPluginToMenu(u"&SENSUM", self.action_building_height)
 
         ######################
         ## CO-REGISTRATION
@@ -698,29 +700,23 @@ class Sensum:
         # connect the action to the run method
         self.action_coregistration.triggered.connect(self.coregistration)
         # Add toolbar button and menu item
-        self.iface.addToolBarIcon(self.action_coregistration)
-        self.iface.addPluginToMenu(u"&Co-Registration", self.action_coregistration)
+        self.toolBar.addAction(self.action_coregistration)
+        self.iface.addPluginToMenu(u"&SENSUM", self.action_coregistration)
 
     def unload(self):
-        # Remove the plugin menu item and icon
-        self.iface.removePluginMenu(u"&Pansharping", self.action_pansharp)
-        self.iface.removeToolBarIcon(self.action_pansharp)
 
-        # Remove the plugin menu item and icon
-        self.iface.removePluginMenu(u"&Classification", self.action_classification)
+        self.iface.removePluginMenu(u"&SENSUM", self.action_pansharp)
         self.iface.removeToolBarIcon(self.action_pansharp)
-
-        # Remove the plugin menu item and icon
-        self.iface.removePluginMenu(u"&Segmentation", self.action_segmentation)
-        self.iface.removeToolBarIcon(self.action_pansharp)
-
-        # Remove the plugin menu item and icon
-        self.iface.removePluginMenu(u"&Features", self.action_features)
-        self.iface.removeToolBarIcon(self.action_pansharp)
-
-        # Remove the plugin menu item and icon
-        self.iface.removePluginMenu(u"&Building Height", self.action_building_height)
-        self.iface.removeToolBarIcon(self.action_pansharp)
+        self.iface.removePluginMenu(u"&SENSUM", self.action_classification)
+        self.iface.removeToolBarIcon(self.action_classification)
+        self.iface.removePluginMenu(u"&SENSUM", self.action_segmentation)
+        self.iface.removeToolBarIcon(self.action_segmentation)
+        self.iface.removePluginMenu(u"&SENSUM", self.action_features)
+        self.iface.removeToolBarIcon(self.action_features)
+        self.iface.removePluginMenu(u"&SENSUM", self.action_building_height)
+        self.iface.removeToolBarIcon(self.action_building_height)
+        self.iface.removePluginMenu(u"&SENSUM", self.action_coregistration)
+        self.iface.removeToolBarIcon(self.action_coregistration)
 
     # run method that performs all the real work
     def pansharp(self):
