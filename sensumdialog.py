@@ -229,11 +229,11 @@ class FootprintsDialog(QtGui.QDialog, Ui_Footprints):
         QObject.connect(self.ui.pushButton_clear, SIGNAL("clicked()"), self.clear_selected)
         QObject.connect(self.ui.pushButton_clear_all, SIGNAL("clicked()"), self.clear_all)
     def setPath_pansharp(self):
-        fileName = QFileDialog.getExistingDirectory(self,"Open Image", "~/","Image Files (*.tiff *.tif)");
+        fileName = QFileDialog.getOpenFileName(self,"Open Image", "~/","Image Files (*.tiff *.tif)");
         if fileName !="":
             self.ui.lineEdit_reference.setText(fileName)
     def setPath_training(self):
-        fileName = QFileDialog.getExistingDirectory(self,"Input Shapefile", "~/","ESRI Shapefile Files (*.shp)");
+        fileName = QFileDialog.getOpenFileName(self,"Input Shapefile", "~/","ESRI Shapefile Files (*.shp)");
         if fileName !="":
             self.ui.lineEdit_tobechange.setText(fileName)
     def addItem_classes(self):
