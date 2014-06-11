@@ -1051,7 +1051,10 @@ class Sensum:
             #height(input_shadow,0.5,0.5,outShape=tmp_shadow_processed,ui_progress=dlgProgress.ui)
             #shadow_checker(input_buildings,tmp_shadow_processed, date, outputShape=output_shape, idfield=idfield, resize=window_resize,ui_progress=dlgProgress.ui)
             print input_shadow,input_buildings,date,output_shape,idfield,window_resize
-            os.system("{}/height.py \"{}\" \"{}\" \"{}\" \"{}\" \"{}\" \"{}\"".format(os.path.dirname(os.path.abspath(__file__)),input_shadow,input_buildings,date,output_shape,idfield,window_resize))
+            if os.name == "posix": 
+                os.system("{}/height.py \"{}\" \"{}\" \"{}\" \"{}\" \"{}\" \"{}\"".format(os.path.dirname(os.path.abspath(__file__)),input_shadow,input_buildings,date,output_shape,idfield,window_resize))
+            else:
+                os.system("python.exe {}/height.py \"{}\" \"{}\" \"{}\" \"{}\" \"{}\" \"{}\"".format(os.path.dirname(os.path.abspath(__file__)),input_shadow,input_buildings,date,output_shape,idfield,window_resize))
             #shutil.rmtree(tmp_shadow_processed)
             QMessageBox.information(None, "Info", 'Done!')
 
