@@ -49,7 +49,7 @@ from sensum_library.features import *
 from sensum_library.secondary_indicators import *
 from numpy.fft import fft2, ifft2, fftshift
 
-def footprints(pansharp_file,training_set,training_attribute,building_classes):
+def footprints(pansharp_file,training_set,training_attribute,building_classes,ui_progress=None):
 
     #pansharp_file = 'F:/Sensum_xp/Izmir/building_footprints/New_development/pansharp.tif'
     #training_set = 'F:/Sensum_xp/Izmir/building_footprints/New_development/training.shp' #supervised classification
@@ -59,16 +59,32 @@ def footprints(pansharp_file,training_set,training_attribute,building_classes):
     start_time = time.time()
 
     #Apply smooth filter to original image
+    if ui_progress:
+        ui_progress.progressBar.setMinimum(1)
+        ui_progress.progressBar.setMaximum(500)
+        ui_progress.label_title.setText("(1/5) Smooth filter...this may take a while")
+        ui_progress.progressBar.setValue(1)
     print 'Smooth filter...this may take a while'
     smooth_filter_otb(pansharp_file,pansharp_file[:-4]+'_smooth.tif',30)
 
+    if ui_progress:
+        ui_progress.label_title.setText("(2/5) Supervised classification...")
+        ui_progress.progressBar.setValue(100)
     print 'Supervised classification...'
     train_classifier_otb([pansharp_file[:-4]+'_smooth.tif'],[training_set],pansharp_file[:-4]+'_svm.txt','svm',training_attribute)
     supervised_classification_otb(pansharp_file[:-4]+'_smooth.tif',pansharp_file[:-4]+'_svm.txt',pansharp_file[:-4]+'_svm.tif')
 
+    if ui_progress:
+        ui_progress.label_title.setText("(3/5) Conversion to shapefile...")
+        ui_progress.progressBar.setValue(200)
     print 'Conversion to shapefile...'
+    if os.path.isfile(pansharp_file[:-4]+'_svm.shp'):
+        os.remove(pansharp_file[:-4]+'_svm.shp')
     rast2shp(pansharp_file[:-4]+'_svm.tif',pansharp_file[:-4]+'_svm.shp')
 
+    if ui_progress:
+        ui_progress.label_title.setText("(4/5) Area and Class filtering...")
+        ui_progress.progressBar.setValue(300)
     print 'Area and Class filtering...'
     driver_shape = osgeo.ogr.GetDriverByName('ESRI Shapefile')
     driver_mem = osgeo.ogr.GetDriverByName('Memory')
@@ -99,6 +115,9 @@ def footprints(pansharp_file,training_set,training_attribute,building_classes):
         infeature = inlayer.GetNextFeature()
     infile.Destroy()
 
+    if ui_progress:
+        ui_progress.label_title.setText("(5/5) Conversion to shapefile...")
+        ui_progress.progressBar.setValue(400)
     print 'Morphology filter...'
     rows,cols,nbands,geotransform,projection = read_image_parameters(pansharp_file)
     for c in range(0,len(building_classes)):
@@ -135,6 +154,8 @@ def footprints(pansharp_file,training_set,training_attribute,building_classes):
         osgeo.gdal.Polygonize(band,band.GetMaskBand(),build_layer,0)
         
         #Filter by area and create output shapefile
+        if os.path.isfile(pansharp_file[:-4]+'_class_' + str(building_classes[c])+'.shp'):
+            os.remove(pansharp_file[:-4]+'_class_' + str(building_classes[c])+'.shp')
         final_file = driver_shape.CreateDataSource(pansharp_file[:-4]+'_class_' + str(building_classes[c])+'.shp') #final file
         final_layer = final_file.CreateLayer('Buildings',geom_type=osgeo.ogr.wkbPolygon)
         class_def = osgeo.ogr.FieldDefn('Class', osgeo.ogr.OFTInteger)
@@ -163,7 +184,10 @@ def footprints(pansharp_file,training_set,training_attribute,building_classes):
         build_file.Destroy()
         
         shutil.copyfile(pansharp_file[:-4]+'_svm.prj', pansharp_file[:-4]+'_class_' + str(building_classes[c])+'.prj')
-        
+    
+    if ui_progress:
+        ui_progress.label_title.setText("Finished")
+        ui_progress.progressBar.setValue(500)
     outfile.Destroy()
     end_time = time.time()
     print '...Total time = ' + str(end_time-start_time)
@@ -1097,6 +1121,7 @@ class Sensum:
     def footprints(self):
         # Create the dialog (after translation) and keep reference
         self.dlg = FootprintsDialog()
+        dlgProgress = ProgressDialog()
         # show the dialog
         self.dlg.show()
         # Run the dialog event loop
@@ -1104,11 +1129,13 @@ class Sensum:
         # See if OK was pressed
         if result == 1:
             ui = self.dlg.ui
+            dlgProgress.show()
             pansharp_file = str(ui.lineEdit_pansharp.text())
             training_set = str(ui.lineEdit_training.text())
             training_attribute = str(ui.lineEdit_training_field.text())
             building_classes = [str(ui.listWidget.item(index).text()) for index in xrange(ui.listWidget.count())]
-            footprints(pansharp_file,training_set,training_attribute,building_classes)
+            footprints(pansharp_file,training_set,training_attribute,building_classes,ui_progress=dlgProgress.ui)
+        QMessageBox.information(None, "Info", 'Done!')
 
 if __name__ == "__main__":
     
