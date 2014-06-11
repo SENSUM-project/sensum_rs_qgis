@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_coregistration.ui'
 #
-# Created: Thu Jun  5 12:01:22 2014
+# Created: Wed Jun 11 12:14:53 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!

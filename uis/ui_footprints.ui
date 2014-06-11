@@ -129,6 +129,9 @@
      <height>21</height>
     </rect>
    </property>
+   <property name="text">
+    <string>Class</string>
+   </property>
   </widget>
   <widget class="QLabel" name="label_training_2">
    <property name="geometry">

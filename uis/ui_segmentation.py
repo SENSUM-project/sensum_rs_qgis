@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_segmentation.ui'
 #
-# Created: Tue Jun 10 14:51:02 2014
+# Created: Wed Jun 11 12:14:53 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!

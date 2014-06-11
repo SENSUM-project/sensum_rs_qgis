@@ -25,7 +25,7 @@
   <property name="windowTitle">
    <string>SensumTools</string>
   </property>
-  <widget class="QLabel" name="label_4">
+  <widget class="QLabel" name="label_title">
    <property name="geometry">
     <rect>
      <x>2</x>

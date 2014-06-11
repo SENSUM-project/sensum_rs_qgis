@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_progress.ui'
 #
-# Created: Fri May 30 17:40:35 2014
+# Created: Wed Jun 11 12:28:26 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -29,9 +29,9 @@ class Ui_Progress(object):
         Progress.resize(568, 119)
         Progress.setMinimumSize(QtCore.QSize(568, 119))
         Progress.setMaximumSize(QtCore.QSize(568, 119))
-        self.label_4 = QtGui.QLabel(Progress)
-        self.label_4.setGeometry(QtCore.QRect(2, 8, 551, 21))
-        self.label_4.setObjectName(_fromUtf8("label_4"))
+        self.label_title = QtGui.QLabel(Progress)
+        self.label_title.setGeometry(QtCore.QRect(2, 8, 551, 21))
+        self.label_title.setObjectName(_fromUtf8("label_title"))
         self.progressBar = QtGui.QProgressBar(Progress)
         self.progressBar.setGeometry(QtCore.QRect(30, 50, 521, 41))
         self.progressBar.setProperty("value", 24)
@@ -42,5 +42,5 @@ class Ui_Progress(object):
 
     def retranslateUi(self, Progress):
         Progress.setWindowTitle(_translate("Progress", "SensumTools", None))
-        self.label_4.setText(_translate("Progress", "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt;\">Please wait...</span></p></body></html>", None))
+        self.label_title.setText(_translate("Progress", "<html><head/><body><p align=\"center\"><span style=\" font-size:16pt;\">Please wait...</span></p></body></html>", None))
 

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_footprints.ui'
 #
-# Created: Tue Jun 10 14:51:03 2014
+# Created: Wed Jun 11 12:28:26 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -90,6 +90,7 @@ class Ui_Footprints(object):
         self.label_pansharp.setText(_translate("Footprints", "Pansharp", None))
         self.label_training.setText(_translate("Footprints", "Training", None))
         self.label_training_field.setText(_translate("Footprints", "Training Field", None))
+        self.lineEdit_training_field.setText(_translate("Footprints", "Class", None))
         self.label_training_2.setText(_translate("Footprints", "Building Classes", None))
         self.pushButton_clear.setText(_translate("Footprints", "Clear Selected", None))
         self.pushButton_pansharp.setText(_translate("Footprints", "...", None))
