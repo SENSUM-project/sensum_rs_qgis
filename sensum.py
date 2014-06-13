@@ -1135,7 +1135,7 @@ class Sensum:
             training_attribute = str(ui.lineEdit_training_field.text())
             building_classes = [str(ui.listWidget.item(index).text()) for index in xrange(ui.listWidget.count())]
             footprints(pansharp_file,training_set,training_attribute,building_classes,ui_progress=dlgProgress.ui)
-        QMessageBox.information(None, "Info", 'Done!')
+            QMessageBox.information(None, "Info", 'Done!')
 
 if __name__ == "__main__":
     
