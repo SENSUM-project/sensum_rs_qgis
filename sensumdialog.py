@@ -225,6 +225,7 @@ class FootprintsDialog(QtGui.QDialog, Ui_Footprints):
         self.ui.setupUi(self)
         QObject.connect(self.ui.pushButton_pansharp, SIGNAL("clicked()"), self.setPath_pansharp)
         QObject.connect(self.ui.pushButton_training, SIGNAL("clicked()"), self.setPath_training)
+        QObject.connect(self.ui.pushButton_output, SIGNAL("clicked()"), self.setPath_output)
         QObject.connect(self.ui.pushButton_add, SIGNAL("clicked()"), self.addItem_classes)
         QObject.connect(self.ui.pushButton_clear, SIGNAL("clicked()"), self.clear_selected)
         QObject.connect(self.ui.pushButton_clear_all, SIGNAL("clicked()"), self.clear_all)
@@ -236,6 +237,10 @@ class FootprintsDialog(QtGui.QDialog, Ui_Footprints):
         fileName = QFileDialog.getOpenFileName(self,"Input Shapefile", "~/","ESRI Shapefile Files (*.shp)");
         if fileName !="":
             self.ui.lineEdit_training.setText(fileName)
+    def setPath_output(self):
+        fileName = QFileDialog.getSaveFileName(self,"Output Shapefile", "~/","ESRI Shapefile Files (*.shp)");
+        if fileName !="":
+            self.ui.lineEdit_output.setText(fileName)
     def addItem_classes(self):
         value = str(self.ui.lineEdit_classes.text())
         self.ui.listWidget.addItem(value)
@@ -245,3 +250,4 @@ class FootprintsDialog(QtGui.QDialog, Ui_Footprints):
             self.ui.listWidget.takeItem(self.ui.listWidget.row(SelectedItem))
     def clear_all(self):
         self.ui.listWidget.clear()
+        

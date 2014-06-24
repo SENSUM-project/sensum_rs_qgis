@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_pansharp.ui'
 #
-# Created: Wed Jun 11 12:14:53 2014
+# Created: Tue Jun 24 10:34:59 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,11 +26,11 @@ except AttributeError:
 class Ui_Pansharp(object):
     def setupUi(self, Pansharp):
         Pansharp.setObjectName(_fromUtf8("Pansharp"))
-        Pansharp.resize(316, 272)
-        Pansharp.setMinimumSize(QtCore.QSize(316, 272))
-        Pansharp.setMaximumSize(QtCore.QSize(316, 272))
+        Pansharp.resize(467, 365)
+        Pansharp.setMinimumSize(QtCore.QSize(467, 365))
+        Pansharp.setMaximumSize(QtCore.QSize(467, 365))
         self.widget = QtGui.QWidget(Pansharp)
-        self.widget.setGeometry(QtCore.QRect(10, 50, 291, 207))
+        self.widget.setGeometry(QtCore.QRect(20, 140, 441, 207))
         self.widget.setObjectName(_fromUtf8("widget"))
         self.gridLayout = QtGui.QGridLayout(self.widget)
         self.gridLayout.setMargin(0)
@@ -68,8 +68,23 @@ class Ui_Pansharp(object):
         self.pushButton_panchromatic.setObjectName(_fromUtf8("pushButton_panchromatic"))
         self.gridLayout.addWidget(self.pushButton_panchromatic, 3, 1, 1, 1)
         self.label_title = QtGui.QLabel(Pansharp)
-        self.label_title.setGeometry(QtCore.QRect(100, 20, 121, 21))
+        self.label_title.setGeometry(QtCore.QRect(170, 100, 121, 21))
         self.label_title.setObjectName(_fromUtf8("label_title"))
+        self.logo_sensum = QtGui.QLabel(Pansharp)
+        self.logo_sensum.setGeometry(QtCore.QRect(30, 30, 101, 21))
+        self.logo_sensum.setText(_fromUtf8(""))
+        self.logo_sensum.setPixmap(QtGui.QPixmap(_fromUtf8("sensum.png")))
+        self.logo_sensum.setObjectName(_fromUtf8("logo_sensum"))
+        self.logo_unipv = QtGui.QLabel(Pansharp)
+        self.logo_unipv.setGeometry(QtCore.QRect(360, 10, 61, 61))
+        self.logo_unipv.setText(_fromUtf8(""))
+        self.logo_unipv.setPixmap(QtGui.QPixmap(_fromUtf8("unipv.png")))
+        self.logo_unipv.setObjectName(_fromUtf8("logo_unipv"))
+        self.logo_eucentre = QtGui.QLabel(Pansharp)
+        self.logo_eucentre.setGeometry(QtCore.QRect(160, 20, 181, 41))
+        self.logo_eucentre.setText(_fromUtf8(""))
+        self.logo_eucentre.setPixmap(QtGui.QPixmap(_fromUtf8("eucentre.png")))
+        self.logo_eucentre.setObjectName(_fromUtf8("logo_eucentre"))
 
         self.retranslateUi(Pansharp)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Pansharp.accept)

@@ -20,7 +20,7 @@
  ***************************************************************************/
  This script initializes the plugin, making it known to QGIS.
 """
-
+import sensum_library.config
 def classFactory(iface):
     # load Sensum class from file Sensum
     from sensum import Sensum

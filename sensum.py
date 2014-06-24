@@ -49,39 +49,36 @@ from sensum_library.features import *
 from sensum_library.secondary_indicators import *
 from numpy.fft import fft2, ifft2, fftshift
 
-def footprints(pansharp_file,training_set,training_attribute,building_classes,ui_progress=None):
+def footprints(pansharp_file,training_set,training_attribute,building_classes,output_shape,enable_smooth_filter=True,ui_progress=None):
 
     #pansharp_file = 'F:/Sensum_xp/Izmir/building_footprints/New_development/pansharp.tif'
     #training_set = 'F:/Sensum_xp/Izmir/building_footprints/New_development/training.shp' #supervised classification
     #training_attribute = 'Class'
     #building_classes = [7,8,9]
 
-    start_time = time.time()
-
-    #Apply smooth filter to original image
     if ui_progress:
         ui_progress.progressBar.setMinimum(1)
         ui_progress.progressBar.setMaximum(500)
         ui_progress.label_title.setText("(1/5) Smooth filter...this may take a while")
         ui_progress.progressBar.setValue(1)
-    print 'Smooth filter...this may take a while'
-    smooth_filter_otb(pansharp_file,pansharp_file[:-4]+'_smooth.tif',30)
-
+    #Apply smooth filter to original image
+    if enable_smooth_filter == True:
+        print 'Smooth filter...this may take a while'
+        smooth_filter_otb(pansharp_file,pansharp_file[:-4]+'_smooth.tif',30)
+        process_file = pansharp_file[:-4]+'_smooth.tif'
+    else:
+        process_file = pansharp_file
     if ui_progress:
         ui_progress.label_title.setText("(2/5) Supervised classification...")
         ui_progress.progressBar.setValue(100)
     print 'Supervised classification...'
-    train_classifier_otb([pansharp_file[:-4]+'_smooth.tif'],[training_set],pansharp_file[:-4]+'_svm.txt','svm',training_attribute)
-    supervised_classification_otb(pansharp_file[:-4]+'_smooth.tif',pansharp_file[:-4]+'_svm.txt',pansharp_file[:-4]+'_svm.tif')
-
+    train_classifier_otb([process_file],[training_set],pansharp_file[:-4]+'_svm.txt','svm',training_attribute)
+    supervised_classification_otb(process_file,pansharp_file[:-4]+'_svm.txt',pansharp_file[:-4]+'_svm.tif')
     if ui_progress:
         ui_progress.label_title.setText("(3/5) Conversion to shapefile...")
         ui_progress.progressBar.setValue(200)
     print 'Conversion to shapefile...'
-    if os.path.isfile(pansharp_file[:-4]+'_svm.shp'):
-        os.remove(pansharp_file[:-4]+'_svm.shp')
     rast2shp(pansharp_file[:-4]+'_svm.tif',pansharp_file[:-4]+'_svm.shp')
-
     if ui_progress:
         ui_progress.label_title.setText("(4/5) Area and Class filtering...")
         ui_progress.progressBar.setValue(300)
@@ -99,12 +96,10 @@ def footprints(pansharp_file,training_set,training_attribute,building_classes,ui
     x_min, x_max, y_min, y_max = inlayer.GetExtent()
     infeature = inlayer.GetNextFeature()
     feature_def = outlayer.GetLayerDefn()
-
     while infeature:
         geom = infeature.GetGeometryRef()
         area = geom.Area()
         dn = infeature.GetField('DN')
-        
         if dn in building_classes and area > 5:
             outfeature = osgeo.ogr.Feature(feature_def)
             outfeature.SetGeometry(geom)
@@ -114,16 +109,24 @@ def footprints(pansharp_file,training_set,training_attribute,building_classes,ui
             outfeature.Destroy()
         infeature = inlayer.GetNextFeature()
     infile.Destroy()
-
     if ui_progress:
         ui_progress.label_title.setText("(5/5) Conversion to shapefile...")
-        ui_progress.progressBar.setValue(400)
+        ui_progress.progressBar.setV
     print 'Morphology filter...'
     rows,cols,nbands,geotransform,projection = read_image_parameters(pansharp_file)
+    #Filter by area and create output shapefile
+    if os.path.isfile(output_shape):
+        os.remove(output_shape)
+    final_file = driver_shape.CreateDataSource(output_shape) #final file
+    final_layer = final_file.CreateLayer('Buildings',geom_type=osgeo.ogr.wkbPolygon)
+    class_def = osgeo.ogr.FieldDefn('Class', osgeo.ogr.OFTInteger)
+    area_def = osgeo.ogr.FieldDefn('Area', osgeo.ogr.OFTReal)
+    final_layer.CreateField(class_def)
+    final_layer.CreateField(area_def)
+    feature_def_fin = final_layer.GetLayerDefn()
     for c in range(0,len(building_classes)):
         query = 'SELECT * FROM Footprint WHERE (DN = ' + str(building_classes[c]) + ')'
         filt_layer = outfile.ExecuteSQL(query)
-        
         #Conversion to raster, forced dimensions from the original shapefile
         x_res = int((x_max - x_min) / geotransform[1]) #pixel x-axis resolution
         y_res = int((y_max - y_min) / abs(geotransform[5])) #pixel y-axis resolution
@@ -137,11 +140,9 @@ def footprints(pansharp_file,training_set,training_attribute,building_classes,ui
         build_matrix = band.ReadAsArray()
         target_ds = None
         filt_layer = None
-        
         #Morphology filter
         build_fill = sp.ndimage.binary_fill_holes(build_matrix, structure=None, output=None, origin=0)
         build_open = sp.ndimage.binary_opening(build_fill, structure=np.ones((3,3))).astype(np.int)
-        
         #Conversion to shapefile
         target_ds = osgeo.gdal.GetDriverByName('MEM').Create('temp', x_res, y_res, GDT_Byte) #create layer in memory
         band = target_ds.GetRasterBand(1)
@@ -152,18 +153,7 @@ def footprints(pansharp_file,training_set,training_attribute,building_classes,ui
         dn = osgeo.ogr.FieldDefn('DN',osgeo.ogr.OFTInteger)
         build_layer.CreateField(dn)
         osgeo.gdal.Polygonize(band,band.GetMaskBand(),build_layer,0)
-        
-        #Filter by area and create output shapefile
-        if os.path.isfile(pansharp_file[:-4]+'_class_' + str(building_classes[c])+'.shp'):
-            os.remove(pansharp_file[:-4]+'_class_' + str(building_classes[c])+'.shp')
-        final_file = driver_shape.CreateDataSource(pansharp_file[:-4]+'_class_' + str(building_classes[c])+'.shp') #final file
-        final_layer = final_file.CreateLayer('Buildings',geom_type=osgeo.ogr.wkbPolygon)
-        class_def = osgeo.ogr.FieldDefn('Class', osgeo.ogr.OFTInteger)
-        area_def = osgeo.ogr.FieldDefn('Area', osgeo.ogr.OFTReal)
-        final_layer.CreateField(class_def)
-        final_layer.CreateField(area_def)
-        
-        feature_def_fin = final_layer.GetLayerDefn()
+        #Filter by area
         build_feature = build_layer.GetNextFeature()
         nfeature = build_layer.GetFeatureCount()
         while build_feature:
@@ -178,20 +168,12 @@ def footprints(pansharp_file,training_set,training_attribute,building_classes,ui
                 final_layer.CreateFeature(final_feature)
                 final_feature.Destroy()
             build_feature = build_layer.GetNextFeature()
-        final_file.Destroy()
         target_ds = None
         build_layer = None
         build_file.Destroy()
-        
-        shutil.copyfile(pansharp_file[:-4]+'_svm.prj', pansharp_file[:-4]+'_class_' + str(building_classes[c])+'.prj')
-    
-    if ui_progress:
-        ui_progress.label_title.setText("Finished")
-        ui_progress.progressBar.setValue(500)
+    shutil.copyfile(pansharp_file[:-4]+'_svm.prj', output_shape[:-4]+'.prj')
     outfile.Destroy()
-    end_time = time.time()
-    print '...Total time = ' + str(end_time-start_time)
-
+    final_file.Destroy()
 
 def Extraction(image1,image2):
     
@@ -609,7 +591,7 @@ def segmentation_optimizer(input_image,input_shape,segmentation_name,select_crit
         
         reference_matrix, ref_geo_transform = polygon2array(temp_layer,geo_transform[1],abs(geo_transform[5])) 
         temp.Destroy()
-        #driver_shape.DeleteDataSource(temp_shape)
+        #driver_shape.DeleteCtaSource(temp_shape)
         reference_list.append(reference_matrix)
         ref_geo_transform_list.append(ref_geo_transform)
         
@@ -1133,23 +1115,8 @@ class Sensum:
             pansharp_file = str(ui.lineEdit_pansharp.text())
             training_set = str(ui.lineEdit_training.text())
             training_attribute = str(ui.lineEdit_training_field.text())
+            output_shape = str(ui.lineEdit_output.text())
+            checked_optimizer = bool(ui.checkBox_filter.isChecked())
             building_classes = [str(ui.listWidget.item(index).text()) for index in xrange(ui.listWidget.count())]
-            footprints(pansharp_file,training_set,training_attribute,building_classes,ui_progress=dlgProgress.ui)
+            footprints(pansharp_file,training_set,training_attribute,building_classes,output_shape,enable_smooth_filter=checked_optimizer,ui_progress=dlgProgress.ui)
             QMessageBox.information(None, "Info", 'Done!')
-
-if __name__ == "__main__":
-    
-    tmp_shadow_processed = tempfile.mkstemp()[1]
-    os.remove(tmp_shadow_processed)
-    if os.path.isfile("/home/gale/Izmir/final_building/prova.shp"):
-        os.remove("/home/gale/Izmir/final_building/prova.shp")
-    height("/home/gale/Izmir/final_building/shadows.shp",0.5,0.5,outShape=tmp_shadow_processed)
-    shadow_checker("/home/gale/Izmir/final_building/pan_class_6.shp",tmp_shadow_processed,'2012/8/11 7:35:00', outputShape="/home/gale/Izmir/final_building/prova.shp", idfield="ID", resize=1)
-    shutil.rmtree(tmp_shadow_processed)
-
-
-    '''
-    e = segmentation_optimizer("/home/gale/pansharp.TIF","/home/gale/reference_polygon_2.shp","Felzenszwalb",4,10)
-    input_band_list = read_image("/home/gale/pansharp.TIF",0,0)
-    felzenszwalb_skimage(input_band_list, float(e[0]), float(e[1]), 0)
-    '''
