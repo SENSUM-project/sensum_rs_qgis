@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_segmentation.ui'
 #
-# Created: Tue Jun 24 10:39:14 2014
+# Created: Tue Jun 24 12:38:38 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -360,21 +360,21 @@ class Ui_Segmentation(object):
         self.checkBox_optimizer = QtGui.QCheckBox(Segmentation)
         self.checkBox_optimizer.setGeometry(QtCore.QRect(290, 250, 85, 20))
         self.checkBox_optimizer.setObjectName(_fromUtf8("checkBox_optimizer"))
-        self.logo_unipv = QtGui.QLabel(Segmentation)
-        self.logo_unipv.setGeometry(QtCore.QRect(370, 10, 61, 61))
-        self.logo_unipv.setText(_fromUtf8(""))
-        self.logo_unipv.setPixmap(QtGui.QPixmap(_fromUtf8("unipv.png")))
-        self.logo_unipv.setObjectName(_fromUtf8("logo_unipv"))
         self.logo_eucentre = QtGui.QLabel(Segmentation)
-        self.logo_eucentre.setGeometry(QtCore.QRect(170, 20, 181, 41))
+        self.logo_eucentre.setGeometry(QtCore.QRect(270, 10, 71, 81))
         self.logo_eucentre.setText(_fromUtf8(""))
         self.logo_eucentre.setPixmap(QtGui.QPixmap(_fromUtf8("eucentre.png")))
         self.logo_eucentre.setObjectName(_fromUtf8("logo_eucentre"))
         self.logo_sensum = QtGui.QLabel(Segmentation)
-        self.logo_sensum.setGeometry(QtCore.QRect(40, 30, 101, 21))
+        self.logo_sensum.setGeometry(QtCore.QRect(10, 20, 241, 61))
         self.logo_sensum.setText(_fromUtf8(""))
         self.logo_sensum.setPixmap(QtGui.QPixmap(_fromUtf8("sensum.png")))
         self.logo_sensum.setObjectName(_fromUtf8("logo_sensum"))
+        self.logo_unipv = QtGui.QLabel(Segmentation)
+        self.logo_unipv.setGeometry(QtCore.QRect(350, 10, 91, 81))
+        self.logo_unipv.setText(_fromUtf8(""))
+        self.logo_unipv.setPixmap(QtGui.QPixmap(_fromUtf8("unipv.png")))
+        self.logo_unipv.setObjectName(_fromUtf8("logo_unipv"))
 
         self.retranslateUi(Segmentation)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Segmentation.accept)

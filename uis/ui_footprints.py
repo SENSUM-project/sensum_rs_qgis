@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_footprints.ui'
 #
-# Created: Tue Jun 24 10:39:14 2014
+# Created: Tue Jun 24 12:38:38 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -79,21 +79,6 @@ class Ui_Footprints(object):
         self.label_title = QtGui.QLabel(Footprints)
         self.label_title.setGeometry(QtCore.QRect(110, 100, 251, 21))
         self.label_title.setObjectName(_fromUtf8("label_title"))
-        self.logo_unipv = QtGui.QLabel(Footprints)
-        self.logo_unipv.setGeometry(QtCore.QRect(370, 10, 61, 61))
-        self.logo_unipv.setText(_fromUtf8(""))
-        self.logo_unipv.setPixmap(QtGui.QPixmap(_fromUtf8("unipv.png")))
-        self.logo_unipv.setObjectName(_fromUtf8("logo_unipv"))
-        self.logo_sensum = QtGui.QLabel(Footprints)
-        self.logo_sensum.setGeometry(QtCore.QRect(40, 30, 101, 21))
-        self.logo_sensum.setText(_fromUtf8(""))
-        self.logo_sensum.setPixmap(QtGui.QPixmap(_fromUtf8("sensum.png")))
-        self.logo_sensum.setObjectName(_fromUtf8("logo_sensum"))
-        self.logo_eucentre = QtGui.QLabel(Footprints)
-        self.logo_eucentre.setGeometry(QtCore.QRect(170, 20, 181, 41))
-        self.logo_eucentre.setText(_fromUtf8(""))
-        self.logo_eucentre.setPixmap(QtGui.QPixmap(_fromUtf8("eucentre.png")))
-        self.logo_eucentre.setObjectName(_fromUtf8("logo_eucentre"))
         self.checkBox_filter = QtGui.QCheckBox(Footprints)
         self.checkBox_filter.setEnabled(True)
         self.checkBox_filter.setGeometry(QtCore.QRect(270, 330, 101, 20))
@@ -108,6 +93,21 @@ class Ui_Footprints(object):
         self.label_output = QtGui.QLabel(Footprints)
         self.label_output.setGeometry(QtCore.QRect(70, 250, 51, 16))
         self.label_output.setObjectName(_fromUtf8("label_output"))
+        self.logo_eucentre = QtGui.QLabel(Footprints)
+        self.logo_eucentre.setGeometry(QtCore.QRect(280, 10, 71, 81))
+        self.logo_eucentre.setText(_fromUtf8(""))
+        self.logo_eucentre.setPixmap(QtGui.QPixmap(_fromUtf8("eucentre.png")))
+        self.logo_eucentre.setObjectName(_fromUtf8("logo_eucentre"))
+        self.logo_sensum = QtGui.QLabel(Footprints)
+        self.logo_sensum.setGeometry(QtCore.QRect(20, 20, 241, 61))
+        self.logo_sensum.setText(_fromUtf8(""))
+        self.logo_sensum.setPixmap(QtGui.QPixmap(_fromUtf8("sensum.png")))
+        self.logo_sensum.setObjectName(_fromUtf8("logo_sensum"))
+        self.logo_unipv = QtGui.QLabel(Footprints)
+        self.logo_unipv.setGeometry(QtCore.QRect(360, 10, 91, 81))
+        self.logo_unipv.setText(_fromUtf8(""))
+        self.logo_unipv.setPixmap(QtGui.QPixmap(_fromUtf8("unipv.png")))
+        self.logo_unipv.setObjectName(_fromUtf8("logo_unipv"))
 
         self.retranslateUi(Footprints)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Footprints.accept)

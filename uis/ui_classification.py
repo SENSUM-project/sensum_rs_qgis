@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_classification.ui'
 #
-# Created: Tue Jun 24 10:39:14 2014
+# Created: Tue Jun 24 12:38:38 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -124,21 +124,21 @@ class Ui_Classification(object):
         self.label_title = QtGui.QLabel(Classification)
         self.label_title.setGeometry(QtCore.QRect(140, 100, 201, 21))
         self.label_title.setObjectName(_fromUtf8("label_title"))
-        self.logo_unipv = QtGui.QLabel(Classification)
-        self.logo_unipv.setGeometry(QtCore.QRect(360, 20, 61, 61))
-        self.logo_unipv.setText(_fromUtf8(""))
-        self.logo_unipv.setPixmap(QtGui.QPixmap(_fromUtf8("unipv.png")))
-        self.logo_unipv.setObjectName(_fromUtf8("logo_unipv"))
         self.logo_eucentre = QtGui.QLabel(Classification)
-        self.logo_eucentre.setGeometry(QtCore.QRect(160, 30, 181, 41))
+        self.logo_eucentre.setGeometry(QtCore.QRect(270, 10, 71, 81))
         self.logo_eucentre.setText(_fromUtf8(""))
         self.logo_eucentre.setPixmap(QtGui.QPixmap(_fromUtf8("eucentre.png")))
         self.logo_eucentre.setObjectName(_fromUtf8("logo_eucentre"))
         self.logo_sensum = QtGui.QLabel(Classification)
-        self.logo_sensum.setGeometry(QtCore.QRect(30, 40, 101, 21))
+        self.logo_sensum.setGeometry(QtCore.QRect(10, 20, 241, 61))
         self.logo_sensum.setText(_fromUtf8(""))
         self.logo_sensum.setPixmap(QtGui.QPixmap(_fromUtf8("sensum.png")))
         self.logo_sensum.setObjectName(_fromUtf8("logo_sensum"))
+        self.logo_unipv = QtGui.QLabel(Classification)
+        self.logo_unipv.setGeometry(QtCore.QRect(350, 10, 91, 81))
+        self.logo_unipv.setText(_fromUtf8(""))
+        self.logo_unipv.setPixmap(QtGui.QPixmap(_fromUtf8("unipv.png")))
+        self.logo_unipv.setObjectName(_fromUtf8("logo_unipv"))
 
         self.retranslateUi(Classification)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Classification.accept)

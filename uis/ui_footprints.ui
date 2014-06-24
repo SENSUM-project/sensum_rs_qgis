@@ -224,54 +224,6 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;BUILDING EXTRACTION&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
   </widget>
-  <widget class="QLabel" name="logo_unipv">
-   <property name="geometry">
-    <rect>
-     <x>370</x>
-     <y>10</y>
-     <width>61</width>
-     <height>61</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap>unipv.png</pixmap>
-   </property>
-  </widget>
-  <widget class="QLabel" name="logo_sensum">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>30</y>
-     <width>101</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap>sensum.png</pixmap>
-   </property>
-  </widget>
-  <widget class="QLabel" name="logo_eucentre">
-   <property name="geometry">
-    <rect>
-     <x>170</x>
-     <y>20</y>
-     <width>181</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="pixmap">
-    <pixmap>eucentre.png</pixmap>
-   </property>
-  </widget>
   <widget class="QCheckBox" name="checkBox_filter">
    <property name="enabled">
     <bool>true</bool>
@@ -325,6 +277,54 @@
    </property>
    <property name="text">
     <string>Output</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="logo_eucentre">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>10</y>
+     <width>71</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap>eucentre.png</pixmap>
+   </property>
+  </widget>
+  <widget class="QLabel" name="logo_sensum">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>20</y>
+     <width>241</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap>sensum.png</pixmap>
+   </property>
+  </widget>
+  <widget class="QLabel" name="logo_unipv">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>10</y>
+     <width>91</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap>unipv.png</pixmap>
    </property>
   </widget>
  </widget>

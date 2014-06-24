@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_features.ui'
 #
-# Created: Tue Jun 24 10:39:14 2014
+# Created: Tue Jun 24 12:38:38 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -126,21 +126,21 @@ class Ui_Features(object):
         self.label_id = QtGui.QLabel(Features)
         self.label_id.setGeometry(QtCore.QRect(80, 320, 51, 17))
         self.label_id.setObjectName(_fromUtf8("label_id"))
-        self.logo_unipv = QtGui.QLabel(Features)
-        self.logo_unipv.setGeometry(QtCore.QRect(360, 20, 61, 61))
-        self.logo_unipv.setText(_fromUtf8(""))
-        self.logo_unipv.setPixmap(QtGui.QPixmap(_fromUtf8("unipv.png")))
-        self.logo_unipv.setObjectName(_fromUtf8("logo_unipv"))
         self.logo_eucentre = QtGui.QLabel(Features)
-        self.logo_eucentre.setGeometry(QtCore.QRect(160, 30, 181, 41))
+        self.logo_eucentre.setGeometry(QtCore.QRect(270, 10, 71, 81))
         self.logo_eucentre.setText(_fromUtf8(""))
         self.logo_eucentre.setPixmap(QtGui.QPixmap(_fromUtf8("eucentre.png")))
         self.logo_eucentre.setObjectName(_fromUtf8("logo_eucentre"))
         self.logo_sensum = QtGui.QLabel(Features)
-        self.logo_sensum.setGeometry(QtCore.QRect(30, 40, 101, 21))
+        self.logo_sensum.setGeometry(QtCore.QRect(10, 20, 241, 61))
         self.logo_sensum.setText(_fromUtf8(""))
         self.logo_sensum.setPixmap(QtGui.QPixmap(_fromUtf8("sensum.png")))
         self.logo_sensum.setObjectName(_fromUtf8("logo_sensum"))
+        self.logo_unipv = QtGui.QLabel(Features)
+        self.logo_unipv.setGeometry(QtCore.QRect(350, 10, 91, 81))
+        self.logo_unipv.setText(_fromUtf8(""))
+        self.logo_unipv.setPixmap(QtGui.QPixmap(_fromUtf8("unipv.png")))
+        self.logo_unipv.setObjectName(_fromUtf8("logo_unipv"))
 
         self.retranslateUi(Features)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Features.accept)
