@@ -1,0 +1,612 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>StackSatellite</class>
+ <widget class="QDialog" name="StackSatellite">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>666</width>
+    <height>727</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Sensum</string>
+  </property>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>170</x>
+     <y>660</y>
+     <width>423</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_inputshapefile">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>210</y>
+     <width>98</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_pixel">
+   <property name="geometry">
+    <rect>
+     <x>70</x>
+     <y>520</y>
+     <width>151</width>
+     <height>111</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Pixel Based Method</string>
+   </property>
+   <widget class="QCheckBox" name="checkBox_builtup_index">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>101</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Buitup Index</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_pca_index">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>85</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PCA Index</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_pca_classification">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>80</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PCA classification</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_reference_diretory">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>410</y>
+     <width>141</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Reference Directory</string>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_options">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>330</y>
+     <width>151</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Options</string>
+   </property>
+   <widget class="QCheckBox" name="checkBox_restrict_to_city">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>121</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Restrict to City</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_coregistration">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>111</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Coregistration</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QPushButton" name="pushButton_satellite_folder">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>150</y>
+     <width>98</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_reference_directory">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>430</y>
+     <width>98</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_reference_directory">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>430</y>
+     <width>291</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_segmentation">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>360</y>
+     <width>191</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Segmentation</string>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_object">
+   <property name="geometry">
+    <rect>
+     <x>420</x>
+     <y>490</y>
+     <width>161</width>
+     <height>141</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Object Based Method</string>
+   </property>
+   <widget class="QCheckBox" name="checkBox_band_combination">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>131</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Band Combination</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_supervised">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>85</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Supervised</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_unsupervised">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>80</y>
+      <width>111</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Unsupervised</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="checkBox_unsupervised_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>110</y>
+      <width>141</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Supervised Polygon</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QLabel" name="label_satellite_folder">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>132</y>
+     <width>191</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Satellite Folder</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="logo_unipv">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>10</y>
+     <width>91</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap>unipv.png</pixmap>
+   </property>
+  </widget>
+  <widget class="QLabel" name="logo_sensum">
+   <property name="geometry">
+    <rect>
+     <x>120</x>
+     <y>20</y>
+     <width>241</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap>sensum.png</pixmap>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_title">
+   <property name="geometry">
+    <rect>
+     <x>220</x>
+     <y>100</y>
+     <width>201</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;STACK SATELLITE&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_satellite_folder">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>150</y>
+     <width>291</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBox_quantization_mode">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>270</y>
+     <width>280</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>Kmeans</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Linear</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QComboBox" name="comboBox_segmentation">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>380</y>
+     <width>280</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>Edison</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Meanshift</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_optimazer_polygon">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>320</y>
+     <width>291</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton_optimazer_polygon">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>320</y>
+     <width>98</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_input_shapefile">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>192</y>
+     <width>191</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Input Shapefile</string>
+   </property>
+  </widget>
+  <widget class="QFrame" name="frame_fundamental">
+   <property name="geometry">
+    <rect>
+     <x>480</x>
+     <y>150</y>
+     <width>151</width>
+     <height>151</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <widget class="QLabel" name="label_nclasses">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>101</y>
+      <width>112</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Number of classes</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spinBox_nclasses">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>122</y>
+      <width>53</width>
+      <height>18</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spinBox_niteration">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>77</y>
+      <width>53</width>
+      <height>18</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_niteration">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>56</y>
+      <width>126</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Number of Iterations</string>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spinBox_select_criteria">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>32</y>
+      <width>53</width>
+      <height>18</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_select_criteria">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>11</y>
+      <width>87</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Select Criteria</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QLabel" name="label_optimazer_polygon">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>302</y>
+     <width>191</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Optimazer Polygon</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_quantization_mode">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>250</y>
+     <width>191</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Quantization Mode</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit_input_shapefile">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>210</y>
+     <width>291</width>
+     <height>27</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="logo_eucentre">
+   <property name="geometry">
+    <rect>
+     <x>380</x>
+     <y>10</y>
+     <width>71</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap>eucentre.png</pixmap>
+   </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_texture">
+   <property name="geometry">
+    <rect>
+     <x>240</x>
+     <y>580</y>
+     <width>151</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Texture Based Method</string>
+   </property>
+   <widget class="QCheckBox" name="checkBox_dissimilarity">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>101</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dissimilarity</string>
+    </property>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>StackSatellite</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>StackSatellite</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

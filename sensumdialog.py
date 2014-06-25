@@ -32,6 +32,7 @@ from uis.ui_features import Ui_Features
 from uis.ui_build_height import Ui_BuildHeight
 from uis.ui_coregistration import Ui_Coregistration
 from uis.ui_footprints import Ui_Footprints
+from uis.ui_stacksatellite import Ui_StackSatellite
 
 class ProgressDialog(QtGui.QDialog, Ui_Progress):
     def __init__(self):
@@ -251,3 +252,37 @@ class FootprintsDialog(QtGui.QDialog, Ui_Footprints):
     def clear_all(self):
         self.ui.listWidget.clear()
         
+class StackSatelliteDialog(QtGui.QDialog, Ui_StackSatellite):
+    def __init__(self):
+        QtGui.QDialog.__init__(self)
+        self.ui = Ui_StackSatellite()
+        self.ui.setupUi(self)
+        QObject.connect(self.ui.pushButton_satellite_folder, SIGNAL("clicked()"), self.setPath_satellite_folder)
+        QObject.connect(self.ui.pushButton_inputshapefile, SIGNAL("clicked()"), self.setPath_inputshapefile)
+        QObject.connect(self.ui.pushButton_optimazer_polygon, SIGNAL("clicked()"), self.setPath_optimazer_polygon)
+        QObject.connect(self.ui.pushButton_reference_directory, SIGNAL("clicked()"), self.setPath_reference_directory)
+        QObject.connect(self.ui.checkBox_reference_diretory, SIGNAL("stateChanged(int)"), self.reference_directory)
+    def setPath_satellite_folder(self):
+        fileName = QFileDialog.getExistingDirectory(self,"Select Folder", "~");
+        if fileName !="":
+            self.ui.lineEdit_satellite_folder.setText(fileName)
+    def setPath_inputshapefile(self):
+        fileName = QFileDialog.getOpenFileName(self,"Input Shapefile", "~/","ESRI Shapefile Files (*.shp)");
+        if fileName !="":
+            self.ui.lineEdit_input_shapefile.setText(fileName)
+    def setPath_optimazer_polygon(self):
+        fileName = QFileDialog.getOpenFileName(self,"Input Shapefile", "~/","ESRI Shapefile Files (*.shp)");
+        if fileName !="":
+            self.ui.lineEdit_optimazer_polygon.setText(fileName)
+    def setPath_reference_directory(self):
+        fileName = QFileDialog.getExistingDirectory(self,"Select Folder", "~");
+        if fileName !="":
+            self.ui.lineEdit_reference_directory.setText(fileName)
+    def reference_directory(self):
+        checked = bool(self.ui.checkBox_reference_diretory.isChecked())
+        if checked:
+            self.ui.lineEdit_reference_directory.setEnabled(1)
+            self.ui.pushButton_reference_directory.setEnabled(1)
+        else:
+            self.ui.lineEdit_reference_directory.setEnabled(0)
+            self.ui.pushButton_reference_directory.setEnabled(0)

@@ -47,7 +47,333 @@ from sensum_library.conversion import *
 from sensum_library.segmentation_opt import *
 from sensum_library.features import *
 from sensum_library.secondary_indicators import *
+from sensum_library.multi import *
 from numpy.fft import fft2, ifft2, fftshift
+from skimage.morphology import square, closing
+import otbApplication
+
+def stacksatellite(sat_folder,input_shapefile,quantization_mode,opt_polygon,segmentation_name,select_criteria,nloops,n_classes,ref_dir,restrict_to_city,coregistration,builtup_index_method,pca_index_method,pca_classification_method,dissimilarity_method,band_combination,supervised_method,supervised_polygon):
+    if os.name == 'posix':
+        separator = '/'
+    else:
+        separator = '\\'
+
+    sat_folder = sat_folder + separator     
+    data_type = np.uint16
+    start_time=time.time()
+    dirs = os.listdir(sat_folder) #list of folders inside the satellite folder
+    print 'List of files and folders: ' + str(dirs)
+
+    band_ref_uint8 = []
+    band_list = []
+    built_up_area_pca_list = []
+    built_up_area_list = []
+    dissimilarity_list = []
+
+    #reference image - if not defined the first in alphabetic order is chosen
+    c = 0
+
+    if ref_dir is None or ref_dir == '': #if a reference image is not provided, the first in alphabetic order is chosen
+        print 'Reference directory not specified - The first folder in alphabetical order will be chosen'
+        while (os.path.isfile(dirs[c]) == True):### to avoid taking the files in the dirs as a reference folder so, the program will search for the first folder
+            c=c+1
+        else:
+            reference_dir = dirs[c]
+        ref_dir = sat_folder + reference_dir + separator #first directory assumed to be the reference
+    ref_files = os.listdir(ref_dir)
+
+    if restrict_to_city == True: #Clip the original images with the provided shapefile
+        ref_list = [s for s in ref_files if ".TIF" in s and not "_city" in s] #look for original landsat files
+        
+        for j in range(0,len(ref_list)):
+            print ref_list[j]
+            #clip_rectangular(input_raster,data_type,input_shape,output_raster)
+            clip_rectangular(ref_dir+ref_list[j],np.uint8,input_shapefile,ref_dir+ref_list[j][:-4]+'_city.TIF')
+        
+        ref_files = os.listdir(ref_dir)
+        ref_list = [s for s in ref_files if "_city.TIF" in s]
+    else: 
+        ref_list = [s for s in ref_files if ".TIF" in s]
+    print ref_list
+    for n in range(0,len(ref_list)):
+        band_ref = read_image(ref_dir+ref_list[n],data_type,0)
+        band_list.append(band_ref[0])
+    rows_ref,cols_ref,nbands_ref,geo_transform_ref,projection_ref = read_image_parameters(ref_dir+ref_list[0])
+    print len(band_list)
+    #pca needs bands 1,2,3,4,5 or bands 1,2,3,4,5,7
+    #indexes need bands 1,2,3,4,5,7
+    if builtup_index_method == True or supervised_method == True or unsupervised_method == True:
+        features_list = band_calculation(band_list,['SAVI','NDVI','NDBI','MNDWI','BUILT_UP']) #extract indexes
+        features_list[3] = features_list[3]*1000
+        features_list[4] = features_list[4]*1000
+        write_image(features_list,np.float32,0,ref_dir+'built_up_index.TIF',rows_ref,cols_ref,geo_transform_ref,projection_ref) #write built-up index to file
+
+    if builtup_index_method == True:
+        mask_vegetation = np.greater(features_list[1],features_list[0]) #exclude vegetation
+        mask_water = np.less(features_list[2],features_list[1]) #exclude water
+        mask_soil = np.greater(features_list[3],0) #exclude soil
+        built_up_area = np.logical_and(mask_soil,np.logical_and(mask_water,mask_vegetation))
+        built_up_area_list.append(built_up_area) 
+
+    if pca_index_method == True or pca_classification_method == True:
+        input_pca_list = (band_list[0],band_list[1],band_list[2],band_list[3],band_list[4])
+        pca_mean,pca_mode,pca_second_order,pca_third_order = pca(input_pca_list)
+        
+        pca_built_up = pca_index(pca_mean,pca_mode,pca_second_order,pca_third_order)
+        
+        if pca_index_method == True:
+            mask_water = np.less(pca_second_order,pca_mean) #exclude water
+            mask_vegetation = np.greater(pca_third_order,pca_second_order) #exclude vegetation
+            mask_soil = np.less(pca_built_up,0) #exclude soil
+            built_up_area_pca = np.logical_and(mask_soil,np.logical_and(mask_water,mask_vegetation))
+            built_up_area_pca_list.append(built_up_area_pca)
+        
+        if pca_classification_method == True:
+            write_image((pca_mean,pca_mode,pca_second_order,pca_third_order,pca_built_up),data_type,0,ref_dir+'pca.TIF',rows_ref,cols_ref,geo_transform_ref,projection_ref)
+            unsupervised_classification_otb(ref_dir+'pca.TIF',ref_dir+'pca_unsupervised.TIF',5,10)
+            
+    if supervised_method == True:
+        print 'Segmentation'
+        '''
+        driver_shape = osgeo.ogr.GetDriverByName('ESRI Shapefile')
+        inDS = driver_shape.Open(input_shapefile, 0)
+        if inDS is None:
+            print 'Could not open file'
+            sys.exit(1)
+        inLayer = inDS.GetLayer()
+        temp = split_shape(inLayer,0)
+        temp_layer = temp.GetLayer()
+        reference_polygon_matrix, ref_polygon_geo_transform = polygon2array(temp_layer,geo_transform_ref[1],abs(geo_transform_ref[5])) 
+        temp.Destroy() 
+        
+        ext_patch_list,patch_geo_transform = create_extended_patch(band_list,reference_polygon_matrix,geo_transform_ref,ref_polygon_geo_transform,0.3,False)   
+        e = call_optimizer(segmentation_name,[ext_patch_list],[reference_polygon_matrix],[patch_geo_transform],[ref_polygon_geo_transform],projection_ref,select_criteria,nloops)
+        '''
+        if segmentation_name == 'Edison':
+            #edison_otb(ref_dir+'built_up_index.TIF','vector',ref_dir+'built_up_index_seg.shp',int(e[0]),float(e[1]),0,0)
+            edison_otb(ref_dir+'built_up_index.TIF','vector',ref_dir+'built_up_index_seg.shp',0,0,0,0)
+        if segmentation_name == 'Meanshift':
+            #meanshift_otb(ref_dir+'built_up_index.TIF','vector',ref_dir+'built_up_index_seg.shp',int(e[0]),float(e[1]),0,0,0)
+            meanshift_otb(ref_dir+'built_up_index.TIF','vector',ref_dir+'built_up_index_seg.shp',0,0,0,0,0)
+        #inDS.Destroy()   
+             
+    if unsupervised_method == True:
+        #include stuff
+        print 'to implement'
+        
+    #Extract mode from segments
+    if supervised_method == True or unsupervised_method == True:
+        #built-up -> polygon around vegetation or water -> optimizer -> edison -> feature extraction mode -> unsupervised classification (4 classes)
+        #Input can change according to the performance: built-up index, single band, rgb combination, panchromatic band
+        class_to_segments(ref_dir+'built_up_index.TIF',ref_dir+'built_up_index_seg.shp',ref_dir+'mode.shp')
+        shp2rast(ref_dir+'mode.shp',ref_dir+'mode.TIF',rows_ref,cols_ref,'Class',0,0,0,0,0,0) #conversion of the segmentation results from shape to raster for further processing
+        unsupervised_classification_otb(ref_dir+'mode.TIF',ref_dir+'mode_class.TIF',n_classes,1)
+        
+        #Define if a vegetation filter is needed
+        '''
+        mask_veg = np.less(NDBI-SAVI,0) 
+        WriteOutputImage(ref_dir+ref_list_city[0],ref_dir,'','vegetation_mask.TIF',0,0,0,1,[SAVI])
+        veg_opening = binary_opening(mask_veg,square(5))
+        WriteOutputImage(ref_dir+ref_list_city[0],ref_dir,'','vegetation_mask_opening.TIF',0,0,0,1,[veg_opening])
+        veg_filt = np.equal(veg_opening,0)
+        out_veg_filt = np.choose(veg_filt,(0,(list_mode_class[0])))
+        '''
+    if dissimilarity_method == True:
+        #include Daniel's function with multiprocessing
+        output_list = []
+        if len(band_list) < 9:
+            band_diss = (band_list[0],band_list[1],band_list[6])
+        else:
+            band_diss = (band_list[0],band_list[1],band_list[7])
+        multiproc = Multi()
+        window_dimension = 7
+        index = 'dissimilarity'
+        quantization_factor = 64
+        band_list_q = linear_quantization(band_diss,quantization_factor)
+        rows_w,cols_w = band_list_q[0].shape
+        print rows_w,cols_w
+        for i in range(0,rows_w):
+            multiproc.put(Task_moving(i, rows_w, cols_w, band_diss,band_list_q,window_dimension,index,quantization_factor))
+        multiproc.kill()
+        #Write results
+        output_ft_1 = np.zeros((len(band_diss),rows_w,cols_w)).astype(np.float32)
+        while rows_w:
+            res = multiproc.result()
+            if res.size != 1:
+                res = res.reshape(res.size/4,4)
+                for i in range(res.size/4):
+                    tmp = res[i]
+                    b,index_row,index_col,feat1 = int(tmp[0]),int(tmp[1]),int(tmp[2]),tmp[3]
+                    #print b,index_row,index_col,feat1
+                    output_ft_1[b][index_row][index_col]=feat1
+            rows_w -= 1
+        for b in range(0,len(band_diss)):
+            output_list.append(output_ft_1[b][:][:])
+        print len(output_list)
+        write_image(output_list,np.float32,0,ref_dir+'dissimilarity.TIF',rows_ref,cols_ref,geo_transform_ref,projection_ref) #write built-up index to file
+        dissimilarity_list.append(output_list)
+        del output_list
+        del output_ft_1
+        del multiproc
+
+    for i in range(0,len(dirs)):
+        band_list = []
+        if (os.path.isfile(sat_folder+dirs[i]) == False) and ((ref_dir!=sat_folder+dirs[i]+separator)):
+            target_dir = sat_folder+dirs[i]+separator
+            img_files = os.listdir(target_dir)
+            
+            if restrict_to_city == True: #Clip the original images with the provided shapefile
+                target_list = [s for s in img_files if ".TIF" in s and not "_city" in s] #look for original landsat files
+                
+                for j in range(0,len(target_list)):
+                    print target_list[j]
+                    #clip_rectangular(input_raster,data_type,input_shape,output_raster)
+                    clip_rectangular(target_dir+target_list[j],np.uint8,input_shapefile,target_dir+target_list[j][:-4]+'_city.TIF')
+                
+                target_files = os.listdir(target_dir)
+                target_list = [s for s in target_files if "_city.TIF" in s and "aux.xml" not in s]
+            else: 
+                target_list = [s for s in target_files if ".TIF" in s]
+            print target_list
+            rows,cols,nbands,geo_transform,projection = read_image_parameters(target_dir+target_list[0])
+            if coregistration == True: #OpenCV needs byte values (from 0 to 255)
+                F_B(sat_folder,target_dir,ref_dir)
+            for n in range(0,len(target_list)):
+                band_target = read_image(target_dir+target_list[n],data_type,0)
+                band_list.append(band_target[0])
+            print len(band_list)
+            rows_target,cols_target,nbands_target,geo_transform_target,projection_target = read_image_parameters(target_dir+target_list[0])
+            #pca needs bands 1,2,3,4,5 or bands 1,2,3,4,5,7
+            #indexes need bands 1,2,3,4,5,7
+            if builtup_index_method == True or supervised_method == True or unsupervised_method == True:
+                features_list = band_calculation(band_list,['SAVI','NDVI','NDBI','MNDWI','BUILT_UP']) #extract indexes
+                features_list[3] = features_list[3]*1000
+                features_list[4] = features_list[4]*1000
+                write_image(features_list,np.float32,0,target_dir+'built_up_index.TIF',rows_target,cols_target,geo_transform_target,projection_target) #write built-up index to file
+            
+            if builtup_index_method == True:
+                mask_vegetation = np.greater(features_list[1],features_list[0]) #exclude vegetation
+                mask_water = np.less(features_list[2],features_list[1]) #exclude water
+                mask_soil = np.greater(features_list[3],0) #exclude soil
+                built_up_area = np.logical_and(mask_soil,np.logical_and(mask_water,mask_vegetation))
+                built_up_area_list.append(built_up_area) 
+            
+            if pca_index_method == True or pca_classification_method == True:
+                input_pca_list = (band_list[0],band_list[1],band_list[2],band_list[3],band_list[4])
+                pca_mean,pca_mode,pca_second_order,pca_third_order = pca(input_pca_list)
+                
+                pca_built_up = pca_index(pca_mean,pca_mode,pca_second_order,pca_third_order)
+                
+                if pca_index_method == True:
+                    mask_water = np.less(pca_second_order,pca_mean) #exclude water
+                    mask_vegetation = np.greater(pca_third_order,pca_second_order) #exclude vegetation
+                    mask_soil = np.less(pca_built_up,0) #exclude soil
+                    built_up_area_pca = np.logical_and(mask_soil,np.logical_and(mask_water,mask_vegetation))
+                    built_up_area_pca_list.append(built_up_area_pca)
+                
+                if pca_classification_method == True:
+                    write_image((pca_mean,pca_mode,pca_second_order,pca_third_order,pca_built_up),data_type,0,target_dir+'pca.TIF',rows_target,cols_target,geo_transform_target,projection_target)
+                    unsupervised_classification_otb(target_dir+'pca.TIF',target_dir+'pca_unsupervised.TIF',5,10)
+                    
+            if supervised_method == True:
+                print 'Segmentation'
+                '''
+                driver_shape = osgeo.ogr.GetDriverByName('ESRI Shapefile')
+                inDS = driver_shape.Open(input_shapefile, 0)
+                if inDS is None:
+                    print 'Could not open file'
+                    sys.exit(1)
+                inLayer = inDS.GetLayer()
+                temp = split_shape(inLayer,0)
+                temp_layer = temp.GetLayer()
+                reference_polygon_matrix, ref_polygon_geo_transform = polygon2array(temp_layer,geo_transform_target[1],abs(geo_transform_target[5])) 
+                temp.Destroy() 
+                
+                ext_patch_list,patch_geo_transform = create_extended_patch(band_list,reference_polygon_matrix,geo_transform_target,ref_polygon_geo_transform,0.3,False)   
+                e = call_optimizer(segmentation_name,[ext_patch_list],[reference_polygon_matrix],[patch_geo_transform],[ref_polygon_geo_transform],projection_target,select_criteria,nloops)
+                '''
+                if segmentation_name == 'Edison':
+                    #(input_raster,output_mode,output_file,spatial_radius,range_radius,min_size,scale)
+                    #edison_otb(target_dir+'built_up_index.TIF','vector',target_dir+'built_up_index_seg.shp',int(e[0]),float(e[1]),0,0)
+                    edison_otb(target_dir+'built_up_index.TIF','vector',target_dir+'built_up_index_seg.shp',0,0,0,0)
+                if segmentation_name == 'Meanshift':
+                    #meanshift_otb(input_raster,output_mode,output_file,spatial_radius,range_radius,threshold,max_iter,min_size)
+                    #meanshift_otb(target_dir+'built_up_index.TIF','vector',target_dir+'built_up_index_seg.shp',int(e[0]),float(e[1]),0,0,0)
+                    meanshift_otb(target_dir+'built_up_index.TIF','vector',target_dir+'built_up_index_seg.shp',0,0,0,0,0)
+                #inDS.Destroy()   
+                     
+            if unsupervised_method == True:
+                #include stuff
+                print 'to implement'
+                
+            #Extract mode from segments
+            if supervised_method == True or unsupervised_method == True:
+                #built-up -> polygon around vegetation or water -> optimizer -> edison -> feature extraction mode -> unsupervised classification (4 classes)
+                #Input can change according to the performance: built-up index, single band, rgb combination, panchromatic band
+                class_to_segments(target_dir+'built_up_index.TIF',target_dir+'built_up_index_seg.shp',target_dir+'mode.shp')
+                shp2rast(target_dir+'mode.shp',target_dir+'mode.TIF',rows_target,cols_target,'Class',0,0,0,0,0,0) #conversion of the segmentation results from shape to raster for further processing
+                unsupervised_classification_otb(target_dir+'mode.TIF',target_dir+'mode_class.TIF',n_classes,1)
+                
+                #Define if a vegetation filter is needed
+                '''
+                mask_veg = np.less(NDBI-SAVI,0) 
+                WriteOutputImage(ref_dir+ref_list_city[0],ref_dir,'','vegetation_mask.TIF',0,0,0,1,[SAVI])
+                veg_opening = binary_opening(mask_veg,square(5))
+                WriteOutputImage(ref_dir+ref_list_city[0],ref_dir,'','vegetation_mask_opening.TIF',0,0,0,1,[veg_opening])
+                veg_filt = np.equal(veg_opening,0)
+                out_veg_filt = np.choose(veg_filt,(0,(list_mode_class[0])))
+                '''
+            if dissimilarity_method == True:
+                #include Daniel's function with multiprocessing
+                output_list = []
+                if len(band_list) < 9:
+                    band_diss = (band_list[0],band_list[1],band_list[6])
+                else:
+                    band_diss = (band_list[0],band_list[1],band_list[7])
+                multiproc = Multi()
+                window_dimension = 7
+                index = 'dissimilarity'
+                quantization_factor = 64
+                band_list_q = linear_quantization(band_diss,quantization_factor)
+                rows_w,cols_w = band_list_q[0].shape
+                print rows_w,cols_w
+                for i in range(0,rows_w):
+                    multiproc.put(Task_moving(i, rows_w, cols_w, band_diss,band_list_q,window_dimension,index,quantization_factor))
+                multiproc.kill()
+                #Write results
+                output_ft_1 = np.zeros((len(band_diss),rows_w,cols_w)).astype(np.float32)
+                while rows_w:
+                    res = multiproc.result()
+                    if res.size != 1:
+                        res = res.reshape(res.size/4,4)
+                        for i in range(res.size/4):
+                            tmp = res[i]
+                            b,index_row,index_col,feat1 = int(tmp[0]),int(tmp[1]),int(tmp[2]),tmp[3]
+                            #print b,index_row,index_col,feat1
+                            output_ft_1[b][index_row][index_col]=feat1
+                    rows_w -= 1
+                for b in range(0,len(band_diss)):
+                    output_list.append(output_ft_1[b][:][:])
+                print len(output_list)
+                write_image(output_list,np.float32,0,target_dir+'dissimilarity.TIF',rows_target,cols_target,geo_transform_target,projection_target) #write built-up index to file
+                dissimilarity_list.append(output_list)
+                del output_list
+                del output_ft_1
+                del multiproc
+                
+    if builtup_index_method == True:
+        write_image(built_up_area_list,data_type,0,sat_folder+'evolution_built_up_index.TIF',rows,cols,geo_transform,projection)
+    if pca_index_method == True:
+        write_image(built_up_area_pca_list,data_type,0,sat_folder+'evolution_pca_index.TIF',rows,cols,geo_transform,projection)
+    if dissimilarity_method == True:
+        write_image(dissimilarity_list,data_type,0,sat_folder+'evolution_dissimilarity.TIF',rows,cols,geo_transform,projection)
+
+    end_time=time.time()
+    time_total = end_time-start_time
+    print '-----------------------------------------------------------------------------------------'
+    print 'Total time= ' + str(time_total)
+    print '-----------------------------------------------------------------------------------------'
+
 
 def footprints(pansharp_file,training_set,training_attribute,building_classes,output_shape,enable_smooth_filter=True,ui_progress=None):
 
@@ -841,6 +1167,19 @@ class Sensum:
         self.toolBar.addAction(self.action_footprints)
         self.iface.addPluginToMenu(u"&SENSUM", self.action_footprints)
 
+        ######################
+        ## STACK SATELLITE
+        ######################
+        # Create action that will start plugin configuration
+        self.action_stacksatellite = QAction(
+            QIcon(":/plugins/sensum_plugin/icons/stacksatellite.png"),
+            u"Stack Satellite", self.iface.mainWindow())
+        # connect the action to the run method
+        self.action_stacksatellite.triggered.connect(self.stacksatellite)
+        # Add toolbar button and menu item
+        self.toolBar.addAction(self.action_stacksatellite)
+        self.iface.addPluginToMenu(u"&SENSUM", self.action_stacksatellite)
+
     def unload(self):
 
         self.iface.removePluginMenu(u"&SENSUM", self.action_pansharp)
@@ -855,6 +1194,10 @@ class Sensum:
         self.iface.removeToolBarIcon(self.action_building_height)
         self.iface.removePluginMenu(u"&SENSUM", self.action_coregistration)
         self.iface.removeToolBarIcon(self.action_coregistration)
+        self.iface.removePluginMenu(u"&SENSUM", self.action_footprints)
+        self.iface.removeToolBarIcon(self.action_footprints)
+        self.iface.removePluginMenu(u"&SENSUM", self.action_stacksatellite)
+        self.iface.removeToolBarIcon(self.action_stacksatellite)
 
     # run method that performs all the real work
     def pansharp(self):
@@ -1119,4 +1462,38 @@ class Sensum:
             checked_optimizer = bool(ui.checkBox_filter.isChecked())
             building_classes = [str(ui.listWidget.item(index).text()) for index in xrange(ui.listWidget.count())]
             footprints(pansharp_file,training_set,training_attribute,building_classes,output_shape,enable_smooth_filter=checked_optimizer,ui_progress=dlgProgress.ui)
+            QMessageBox.information(None, "Info", 'Done!')
+
+    def stacksatellite(self):
+        # Create the dialog (after translation) and keep reference
+        self.dlg = StackSatelliteDialog()
+        dlgProgress = ProgressDialog()
+        # show the dialog
+        self.dlg.show()
+        # Run the dialog event loop
+        result = self.dlg.exec_()
+        # See if OK was pressed
+        if result == 1:
+            ui = self.dlg.ui
+            dlgProgress.show()
+            sat_folder = str(ui.lineEdit_satellite_folder.text())
+            input_shapefile = str(ui.lineEdit_input_shapefile.text())
+            quantization_mode = str(ui.comboBox_quantization_mode.currentText())
+            opt_polygon = str(ui.lineEdit_optimazer_polygon.text())
+            segmentation_name = str(ui.comboBox_segmentation.currentText())
+            select_criteria = str(ui.spinBox_select_criteria.text())
+            nloops = str(ui.spinBox_niteration.text())
+            n_classes = str(ui.spinBox_nclasses.text())
+            ref_dir = (str(ui.lineEdit_reference_directory.text() if bool(ui.checkBox_restrict_to_city.isChecked()) else ""))
+            restrict_to_city = bool(ui.checkBox_restrict_to_city.isChecked())
+            coregistration = bool(ui.checkBox_coregistration.isChecked())
+            builtup_index_method = bool(ui.checkBox_builtup_index.isChecked())
+            pca_index_method = bool(ui.checkBox_pca_index.isChecked())
+            pca_classification_method = bool(ui.checkBox_pca_classification.isChecked())
+            dissimilarity_method = bool(ui.checkBox_dissimilarity.isChecked())
+            band_combination = bool(ui.checkBox_band_combination.isChecked())
+            supervised_method = bool(ui.checkBox_supervised.isChecked())
+            unsupervised_method = bool(ui.checkBox_unsupervised.isChecked())
+            supervised_polygon = bool(ui.checkBox_unsupervised.isChecked())
+            stacksatellite(sat_folder, input_shapefile, quantization_mode, opt_polygon, segmentation_name, select_criteria, nloops, n_classes, ref_dir, restrict_to_city, coregistration, builtup_index_method, pca_index_method, pca_classification_method, dissimilarity_method, band_combination, supervised_method, supervised_polygon)
             QMessageBox.information(None, "Info", 'Done!')
