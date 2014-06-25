@@ -139,7 +139,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap>eucentre.png</pixmap>
+    <pixmap>.sensum/eucentre.png</pixmap>
    </property>
   </widget>
   <widget class="QLabel" name="logo_sensum">
@@ -155,7 +155,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap>sensum.png</pixmap>
+    <pixmap>.sensum/sensum.png</pixmap>
    </property>
   </widget>
   <widget class="QLabel" name="logo_unipv">
@@ -171,7 +171,7 @@
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap>unipv.png</pixmap>
+    <pixmap>.sensum/unipv.png</pixmap>
    </property>
   </widget>
  </widget>

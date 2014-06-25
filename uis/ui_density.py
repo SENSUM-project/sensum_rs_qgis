@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_density.ui'
 #
-# Created: Wed Jun 25 14:25:37 2014
+# Created: Wed Jun 25 16:15:42 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -67,17 +67,17 @@ class Ui_Density(object):
         self.logo_sensum = QtGui.QLabel(Density)
         self.logo_sensum.setGeometry(QtCore.QRect(10, 20, 241, 61))
         self.logo_sensum.setText(_fromUtf8(""))
-        self.logo_sensum.setPixmap(QtGui.QPixmap(_fromUtf8("sensum.png")))
+        self.logo_sensum.setPixmap(QtGui.QPixmap(_fromUtf8(".sensum/sensum.png")))
         self.logo_sensum.setObjectName(_fromUtf8("logo_sensum"))
         self.logo_unipv = QtGui.QLabel(Density)
         self.logo_unipv.setGeometry(QtCore.QRect(350, 10, 91, 81))
         self.logo_unipv.setText(_fromUtf8(""))
-        self.logo_unipv.setPixmap(QtGui.QPixmap(_fromUtf8("unipv.png")))
+        self.logo_unipv.setPixmap(QtGui.QPixmap(_fromUtf8(".sensum/unipv.png")))
         self.logo_unipv.setObjectName(_fromUtf8("logo_unipv"))
         self.logo_eucentre = QtGui.QLabel(Density)
         self.logo_eucentre.setGeometry(QtCore.QRect(270, 10, 71, 81))
         self.logo_eucentre.setText(_fromUtf8(""))
-        self.logo_eucentre.setPixmap(QtGui.QPixmap(_fromUtf8("eucentre.png")))
+        self.logo_eucentre.setPixmap(QtGui.QPixmap(_fromUtf8(".sensum/eucentre.png")))
         self.logo_eucentre.setObjectName(_fromUtf8("logo_eucentre"))
 
         self.retranslateUi(Density)
@@ -91,6 +91,6 @@ class Ui_Density(object):
         self.label_building_shape.setText(_translate("Density", "Building Shape", None))
         self.label_output_shapefile.setText(_translate("Density", "Output Shapefile", None))
         self.pushButton_output_shapefile.setText(_translate("Density", "...", None))
-        self.label_radius.setText(_translate("Density", "Radius (expressed in coordinates)", None))
+        self.label_radius.setText(_translate("Density", "Radius (expressed in meters)", None))
         self.label_title.setText(_translate("Density", "<html><head/><body><p><span style=\" font-size:16pt;\">DENSITY</span></p></body></html>", None))
 
