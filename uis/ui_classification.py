@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_classification.ui'
 #
-# Created: Tue Jun 24 12:38:38 2014
+# Created: Wed Jun 25 14:25:37 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -146,7 +146,7 @@ class Ui_Classification(object):
         QtCore.QMetaObject.connectSlotsByName(Classification)
 
     def retranslateUi(self, Classification):
-        Classification.setWindowTitle(_translate("Classification", "Sensum", None))
+        Classification.setWindowTitle(_translate("Classification", "SensumTools", None))
         self.label_input.setText(_translate("Classification", "Input File:", None))
         self.pushButton_input.setText(_translate("Classification", "...", None))
         self.pushButton_output.setText(_translate("Classification", "...", None))

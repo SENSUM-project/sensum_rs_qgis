@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Sensum</string>
+   <string>SensumTools</string>
   </property>
   <widget class="QWidget" name="widget" native="true">
    <property name="geometry">

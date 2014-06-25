@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_footprints.ui'
 #
-# Created: Tue Jun 24 12:38:38 2014
+# Created: Wed Jun 25 14:25:37 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -115,7 +115,7 @@ class Ui_Footprints(object):
         QtCore.QMetaObject.connectSlotsByName(Footprints)
 
     def retranslateUi(self, Footprints):
-        Footprints.setWindowTitle(_translate("Footprints", "Dialog", None))
+        Footprints.setWindowTitle(_translate("Footprints", "SensumTools", None))
         self.label_pansharp.setText(_translate("Footprints", "Pansharp", None))
         self.label_training.setText(_translate("Footprints", "Training", None))
         self.label_training_field.setText(_translate("Footprints", "Training Field", None))

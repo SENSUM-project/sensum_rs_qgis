@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_stacksatellite.ui'
 #
-# Created: Wed Jun 25 13:45:08 2014
+# Created: Wed Jun 25 14:25:37 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -172,7 +172,7 @@ class Ui_StackSatellite(object):
         QtCore.QMetaObject.connectSlotsByName(StackSatellite)
 
     def retranslateUi(self, StackSatellite):
-        StackSatellite.setWindowTitle(_translate("StackSatellite", "Sensum", None))
+        StackSatellite.setWindowTitle(_translate("StackSatellite", "SensumTools", None))
         self.pushButton_inputshapefile.setText(_translate("StackSatellite", "...", None))
         self.groupBox_pixel.setTitle(_translate("StackSatellite", "Pixel Based Method", None))
         self.checkBox_builtup_index.setText(_translate("StackSatellite", "Buit-up Index", None))

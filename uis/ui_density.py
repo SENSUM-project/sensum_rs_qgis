@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_density.ui'
 #
-# Created: Wed Jun 25 14:10:55 2014
+# Created: Wed Jun 25 14:25:37 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -86,7 +86,7 @@ class Ui_Density(object):
         QtCore.QMetaObject.connectSlotsByName(Density)
 
     def retranslateUi(self, Density):
-        Density.setWindowTitle(_translate("Density", "Sensum", None))
+        Density.setWindowTitle(_translate("Density", "SensumTools", None))
         self.pushButton_building_shape.setText(_translate("Density", "...", None))
         self.label_building_shape.setText(_translate("Density", "Building Shape", None))
         self.label_output_shapefile.setText(_translate("Density", "Output Shapefile", None))

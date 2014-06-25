@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_build_height.ui'
 #
-# Created: Tue Jun 24 12:38:38 2014
+# Created: Wed Jun 25 14:25:37 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -111,7 +111,7 @@ class Ui_BuildHeight(object):
         QtCore.QMetaObject.connectSlotsByName(BuildHeight)
 
     def retranslateUi(self, BuildHeight):
-        BuildHeight.setWindowTitle(_translate("BuildHeight", "Dialog", None))
+        BuildHeight.setWindowTitle(_translate("BuildHeight", "SensumTools", None))
         self.pushButton_input_buldings.setText(_translate("BuildHeight", "...", None))
         self.label.setText(_translate("BuildHeight", "Building ESRI Shapefile", None))
         self.pushButton_input_shadows.setText(_translate("BuildHeight", "...", None))

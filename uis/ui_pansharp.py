@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_pansharp.ui'
 #
-# Created: Tue Jun 24 12:38:38 2014
+# Created: Wed Jun 25 14:26:41 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -92,7 +92,7 @@ class Ui_Pansharp(object):
         QtCore.QMetaObject.connectSlotsByName(Pansharp)
 
     def retranslateUi(self, Pansharp):
-        Pansharp.setWindowTitle(_translate("Pansharp", "Sensum", None))
+        Pansharp.setWindowTitle(_translate("Pansharp", "SensumTools", None))
         self.pushButton_multiband.setText(_translate("Pansharp", "...", None))
         self.pushButton_output.setText(_translate("Pansharp", "...", None))
         self.label_panchromatic.setText(_translate("Pansharp", "Panchromatic Image", None))
