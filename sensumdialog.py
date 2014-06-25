@@ -33,6 +33,7 @@ from uis.ui_build_height import Ui_BuildHeight
 from uis.ui_coregistration import Ui_Coregistration
 from uis.ui_footprints import Ui_Footprints
 from uis.ui_stacksatellite import Ui_StackSatellite
+from uis.ui_density import Ui_Density
 
 class ProgressDialog(QtGui.QDialog, Ui_Progress):
     def __init__(self):
@@ -262,6 +263,7 @@ class StackSatelliteDialog(QtGui.QDialog, Ui_StackSatellite):
         QObject.connect(self.ui.pushButton_optimazer_polygon, SIGNAL("clicked()"), self.setPath_optimazer_polygon)
         QObject.connect(self.ui.pushButton_reference_directory, SIGNAL("clicked()"), self.setPath_reference_directory)
         QObject.connect(self.ui.checkBox_reference_diretory, SIGNAL("stateChanged(int)"), self.reference_directory)
+        QObject.connect(self.ui.checkBox_supervised, SIGNAL("stateChanged(int)"), self.supervised_polygon)
     def setPath_satellite_folder(self):
         fileName = QFileDialog.getExistingDirectory(self,"Select Folder", "~");
         if fileName !="":
@@ -286,3 +288,29 @@ class StackSatelliteDialog(QtGui.QDialog, Ui_StackSatellite):
         else:
             self.ui.lineEdit_reference_directory.setEnabled(0)
             self.ui.pushButton_reference_directory.setEnabled(0)
+    def supervised_polygon(self):
+        checked = bool(self.ui.checkBox_supervised.isChecked())
+        if checked:
+            self.ui.lineEdit_optimazer_polygon.setEnabled(1)
+            self.ui.pushButton_optimazer_polygon.setEnabled(1)
+        else:
+            self.ui.lineEdit_optimazer_polygon.setEnabled(0)
+            self.ui.pushButton_optimazer_polygon.setEnabled(0)
+
+class DensityDialog(QtGui.QDialog, Ui_Density):
+    def __init__(self):
+        QtGui.QDialog.__init__(self)
+        self.ui = Ui_Density()
+        self.ui.setupUi(self)
+                
+        QObject.connect(self.ui.pushButton_building_shape, SIGNAL("clicked()"), self.setPath_building_shape)
+        QObject.connect(self.ui.pushButton_output_shapefile, SIGNAL("clicked()"), self.setPath_output_shapefile)
+
+    def setPath_building_shape(self):
+        fileName = QFileDialog.getOpenFileName(self,"Input Shapefile", "~/","ESRI Shapefile Files (*.shp)");
+        if fileName !="":
+            self.ui.lineEdit_building_shape.setText(fileName)
+    def setPath_output_shapefile(self):
+        fileName = QFileDialog.getSaveFileName(self,"Output Shapefile", "~/","ESRI Shapefile Files (*.shp)");
+        if fileName !="":
+            self.ui.lineEdit_output_shapefile.setText(fileName)

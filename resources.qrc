@@ -8,5 +8,6 @@
         <file>icons/coregistration.png</file>
         <file>icons/footprints.png</file>
         <file>icons/stacksatellite.png</file>
+        <file>icons/density.png</file>
     </qresource>
 </RCC>

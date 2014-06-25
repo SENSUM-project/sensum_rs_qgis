@@ -52,7 +52,7 @@ from numpy.fft import fft2, ifft2, fftshift
 from skimage.morphology import square, closing
 import otbApplication
 
-def stacksatellite(sat_folder,input_shapefile,quantization_mode,opt_polygon,segmentation_name,select_criteria,nloops,n_classes,ref_dir,restrict_to_city,coregistration,builtup_index_method,pca_index_method,pca_classification_method,dissimilarity_method,band_combination,supervised_method,supervised_polygon):
+def stacksatellite(sat_folder,input_shapefile,quantization_mode,opt_polygon,segmentation_name,select_criteria,nloops,n_classes,ref_dir,restrict_to_city,coregistration,builtup_index_method,pca_index_method,pca_classification_method,dissimilarity_method,supervised_method,unsupervised_method):
     if os.name == 'posix':
         separator = '/'
     else:
@@ -1180,6 +1180,19 @@ class Sensum:
         self.toolBar.addAction(self.action_stacksatellite)
         self.iface.addPluginToMenu(u"&SENSUM", self.action_stacksatellite)
 
+        ######################
+        ## DENSITY
+        ######################
+        # Create action that will start plugin configuration
+        self.action_density = QAction(
+            QIcon(":/plugins/sensum_plugin/icons/density.png"),
+            u"Density", self.iface.mainWindow())
+        # connect the action to the run method
+        self.action_density.triggered.connect(self.density)
+        # Add toolbar button and menu item
+        self.toolBar.addAction(self.action_density)
+        self.iface.addPluginToMenu(u"&SENSUM", self.action_density)
+
     def unload(self):
 
         self.iface.removePluginMenu(u"&SENSUM", self.action_pansharp)
@@ -1491,9 +1504,28 @@ class Sensum:
             pca_index_method = bool(ui.checkBox_pca_index.isChecked())
             pca_classification_method = bool(ui.checkBox_pca_classification.isChecked())
             dissimilarity_method = bool(ui.checkBox_dissimilarity.isChecked())
-            band_combination = bool(ui.checkBox_band_combination.isChecked())
             supervised_method = bool(ui.checkBox_supervised.isChecked())
             unsupervised_method = bool(ui.checkBox_unsupervised.isChecked())
-            supervised_polygon = bool(ui.checkBox_unsupervised.isChecked())
-            stacksatellite(sat_folder, input_shapefile, quantization_mode, opt_polygon, segmentation_name, select_criteria, nloops, n_classes, ref_dir, restrict_to_city, coregistration, builtup_index_method, pca_index_method, pca_classification_method, dissimilarity_method, band_combination, supervised_method, supervised_polygon)
+            stacksatellite(sat_folder,input_shapefile,quantization_mode,opt_polygon,segmentation_name,select_criteria,nloops,n_classes,ref_dir,restrict_to_city,coregistration,builtup_index_method,pca_index_method,pca_classification_method,dissimilarity_method,supervised_method,unsupervised_method)
             QMessageBox.information(None, "Info", 'Done!')
+
+    def density(self):
+        # Create the dialog (after translation) and keep reference
+        self.dlg = DensityDialog()
+        dlgProgress = ProgressDialog()
+        # show the dialog
+        self.dlg.show()
+        # Run the dialog event loop
+        result = self.dlg.exec_()
+        # See if OK was pressed
+        if result == 1:
+            ui = self.dlg.ui
+            dlgProgress.show()
+            buildingShape = str(ui.lineEdit_building_shape.text())
+            radius = float(ui.doubleSpinBox_radius.text())
+            outputShape = str(ui.lineEdit_output_shapefile.text())
+            if os.path.isfile(outputShape):
+                os.remove(outputShape)
+            density(buildingShape,radius,outputShape=outputShape)
+            QMessageBox.information(None, "Info", 'Done!')
+            
