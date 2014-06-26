@@ -62,9 +62,9 @@ def stacksatellite(sat_folder,input_shapefile,quantization_mode,opt_polygon,segm
     data_type = np.uint16
     start_time=time.time()
     dirs = os.listdir(sat_folder) #list of folders inside the satellite folder
+    
     print 'List of files and folders: ' + str(dirs)
 
-    band_ref_uint8 = []
     band_list = []
     built_up_area_pca_list = []
     built_up_area_list = []
@@ -100,6 +100,11 @@ def stacksatellite(sat_folder,input_shapefile,quantization_mode,opt_polygon,segm
         band_list.append(band_ref[0])
     rows_ref,cols_ref,nbands_ref,geo_transform_ref,projection_ref = read_image_parameters(ref_dir+ref_list[0])
     print len(band_list)
+    if len(band_list) < 10:
+        band_list = normalize_to_L8(band_list)
+    elif len(band_list) > 10:
+        band_list[0],band_list[1],band_list[2],band_list[3],band_list[4],band_list[5]= band_list[1],band_list[2],band_list[3],band_list[4],band_list[5],band_list[9]
+        
     #pca needs bands 1,2,3,4,5 or bands 1,2,3,4,5,7
     #indexes need bands 1,2,3,4,5,7
     if builtup_index_method == True or supervised_method == True or unsupervised_method == True:
@@ -129,10 +134,10 @@ def stacksatellite(sat_folder,input_shapefile,quantization_mode,opt_polygon,segm
             built_up_area_pca_list.append(built_up_area_pca)
         
         if pca_classification_method == True:
-            write_image((pca_mean,pca_mode,pca_second_order,pca_third_order,pca_built_up),data_type,0,ref_dir+'pca.TIF',rows_ref,cols_ref,geo_transform_ref,projection_ref)
+            write_image((pca_mean,pca_mode,pca_second_order,pca_third_order,pca_built_up),np.float32,0,ref_dir+'pca.TIF',rows_ref,cols_ref,geo_transform_ref,projection_ref)
             unsupervised_classification_otb(ref_dir+'pca.TIF',ref_dir+'pca_unsupervised.TIF',5,10)
             
-    if supervised_method == True:
+    if supervised_method == True or dissimilarity_method == True:
         print 'Segmentation'
         '''
         driver_shape = osgeo.ogr.GetDriverByName('ESRI Shapefile')
@@ -211,7 +216,16 @@ def stacksatellite(sat_folder,input_shapefile,quantization_mode,opt_polygon,segm
             output_list.append(output_ft_1[b][:][:])
         print len(output_list)
         write_image(output_list,np.float32,0,ref_dir+'dissimilarity.TIF',rows_ref,cols_ref,geo_transform_ref,projection_ref) #write built-up index to file
-        dissimilarity_list.append(output_list)
+        value_to_segments(ref_dir+'dissimilarity.TIF',ref_dir+'built_up_index_seg.shp',ref_dir+'dissimilarity.shp')
+        
+        for b in range(0,len(output_list)):
+            shp2rast(ref_dir+'dissimilarity.shp',ref_dir+'dissimilarity_mean'+str(b+1)+'.tif',rows_ref,cols_ref,'Mean'+str(b+1),pixel_width=0,pixel_height=0,x_min=0,x_max=0,y_min=0,y_max=0)
+            mat = read_image(ref_dir+'dissimilarity_mean'+str(b+1)+'.tif',np.uint16,0)
+            dissimilarity_list.append(mat[0])
+        write_image(dissimilarity_list,np.float32,0,ref_dir + 'dissimilarity_mean.tif',rows_ref,cols_ref,geo_transform_ref,projection_ref)
+        dissimilarity_list = []
+        unsupervised_classification_otb(ref_dir+'dissimilarity_mean.tif',ref_dir+'dissimilarity_mean_class.tif',n_classes,10)
+        #dissimilarity_list.append(output_list)
         del output_list
         del output_ft_1
         del multiproc
@@ -233,7 +247,7 @@ def stacksatellite(sat_folder,input_shapefile,quantization_mode,opt_polygon,segm
                 target_files = os.listdir(target_dir)
                 target_list = [s for s in target_files if "_city.TIF" in s and "aux.xml" not in s]
             else: 
-                target_list = [s for s in target_files if ".TIF" in s]
+                target_list = [s for s in target_files if ".TIF" in s and "aux.xml" not in s]
             print target_list
             rows,cols,nbands,geo_transform,projection = read_image_parameters(target_dir+target_list[0])
             if coregistration == True: #OpenCV needs byte values (from 0 to 255)
@@ -242,6 +256,13 @@ def stacksatellite(sat_folder,input_shapefile,quantization_mode,opt_polygon,segm
                 band_target = read_image(target_dir+target_list[n],data_type,0)
                 band_list.append(band_target[0])
             print len(band_list)
+            if len(band_list) < 10:
+                band_list = normalize_to_L8(band_list)
+            elif len(band_list) > 10:
+                band_list[0],band_list[1],band_list[2],band_list[3],band_list[4],band_list[5]= band_list[1],band_list[2],band_list[3],band_list[4],band_list[5],band_list[9]
+
+            #else:
+                #band_list = (band_list[0],band_list[1],band_list[2],band_list[3],band_list[4])
             rows_target,cols_target,nbands_target,geo_transform_target,projection_target = read_image_parameters(target_dir+target_list[0])
             #pca needs bands 1,2,3,4,5 or bands 1,2,3,4,5,7
             #indexes need bands 1,2,3,4,5,7
@@ -272,10 +293,10 @@ def stacksatellite(sat_folder,input_shapefile,quantization_mode,opt_polygon,segm
                     built_up_area_pca_list.append(built_up_area_pca)
                 
                 if pca_classification_method == True:
-                    write_image((pca_mean,pca_mode,pca_second_order,pca_third_order,pca_built_up),data_type,0,target_dir+'pca.TIF',rows_target,cols_target,geo_transform_target,projection_target)
+                    write_image((pca_mean,pca_mode,pca_second_order,pca_third_order,pca_built_up),np.float32,0,target_dir+'pca.TIF',rows_target,cols_target,geo_transform_target,projection_target)
                     unsupervised_classification_otb(target_dir+'pca.TIF',target_dir+'pca_unsupervised.TIF',5,10)
                     
-            if supervised_method == True:
+            if supervised_method == True or dissimilarity_method == True:
                 print 'Segmentation'
                 '''
                 driver_shape = osgeo.ogr.GetDriverByName('ESRI Shapefile')
@@ -356,23 +377,25 @@ def stacksatellite(sat_folder,input_shapefile,quantization_mode,opt_polygon,segm
                     output_list.append(output_ft_1[b][:][:])
                 print len(output_list)
                 write_image(output_list,np.float32,0,target_dir+'dissimilarity.TIF',rows_target,cols_target,geo_transform_target,projection_target) #write built-up index to file
-                dissimilarity_list.append(output_list)
+                value_to_segments(target_dir+'dissimilarity.TIF',target_dir+'built_up_index_seg.shp',target_dir+'dissimilarity.shp')
+                for b in range(0,len(output_list)):
+                    shp2rast(target_dir+'dissimilarity.shp',target_dir+'dissimilarity_mean'+str(b+1)+'.tif',rows_ref,cols_ref,'Mean'+str(b+1),pixel_width=0,pixel_height=0,x_min=0,x_max=0,y_min=0,y_max=0)
+                    mat = read_image(target_dir+'dissimilarity_mean'+str(b+1)+'.tif',np.uint16,0)
+                    dissimilarity_list.append(mat[0])
+                write_image(dissimilarity_list,np.float32,0,target_dir + 'dissimilarity_mean.tif',rows_target,cols_target,geo_transform_target,projection_target)
+                dissimilarity_list = []
+                unsupervised_classification_otb(target_dir+'dissimilarity_mean.tif',target_dir+'dissimilarity_mean_class.tif',n_classes,10)
+                #dissimilarity_list.append(output_list)
                 del output_list
                 del output_ft_1
                 del multiproc
                 
     if builtup_index_method == True:
-        write_image(built_up_area_list,data_type,0,sat_folder+'evolution_built_up_index.TIF',rows,cols,geo_transform,projection)
+        write_image(built_up_area_list,np.float32,0,sat_folder+'evolution_built_up_index.TIF',rows,cols,geo_transform,projection)
     if pca_index_method == True:
-        write_image(built_up_area_pca_list,data_type,0,sat_folder+'evolution_pca_index.TIF',rows,cols,geo_transform,projection)
-    if dissimilarity_method == True:
-        write_image(dissimilarity_list,data_type,0,sat_folder+'evolution_dissimilarity.TIF',rows,cols,geo_transform,projection)
-
-    end_time=time.time()
-    time_total = end_time-start_time
-    print '-----------------------------------------------------------------------------------------'
-    print 'Total time= ' + str(time_total)
-    print '-----------------------------------------------------------------------------------------'
+        write_image(built_up_area_pca_list,np.float32,0,sat_folder+'evolution_pca_index.TIF',rows,cols,geo_transform,projection)
+    #if dissimilarity_method == True:
+        #write_image(dissimilarity_list,data_type,0,sat_folder+'evolution_dissimilarity.TIF',rows,cols,geo_transform,projection)
 
 
 def footprints(pansharp_file,training_set,training_attribute,building_classes,output_shape,enable_smooth_filter=True,ui_progress=None):
