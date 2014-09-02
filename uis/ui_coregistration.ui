@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>464</width>
-    <height>286</height>
+    <width>496</width>
+    <height>444</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>464</width>
-    <height>286</height>
+    <width>496</width>
+    <height>444</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>464</width>
-    <height>286</height>
+    <width>496</width>
+    <height>444</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -28,8 +28,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>240</y>
+     <x>260</x>
+     <y>380</y>
      <width>171</width>
      <height>32</height>
     </rect>
@@ -44,7 +44,7 @@
   <widget class="QLineEdit" name="lineEdit_reference">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>40</x>
      <y>200</y>
      <width>291</width>
      <height>27</height>
@@ -54,20 +54,20 @@
   <widget class="QLabel" name="label_reference">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>40</x>
      <y>180</y>
      <width>131</width>
      <height>17</height>
     </rect>
    </property>
    <property name="text">
-    <string>References directory</string>
+    <string>Reference directory</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_reference">
    <property name="geometry">
     <rect>
-     <x>330</x>
+     <x>350</x>
      <y>200</y>
      <width>98</width>
      <height>27</height>
@@ -80,7 +80,7 @@
   <widget class="QLabel" name="label_tobechange">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>40</x>
      <y>132</y>
      <width>191</width>
      <height>17</height>
@@ -93,7 +93,7 @@
   <widget class="QPushButton" name="pushButton_tobechange">
    <property name="geometry">
     <rect>
-     <x>330</x>
+     <x>350</x>
      <y>150</y>
      <width>98</width>
      <height>27</height>
@@ -106,7 +106,7 @@
   <widget class="QLineEdit" name="lineEdit_tobechange">
    <property name="geometry">
     <rect>
-     <x>20</x>
+     <x>40</x>
      <y>150</y>
      <width>291</width>
      <height>27</height>
@@ -116,7 +116,7 @@
   <widget class="QLabel" name="label_title">
    <property name="geometry">
     <rect>
-     <x>120</x>
+     <x>150</x>
      <y>100</y>
      <width>201</width>
      <height>21</height>
@@ -172,6 +172,165 @@
    </property>
    <property name="pixmap">
     <pixmap>.sensum/unipv.png</pixmap>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="comboBox_select_crop">
+   <property name="geometry">
+    <rect>
+     <x>40</x>
+     <y>240</y>
+     <width>69</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string>Clip</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Grid</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_clip">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>280</y>
+     <width>451</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Clip</string>
+   </property>
+   <widget class="QLabel" name="label_tobechange_2">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>30</y>
+      <width>81</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Input Shapefile</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox_input_shape">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>50</y>
+      <width>371</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string comment="Click to select File" extracomment="Click to select File">[Choose from a file..]</string>
+     </property>
+    </item>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_grid">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>280</y>
+     <width>451</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Grid</string>
+   </property>
+   <widget class="QSpinBox" name="spinBox_rows">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>40</y>
+      <width>42</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QSpinBox" name="spinBox_cols">
+    <property name="geometry">
+     <rect>
+      <x>290</x>
+      <y>40</y>
+      <width>42</width>
+      <height>22</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_tobechange_3">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>40</y>
+      <width>31</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Rows</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_tobechange_4">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>40</y>
+      <width>31</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Cols</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_resampling">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>250</y>
+     <width>81</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Resampling</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_surf">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>250</y>
+     <width>70</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>SURF</string>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="checkBox_fft">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>250</y>
+     <width>70</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>FFT</string>
    </property>
   </widget>
  </widget>

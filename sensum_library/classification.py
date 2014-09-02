@@ -51,8 +51,6 @@ import xml.etree.cElementTree as ET
 import otbApplication
 from conversion import *
 import time
-from sklearn import tree
-from sklearn.ensemble import GradientBoostingClassifier
 import operator
 
 if os.name == 'posix':
@@ -64,7 +62,11 @@ else:
 def unsupervised_classification_otb(input_raster,output_raster,n_classes,n_iterations):
     
     '''Unsupervised K-Means classification using OTB library.
-    
+    Tool used to recall the K-Means unsupervised classification algorithm implemented by the Orfeo Toolbox library. User input is limited to the number of classes to extract and the number
+    of iterations of the classifier.
+
+    Example: unsupervised_classification_otb(input_raster='C:\\Users\\Guest\\work\\pansharp.tif',output_raster='C:\\Users\\Guest\\work\\pansharp_unsup.tif',n_classes=5,n_iterations=10)
+
     :param input_raster: path and name of the input raster file (*.TIF,*.tiff) (string)
     :param output_raster: path and name of the output raster file (*.TIF,*.tiff) (string)
     :param n_classes: number of classes to extract (integer)
@@ -94,6 +96,11 @@ def unsupervised_classification_opencv(input_band_list,n_classes,n_iterations):
     
     '''Unsupervised K-Means classification using OpenCV library.
     
+    Tool used to recall the K-Means unsupervised classification algorithm implemented by the OpenCV library. Main difference in respect of the Orfeo Toolbox implementation is in the input type
+    (matrices instead of a tiff file)
+
+    Example: unsupervised_classification_opencv(input_band_list=(band1,band2,band3,band4),n_classes=5,n_iterations=10)
+
     :param input_band_list: list of 2darrays corresponding to bands (band 1: blue) (list of numpy arrays)
     :param n_classes: number of classes to extract (integer)
     :param n_iterations: number of iterations of the classifier (integer)
@@ -117,16 +124,21 @@ def unsupervised_classification_opencv(input_band_list,n_classes,n_iterations):
     
     return output_array
     
-    
 def train_classifier_otb(input_raster_list,input_shape_list,output_txt,classification_type,training_field):
     
     '''Training of the desired classifier using OTB library
     
+    Function made to recall the train classifier implemented by the Orfeo Toolbox libray. User has to provide a shapefile with samples used to train the classifier.
+    Algorithms available are: Support Vector Machine, Decision Tree, Gradient Boosted Tree, Normal Bayes, Random Forest and K-Nearest-Neighbors. 
+    Please note that the generation of the training set is limited to the same area of the input image and the shapefile.
+
+    Example: train_classifier_otb(input_raster_list=[input_raster='C:\\Users\\Guest\\work\\pansharp.tif'],input_shape_list=[input_raster='C:\\Users\\Guest\\work\\training_set.shp'],output_txt='C:\\Users\\Guest\\work\\classification.txt',classification_type='libsvm',training_field='Class')
+
     :param input_raster_list: list of paths and names of the input raster files (*.TIF,*.tiff) (list of strings)
     :param input_shape_list: list of paths and names of the input shapefiles containing the training sets (*.TIF,*.tiff) (list of strings)
     :param output_txt: path and name of text file with the training parameters (*.txt) (string)
     :param classification type: definition of the desired classification algorithm ('libsvm','svm','dt','gbt','bayes','rf','knn') (string)
-    :param training_field: name of the discriminan attribute in the training shapefile (string)
+    :param training_field: name of the discriminant attribute in the training shapefile (string)
     :returns:  an output text file is created along with a csv file containing a confusion matrix
     :raises: AttributeError, KeyError
     
@@ -179,12 +191,15 @@ def train_classifier_otb(input_raster_list,input_shape_list,output_txt,classific
     
     # The following line execute the application 
     TrainImagesClassifier.ExecuteAndWriteOutput()
- 
 
 def supervised_classification_otb(input_raster,input_txt,output_raster):
     
     '''Supervised classification using OTB library
     
+    Function made to recall the supervised classification implemented by the Orfeo Toolbox library. The algorithm used for the classification is pre-defined by the training classifier function.
+
+    Example: supervised_classification_otb(input_raster='C:\\Users\\Guest\\work\\pansharp.tif',input_txt='C:\\Users\\Guest\\work\\classification.txt',output_raster='C:\\Users\\Guest\\work\\pansharp_sup_class.tif')
+
     :param input_raster: path and name of the input raster file (*.TIF,*.tiff) (string)
     :param input_txt: path and name of text file with the training parameters (*.txt) (string)
     :param output_raster: path and name of the output raster file (*.TIF,*.tiff) (string)
@@ -233,6 +248,10 @@ def generate_training(input_band_list,input_shape,training_field,pixel_width,pix
     
     '''Extract the training set from the input shapefile
     
+    Tool to extract a set of training samples from a shapefile used to feed the supervised classification from OpenCV. The shapefile provided by the user should include polygons and associated class.
+
+    Example: generate_training(input_band_list=(band1,band2,band3,band4),input_shape='C:\\Users\\Guest\\work\\training_set.shp',training_field='Class',pixel_width=geotransform[1],pixel_height=abs(geotransform[5])
+
     :param input_band_list: list of 2darrays corresponding to bands (band 1: blue) (list of numpy arrays)
     :param input_shape: path and name of shapefile with the polygons for training definition (*.shp) (string)
     :param training_field: name of the discriminant attribute in the training shapefile (string)
@@ -285,6 +304,10 @@ def create_training_file(sample_matrix,train_matrix,output_file):
     
     '''Export training set to text file
     
+    Function to create a text file with the generated training samples. Template for text file is "class,dn_value".
+
+    Example: create_training_file(sample_matrix=samples_mat,train_matrix=training_mat,output_file='C:\\Users\\Guest\\work\\training_file.txt')
+
     :param sample_matrix: 2darray with number of rows equal to number of sample pixels and columns equal to number of bands
     :param train_matrix: 1darray with class value corresponding to each pixel sample
     :param output_file: path and name of the output text file (*.txt) (string)
@@ -304,6 +327,10 @@ def read_training_file(input_file):
     
     '''Read training set from text file
     
+    Function to read the training file generated with the create_training_file function. Output of this function can be provided as input for the classifier.
+
+    Example: read_training_file(input_file='C:\\Users\\Guest\\work\\training_file.txt')
+
     :param input_file: path and name of the text file with the training set
     :returns:  list with 2 2darrays is returned (sample_matrix, train_matrix)
     :raises: AttributeError, KeyError
@@ -323,6 +350,10 @@ def update_training_file(input_file,sample_matrix,train_matrix):
     
     '''Update a text file with new training samples
     
+    Tool that can be used to update a previously generated training file. New samples are appended to the original file.
+
+    Example: update_training_file(input_file='C:\\Users\\Guest\\work\\training_file.txt',sample_matrix=samples_mat,train_matrix=training_mat)
+
     :param input_file: path and name of the text file with the training set
     :param sample_matrix: 2darray with the samples to add 
     :param train_matrix: 1darray with the corresponding classes
@@ -343,6 +374,12 @@ def supervised_classification_opencv(input_band_list,sample_matrix,train_matrix,
     
     '''Supervised classification using OpenCV library
     
+    Function used to recall the supervised classification from the OpenCV library. Train and samples matrix can be extracted directly from a shapefile with the generate_training function
+    or from a text file.
+    Available algorithms: Support Vector Machine, Decision Tree, Gradient Boosted Tree, Normal Bayes, Random Forest, K-Nearest-Neighbors.
+
+    Example: supervised_classification_opencv(input_band_list=(band1,band2,band3,band4),sample_matrix=samples_mat,train_matrix=training_mat,classification_type='svm')
+
     :param input_band_list: list of 2darrays corresponding to bands (band 1: blue) (list of numpy arrays)
     :param sample_matrix: 2darray with the samples to add 
     :param train_matrix: 1darray with the corresponding classes
@@ -409,6 +446,10 @@ def class_to_segments(input_raster,input_shape,output_shape):
     
     '''Assign the most frequent value inside a segment to the segment itself
     
+    Function used to merge results of classification and segmentation. In details, the most frequent class value (mode) inside a segment is assigned to the segment itself.
+
+    Example: class_to_segments(input_raster='C:\\Users\\Guest\\work\\pansharp_sup_class.tif',input_shape='C:\\Users\\Guest\\work\\segments.shp',output_shape='C:\\Users\\Guest\\work\\segments_class.shp')
+
     :param input_raster: path and name of the input raster file (*.TIF,*.tiff) (string)
     :param input_shape: path and name of shapefile with the segmentation results (*.shp) (string)
     :param output_shape: path and name of the output shapefile (*.shp) (string)
@@ -483,6 +524,11 @@ def confusion_matrix(input_raster,input_shape,reference_field,output_file):
     
     '''Compute a confusion matrix for accuracy estimation of the classification
     
+    Function to compute the confusion matrix according to the Orfeo Toolbox implementation. It can be used for example to compute the accuracy of a supervised classification. The output is saved
+    to a csv file.
+
+    Example: confusion_matrix(input_raster='C:\\Users\\Guest\\work\\pansharp_sup_class.tif',input_shape='C:\\Users\\Guest\\work\\reference.shp',reference_field='Class',output_file='C:\\Users\\Guest\\work\\confusion_matrix.csv')
+
     :param input_raster: path and name of the input raster file (*.TIF,*.tiff) (string)
     :param input_shape: path and name of shapefile with the reference polygons (*.shp) (string)
     :param reference_field: name of the discriminant attribute in the reference shapefile (string)
@@ -509,11 +555,15 @@ def confusion_matrix(input_raster,input_shape,reference_field,output_file):
     
 
 def extract_from_shape(input_shape,output_shape='',field_name='Class',*classes):
-
+    
     '''Extract a subset of the input shapefile according to the specified attribute field and list of values
     
+    Function used to filter on the attributes of a shapefile by applying a query. The query is automatically generated by the function using the provided parameters.
+
+    Example: extract_from_shape(input_shape='C:\\Users\\Guest\\work\\classification.shp',output_shape='C:\\Users\\Guest\\work\\classification_filt.shp',field_name='Class',6,7,8)
+
     :param input_shape: path and name of the input shapefile (*.shp) (string)
-    :param classes: value of class which want to extract (string)
+    :param classes: value of class which you want to extract (string)
     :param output_shape: path and name of the output shapefile (*.shp) (string)
     :param field_name: name of field to extract (string)
     :returns:  an output layer is created as a subset of the original shapefile
@@ -546,6 +596,10 @@ def reclassify_raster(input_band,*operations):
     
     '''Reclassify results of a classification according to the operation list
     
+    Tool to modify a raster acccording to the conditions provided. For example, this function can be used to create a mask for certain values.
+
+    Example: reclassify_raster(input_band=classification_mat,'0 where <3','255 where >3')
+
     :param input_band: 2darray corresponding to single classification band (numpy array)
     :param operations: list of operations to apply (e.g. '0 where 3', '255 where >3') (strings)
     :returns: output 2darray is created with the results of the reclassification process
@@ -576,4 +630,5 @@ def reclassify_raster(input_band,*operations):
             logic_list.append(np.where(output_band != cls, 0, 1))
     for i in range(len(operations)):
         output_band = np.where(logic_list[i] != 1, output_band,output_band_list[i])
-    print output_band
+    return output_band
+

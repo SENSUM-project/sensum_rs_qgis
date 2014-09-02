@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_classification.ui'
 #
-# Created: Wed Jun 25 16:15:42 2014
+# Created: Tue Aug 26 15:40:23 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -38,15 +38,9 @@ class Ui_Classification(object):
         self.label_input = QtGui.QLabel(self.widget)
         self.label_input.setObjectName(_fromUtf8("label_input"))
         self.gridLayout.addWidget(self.label_input, 0, 0, 1, 1)
-        self.pushButton_input = QtGui.QPushButton(self.widget)
-        self.pushButton_input.setObjectName(_fromUtf8("pushButton_input"))
-        self.gridLayout.addWidget(self.pushButton_input, 1, 1, 1, 1)
         self.pushButton_output = QtGui.QPushButton(self.widget)
         self.pushButton_output.setObjectName(_fromUtf8("pushButton_output"))
         self.gridLayout.addWidget(self.pushButton_output, 3, 1, 1, 1)
-        self.lineEdit_input = QtGui.QLineEdit(self.widget)
-        self.lineEdit_input.setObjectName(_fromUtf8("lineEdit_input"))
-        self.gridLayout.addWidget(self.lineEdit_input, 1, 0, 1, 1)
         self.label_output = QtGui.QLabel(self.widget)
         self.label_output.setObjectName(_fromUtf8("label_output"))
         self.gridLayout.addWidget(self.label_output, 2, 0, 1, 1)
@@ -58,6 +52,10 @@ class Ui_Classification(object):
         self.comboBox_supervised.addItem(_fromUtf8(""))
         self.comboBox_supervised.addItem(_fromUtf8(""))
         self.gridLayout.addWidget(self.comboBox_supervised, 4, 0, 1, 1)
+        self.comboBox_input = QtGui.QComboBox(self.widget)
+        self.comboBox_input.setObjectName(_fromUtf8("comboBox_input"))
+        self.comboBox_input.addItem(_fromUtf8(""))
+        self.gridLayout.addWidget(self.comboBox_input, 1, 0, 1, 2)
         self.groupBox = QtGui.QGroupBox(Classification)
         self.groupBox.setGeometry(QtCore.QRect(80, 290, 301, 151))
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
@@ -148,11 +146,11 @@ class Ui_Classification(object):
     def retranslateUi(self, Classification):
         Classification.setWindowTitle(_translate("Classification", "SensumTools", None))
         self.label_input.setText(_translate("Classification", "Input File:", None))
-        self.pushButton_input.setText(_translate("Classification", "...", None))
         self.pushButton_output.setText(_translate("Classification", "...", None))
         self.label_output.setText(_translate("Classification", "Output File:", None))
         self.comboBox_supervised.setItemText(0, _translate("Classification", "Supervised", None))
         self.comboBox_supervised.setItemText(1, _translate("Classification", "Unsupervised", None))
+        self.comboBox_input.setItemText(0, _translate("Classification", "[Choose from a file..]", "Click to select File"))
         self.groupBox.setTitle(_translate("Classification", "Options", None))
         self.label_supervised_type.setText(_translate("Classification", "Supervised Type", None))
         self.label_training_type.setText(_translate("Classification", "Discriminant Field", None))

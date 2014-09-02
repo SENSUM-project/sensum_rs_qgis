@@ -845,3 +845,28 @@ class WindowsMaker(object):
         outDS = driver.CreateDataSource(path)
         outLayer = outDS.CreateLayer('polygon', geom_type=osgeo.ogr.wkbPolygon)
         outLayer.CreateFeature(outFeature)
+
+def normalize_to_L8(input_band_list):
+    
+    '''Normalize the range of values of Landsat 5 and 7 to match Landsat 8
+    
+    :param input_band_list: list of 2darrays (list of 2darrays)
+    :returns:  a list containing the normalized bands as ndarrays (list of arrays).
+    :raises: AttributeError, KeyError
+    
+    Author: Mostapha Harb - Daniele De Vecchi - Daniel Aurelio Galeazzo
+    Last modified: 24/06/2014
+    
+    '''
+    out_list = []
+    for b in range(0,len(input_band_list)):
+        matrix = input_band_list[b].astype(np.float32)
+        matrix = (matrix - matrix.min()) / (matrix.max()-matrix.min())
+        matrix = matrix * 65000
+        matrix = matrix.astype(np.int32)
+        out_list.append(matrix)  
+    
+    return out_list 
+    
+if __name__ == "__main__":
+    reproject_shapefile("C:/Van_process/New_Mask_Inner_lake.shp","C:/Van_process/mask.shp",32638)

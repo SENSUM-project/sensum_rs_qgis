@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_density.ui'
 #
-# Created: Wed Jun 25 16:15:42 2014
+# Created: Wed Aug 27 10:14:27 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -32,19 +32,13 @@ class Ui_Density(object):
         self.widget = QtGui.QWidget(Density)
         self.widget.setGeometry(QtCore.QRect(20, 140, 441, 207))
         self.widget.setObjectName(_fromUtf8("widget"))
-        self.lineEdit_building_shape = QtGui.QLineEdit(self.widget)
-        self.lineEdit_building_shape.setGeometry(QtCore.QRect(10, 30, 351, 21))
-        self.lineEdit_building_shape.setObjectName(_fromUtf8("lineEdit_building_shape"))
-        self.pushButton_building_shape = QtGui.QPushButton(self.widget)
-        self.pushButton_building_shape.setGeometry(QtCore.QRect(376, 30, 41, 21))
-        self.pushButton_building_shape.setObjectName(_fromUtf8("pushButton_building_shape"))
         self.buttonBox = QtGui.QDialogButtonBox(self.widget)
         self.buttonBox.setGeometry(QtCore.QRect(9, 171, 160, 27))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.label_building_shape = QtGui.QLabel(self.widget)
-        self.label_building_shape.setGeometry(QtCore.QRect(9, 9, 103, 16))
+        self.label_building_shape.setGeometry(QtCore.QRect(9, 9, 261, 16))
         self.label_building_shape.setObjectName(_fromUtf8("label_building_shape"))
         self.label_output_shapefile = QtGui.QLabel(self.widget)
         self.label_output_shapefile.setGeometry(QtCore.QRect(10, 120, 111, 16))
@@ -61,6 +55,10 @@ class Ui_Density(object):
         self.label_radius = QtGui.QLabel(self.widget)
         self.label_radius.setGeometry(QtCore.QRect(10, 70, 211, 16))
         self.label_radius.setObjectName(_fromUtf8("label_radius"))
+        self.comboBox_building_shape = QtGui.QComboBox(self.widget)
+        self.comboBox_building_shape.setGeometry(QtCore.QRect(10, 30, 401, 20))
+        self.comboBox_building_shape.setObjectName(_fromUtf8("comboBox_building_shape"))
+        self.comboBox_building_shape.addItem(_fromUtf8(""))
         self.label_title = QtGui.QLabel(Density)
         self.label_title.setGeometry(QtCore.QRect(180, 100, 101, 21))
         self.label_title.setObjectName(_fromUtf8("label_title"))
@@ -87,10 +85,10 @@ class Ui_Density(object):
 
     def retranslateUi(self, Density):
         Density.setWindowTitle(_translate("Density", "SensumTools", None))
-        self.pushButton_building_shape.setText(_translate("Density", "...", None))
-        self.label_building_shape.setText(_translate("Density", "Building Shape", None))
+        self.label_building_shape.setText(_translate("Density", "Shapefile of the Buildings", None))
         self.label_output_shapefile.setText(_translate("Density", "Output Shapefile", None))
         self.pushButton_output_shapefile.setText(_translate("Density", "...", None))
         self.label_radius.setText(_translate("Density", "Radius (expressed in meters)", None))
+        self.comboBox_building_shape.setItemText(0, _translate("Density", "[Choose from a file..]", "Click to select File"))
         self.label_title.setText(_translate("Density", "<html><head/><body><p><span style=\" font-size:16pt;\">DENSITY</span></p></body></html>", None))
 

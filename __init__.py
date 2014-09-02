@@ -21,6 +21,14 @@
  This script initializes the plugin, making it known to QGIS.
 """
 import sensum_library.config
+from sensum_library.preprocess import *
+from sensum_library.classification import *
+from sensum_library.segmentation import *
+from sensum_library.conversion import *
+from sensum_library.segmentation_opt import *
+from sensum_library.features import *
+from sensum_library.secondary_indicators import *
+
 def classFactory(iface):
     # load Sensum class from file Sensum
     from sensum import Sensum

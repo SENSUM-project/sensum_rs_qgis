@@ -33,6 +33,7 @@ License: This program is free software; you can redistribute it and/or modify
 import config
 import os
 import sys
+import subprocess
 import osgeo.osr
 import osgeo.ogr
 import numpy as np
@@ -45,12 +46,12 @@ import math
 from collections import Counter
 from operator import itemgetter
 from conversion import *
+from PyQt4 import QtCore, QtGui
 
 if os.name == 'posix':
     separator = '/'
 else:
     separator = '\\'
-
 
 def call_multiprocess(process,parameters_list,first_segment,last_segment):
     

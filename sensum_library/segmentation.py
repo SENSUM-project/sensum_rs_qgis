@@ -60,8 +60,8 @@ if os.name == 'posix':
 else:
     separator = '\\'
 
-temp_folder_interimage = 'F:\Sensum_xp\Izmir\Applications\\tmpfolder'
-exe_folder_interimage = 'F:\Sensum_xp\Izmir\Applications\seg_exec'
+temp_folder_interimage = os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]+"/terraAIDA/.tmp"
+exe_folder_interimage = os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]+"/terraAIDA"
 
 
 def felzenszwalb_skimage(input_band_list, scale, sigma, min_size):
@@ -192,8 +192,10 @@ def baatz_interimage(input_raster,euc_threshold,compactness,baatz_color,scale,in
     file_ = [s for s in Folder_files if "ta_segmenter" in s]
     for f in file_:
         os.remove(temp_folder_interimage+separator+f)
-    exe_file =  exe_folder_interimage +separator+ 'ta_baatz_segmenter.exe'   
+    #exe_file =  exe_folder_interimage +separator+ 'ta_baatz_segmenter.exe'   
+    exe_file = (exe_folder_interimage +separator+"ta_baatz_segmenter.op" if os.name == "posix" else exe_folder_interimage +separator+"ta_baatz_segmenter.exe")
     #runs the baatz segmenter
+    print exe_file + ' "'+input_raster+'" "'+str(GW)+'" "'+str(GN)+'" "'+str(GE)+'" "'+str(GS)+'" "" "'+temp_folder_interimage+'" "" Baatz "'+str(euc_threshold)+'" "@area_min@" "'+str(compactness)+'" "'+str(baatz_color)+'" "'+str(scale)+'" "'+str(bands_str)+ '" "' + str(weights_str)+'" "'+output_file+'" "seg" "0.2" "" "" "no"'
     os.system(exe_file + ' "'+input_raster+'" "'+str(GW)+'" "'+str(GN)+'" "'+str(GE)+'" "'+str(GS)+'" "" "'+temp_folder_interimage+'" "" Baatz "'+str(euc_threshold)+'" "@area_min@" "'+str(compactness)+'" "'+str(baatz_color)+'" "'+str(scale)+'" "'+str(bands_str)+ '" "' + str(weights_str)+'" "'+output_file+'" "seg" "0.2" "" "" "no"')
 
     #removing the raw file if existed
@@ -277,7 +279,8 @@ def region_growing_interimage(input_raster,euc_threshold,compactness,baatz_color
     for f in file_:
         os.remove(temp_folder_interimage+separator+f)
         
-    exe_file =  exe_folder_interimage +separator+ 'ta_regiongrowing_segmenter.exe'   
+    #exe_file =  exe_folder_interimage +separator+ 'ta_regiongrowing_segmenter.exe'   
+    exe_file = (exe_folder_interimage +separator+ 'ta_regiongrowing_segmenter.op' if os.name == "posix" else exe_folder_interimage +separator+ 'ta_regiongrowing_segmenter.exe')
     
     #runs the regiongrowing segmenter
     os.system(exe_file + ' "'+input_raster+'" "'+str(GW)+'" "'+str(GN)+'" "'+str(GE)+'" "'+str(GS)+'" "" "'+temp_folder_interimage+'" "" RegionGrowing "'+str(euc_threshold)+'" "@area_min@" "'+str(compactness)+'" "'+str(baatz_color)+'" "'+str(scale)+'" "'+str(bands_str)+ '" "' + str(weights_str)+'" "'+output_file+'" "seg" "0.2" "" "" "no"')

@@ -61,7 +61,7 @@ input_raster = 'building_extraction_sup\\pansharp.TIF'
 input_shape = 'building_extraction_sup\\segmentation_watershed_default_training.shp'
 input_raster_2 = 'wetransfer-749d73\\pansharp.TIF'
 input_shape_2 = 'wetransfer-749d73\\watershed_001_training.shp'
-input_raster_3 = 'F:\\Sensum_xp\\Izmir\\Landsat5\\1984\\LT51800331984164XXX04_B1_city_adj.TIF'
+input_raster_3 = '/home/gale/Izmir/11MAY06080935-M2AS-053497864010_01_P002.TIF'
 input_txt = 'building_extraction_sup\\svm.txt'
 data_type = np.float32
 output_raster_opencv = 'building_extraction_sup\\opencv_supervised.TIF'
@@ -107,12 +107,91 @@ def band_calculation(input_band_list,indexes_list):
             NBI = ((input_band_list[2] * input_band_list[4]) / (input_band_list[3]+0.0001))
             output_list.append(NBI)
         if indexes_list[indx] == 'NDISI' and len(input_band_list)>5:
-            NDISI = ((input_band_list[5] - ((input_band_list[0] + input_band_list[3] + input_band_list[4])/3)) / (input_band_list[5] + ((input_band_list[0] + input_band_list[3] + input_band_list[4])/3)))
+            NDISI = ((input_band_list[5] - ((input_band_list[0] + input_band_list[3] + input_band_list[4])/3)) / (input_band_list[5] + ((input_band_list[0] + input_band_list[3] + input_band_list[4])/3))+0.00001)
             output_list.append(NDISI)
-        if indexes_list[indx] == 'BUILT_UP' and len(input_band_list)>6:
-            BUILT_UP = ((input_band_list[6]+input_band_list[1] - 1.5*input_band_list[4]) / (input_band_list[1] + input_band_list[4] + input_band_list[6]+0.0001))
+        if indexes_list[indx] == 'BUILT_UP':
+            if len(input_band_list) < 9:
+                BUILT_UP = ((input_band_list[6] + input_band_list[1] - 1.5*input_band_list[3]) / (input_band_list[1] + input_band_list[4] + input_band_list[6]+0.00001))
+            else:
+                BUILT_UP = ((input_band_list[7] + input_band_list[1] - 1.5*input_band_list[3]) / (input_band_list[1] + input_band_list[4] + input_band_list[6]+0.00001))
             output_list.append(BUILT_UP)
-            
+        '''    
+        if indexes_list[indx] == 'Index5' and len(input_band_list)>6:
+            if len(input_band_list) < 9:
+                Index5 = (input_band_list[6]-input_band_list[1]) / (input_band_list[6]+input_band_list[1]+0.000001)
+            else:
+                Index5 = (input_band_list[7]-input_band_list[1]) / (input_band_list[7]+input_band_list[1]+0.000001)
+            output_list.append(Index5)
+        if indexes_list[indx] == 'Index4' and len(input_band_list)>6:
+            Index4 = (input_band_list[4]-input_band_list[1]) / (input_band_list[4]+input_band_list[1]+0.000001)
+            output_list.append(Index4)
+        if indexes_list[indx] == 'Index3' and len(input_band_list)>6:
+            Index3 = (input_band_list[4]-input_band_list[3]) / (input_band_list[4]+input_band_list[3]+0.000001)
+            output_list.append(Index3)
+        if indexes_list[indx] == 'Index2' and len(input_band_list)>6:
+            Index2 = (input_band_list[3]-input_band_list[1]) / (input_band_list[3]+input_band_list[1]+0.000001)
+            output_list.append(Index2)
+        if indexes_list[indx] == 'Index1' and len(input_band_list)>6:
+            if len(input_band_list) < 9:
+                Index1 = (input_band_list[6]-input_band_list[4]) / (input_band_list[6]+input_band_list[4]+0.000001)
+            else:
+                Index1 = (input_band_list[7]-input_band_list[4]) / (input_band_list[7]+input_band_list[4]+0.000001)
+            output_list.append(Index1)
+        '''
+        if indexes_list[indx] == 'Index1': #b4-b3/b4+b3
+            index1 = (input_band_list[3] - input_band_list[2]) / (input_band_list[3] + input_band_list[2]+0.000001)
+            output_list.append(index1)
+        if indexes_list[indx] == 'Index2': #b5-b4/b5+b4
+            index2 = (input_band_list[4] - input_band_list[3]) / (input_band_list[4] + input_band_list[3]+0.000001)
+            output_list.append(index2)
+        if indexes_list[indx] == 'Index3' and len(input_band_list) > 6: #b4-b7/b4+b7
+            if len(input_band_list) < 9:
+                index3 = (input_band_list[3] - input_band_list[6]) / (input_band_list[3] + input_band_list[6]+0.000001)
+            else:
+                index3 = (input_band_list[3] - input_band_list[7]) / (input_band_list[3] + input_band_list[7]+0.000001)
+            output_list.append(index3)
+        if indexes_list[indx] == 'Index4': #b5-b2/b5+b2
+            index4 = (input_band_list[4] - input_band_list[1]) / (input_band_list[4] + input_band_list[1]+0.000001)
+            output_list.append(index4)
+        if indexes_list[indx] == 'Index5': #b5-b6/b5+b6
+            index5 = (input_band_list[4] - input_band_list[5]) / (input_band_list[4] + input_band_list[5]+0.000001)
+            output_list.append(index5)
+        if indexes_list[indx] == 'Index6': #b7-b5/b7+b5
+            if len(input_band_list) < 9:
+                index6 = (input_band_list[6] - input_band_list[4]) / (input_band_list[6] + input_band_list[4]+0.000001)
+            else:
+                index6 = (input_band_list[7] - input_band_list[4]) / (input_band_list[7] + input_band_list[4]+0.000001)
+            output_list.append(index6)
+        if indexes_list[indx] == 'Index7': #b4-b2/b4+b2
+            index7 = (input_band_list[3] - input_band_list[1]) / (input_band_list[3] + input_band_list[1]+0.000001)
+            output_list.append(index7)
+        if indexes_list[indx] == 'Index8': #b7-b2/b7+b2
+            if len(input_band_list) < 9:
+                index8 = (input_band_list[6] - input_band_list[1]) / (input_band_list[6] + input_band_list[1]+0.000001)
+            else:
+                index8 = (input_band_list[7] - input_band_list[1]) / (input_band_list[7] + input_band_list[1]+0.000001)
+            output_list.append(index8) 
+        if indexes_list[indx] == 'Index9': #
+            #index A = float(BAND5) / (float(BAND5)+float(BAND4))
+            inda = input_band_list[4].astype(float) / (input_band_list[4].astype(float)+input_band_list[3].astype(float)+0.000001)
+            #index B = float(BAND4) / (float(BAND4)+float(BAND3))
+            indb = input_band_list[3].astype(float) / (input_band_list[3].astype(float)+input_band_list[2].astype(float)+0.000001)
+            #index C = float(BAND2) / (float(BAND2)+float(BAND5))
+            indc = input_band_list[1].astype(float) / (input_band_list[1].astype(float)+input_band_list[4].astype(float)+0.000001)
+            #index 9 = =(2.0*float(index A)-(float(index B)+float(index C)))/(2.0*float(index A)+(float(index B)+float(index C)))
+            index9 = (2*inda.astype(float) - (indb.astype(float)+indc.astype(float))) / (2*inda.astype(float) + indb.astype(float)+indc.astype(float)+0.000001)
+            output_list.append(index9) 
+        if indexes_list[indx] == 'Index10': 
+            #index 10 = (float(BAND5)-float(BAND4))/(10*sqrt(float(BAND5)+float(BAND6)))
+            index10 = (input_band_list[4].astype(float) - input_band_list[3].astype(float)) / (10*np.sqrt(input_band_list[4].astype(float) + input_band_list[5].astype(float))+0.000001)
+            output_list.append(index10)
+        if indexes_list[indx] == 'Index11': 
+            index11 = index1.astype(float) +0.5 / (np.absolute(index1.astype(float)+0.5)+0.000001) * np.sqrt(np.absolute(index1.astype(float)+0.5))
+            output_list.append(index11)
+        if indexes_list[indx] == 'Index12': 
+            index1 = (input_band_list[3] - input_band_list[2]) / (input_band_list[3] + input_band_list[2]+0.000001)
+            index12 = np.sqrt(np.absolute(index1.astype(float)+0.5))
+            output_list.append(index12)
     return output_list
     
     
@@ -346,6 +425,10 @@ def texture_moving_window(input_band_list,window_dimension,index,quantization_fa
 
     
 class Task_moving(object):
+    #import os,sys
+    #sys.path.append("C:\\OSGeo4W64\\apps\\Python27\\Lib\\site-packages")
+    #sys.path.append("C:\\OSGeo4W64\\apps\\orfeotoolbox\\python")
+    #os.environ["PATH"] = os.environ["PATH"] + "C:\\OSGeo4W64\\bin"
     def __init__(self, i, rows_w, cols_w, input_band_list,band_list_q,window_dimension,index, quantization_factor):
         self.i = i
         self.rows_w = rows_w
@@ -360,9 +443,30 @@ class Task_moving(object):
         check = 1
         print str(self.i+1)+' of '+str(self.rows_w)
         for j in range(0,self.cols_w):
+            data_glcm_1 = self.band_list_q[0][self.i:self.i+self.window_dimension,j:j+self.window_dimension] #extract the data for the glcm
+            data_glcm_2 = self.band_list_q[1][self.i:self.i+self.window_dimension,j:j+self.window_dimension] #extract the data for the glcm
+            data_glcm_3 = self.band_list_q[2][self.i:self.i+self.window_dimension,j:j+self.window_dimension] #extract the data for the glcm
+            if (self.i+self.window_dimension<self.rows_w) and (j+self.window_dimension<self.cols_w):
+                glcm1 = greycomatrix(data_glcm_1, [1], [0, np.pi/4, np.pi/2, np.pi*(3/4)], levels=self.quantization_factor, symmetric=False, normed=True)
+                feat1 = greycoprops(glcm1, self.index)[0][0]
+                glcm2 = greycomatrix(data_glcm_2, [1], [0, np.pi/4, np.pi/2, np.pi*(3/4)], levels=self.quantization_factor, symmetric=False, normed=True)
+                feat2 = greycoprops(glcm2, self.index)[0][0]
+                glcm3 = greycomatrix(data_glcm_3, [1], [0, np.pi/4, np.pi/2, np.pi*(3/4)], levels=self.quantization_factor, symmetric=False, normed=True)
+                feat3 = greycoprops(glcm3, self.index)[0][0]
+                index_row = self.i+1
+                index_col = j+1
+                if (check):
+                    res = []
+                    check = 0
+                tmp1 = np.array([0,index_row,index_col,feat1])
+                tmp2 = np.array([1,index_row,index_col,feat2])
+                tmp3 = np.array([2,index_row,index_col,feat3])
+                res = np.append(res,tmp1)
+                res = np.append(res,tmp2)
+                res = np.append(res,tmp3)
+            '''
             for b in range(0,len(self.input_band_list)):
-                data_glcm_1 = self.band_list_q[0][self.i:self.i+self.window_dimension,j:j+self.window_dimension] #extract the data for the glcm
-            
+                data_glcm_1 = self.band_list_q[b][self.i:self.i+self.window_dimension,j:j+self.window_dimension] #extract the data for the glcm
                 if (self.i+self.window_dimension<self.rows_w) and (j+self.window_dimension<self.cols_w):
                     glcm1 = greycomatrix(data_glcm_1, [1], [0, np.pi/4, np.pi/2, np.pi*(3/4)], levels=self.quantization_factor, symmetric=False, normed=True)
                     feat1 = greycoprops(glcm1, self.index)[0][0]
@@ -374,13 +478,14 @@ class Task_moving(object):
                         check = 0
                     tmp = np.array([b,index_row,index_col,feat1])
                     res = np.append(res,tmp)
+            '''
         if (check):
             res = np.zeros(1)
         return res
     def __str__(self):
-        return str(self.i)
+         return str(self.i)
     
-    
+'''   
 if __name__ == '__main__':
     print time.asctime( time.localtime(time.time()) )
     # Establish communication queues
@@ -457,4 +562,118 @@ if __name__ == '__main__':
         
     print time.asctime( time.localtime(time.time()) )
     print output_list
+'''
+
+
+def value_to_segments(input_raster,input_shape,output_shape,operation = 'Mode'):
+    
+    '''Assign the most frequent value inside a segment to the segment itself
+    
+    :param input_raster: path and name of the input raster file (*.TIF,*.tiff) (string)
+    :param input_shape: path and name of shapefile with the segmentation results (*.shp) (string)
+    :param output_shape: path and name of the output shapefile (*.shp) (string)
+    :param operation: string with the function to apply to fill the segments (mean or mode) (string)
+    :returns:  an output shapefile is created with a new attribute field related to the most frequent value inside the segment
+    :raises: AttributeError, KeyError
+    
+    Author: Daniele De Vecchi - Mostapha Harb
+    Last modified: 23/03/2014
+    '''
+    #Example of hybrid approach
+    #TODO: this is only a spatial union operation, isn't it? So it is not part of the hybrid approach where you aggregate pixel classes to segments!?
+    rows,cols,nbands,geotransform,projection = read_image_parameters(input_raster) 
+    band_list_class = read_image(input_raster,np.int32,0) #read original raster file
+    shp2rast(input_shape,input_shape[:-4]+'.TIF',rows,cols,'DN',0,0,0,0,0,0) #conversion of the segmentation results from shape to raster for further processing
+    band_list_seg = read_image(input_shape[:-4]+'.TIF',np.int32,0) #read segmentation raster file
+    
+    driver_shape=osgeo.ogr.GetDriverByName('ESRI Shapefile')
+    infile=driver_shape.Open(input_shape)
+    inlayer=infile.GetLayer()
+    outfile=driver_shape.CreateDataSource(output_shape)
+    outlayer=outfile.CreateLayer('Features',geom_type=osgeo.ogr.wkbPolygon)
+    
+    layer_defn = inlayer.GetLayerDefn()
+    infeature = inlayer.GetNextFeature()
+    feature_def = outlayer.GetLayerDefn()
+    dn_def = osgeo.ogr.FieldDefn('DN', osgeo.ogr.OFTInteger)
+    outlayer.CreateField(dn_def)
+    for b in range(0,len(band_list_class)):
+        class_def = osgeo.ogr.FieldDefn(operation+str(b+1),osgeo.ogr.OFTReal)
+        outlayer.CreateField(class_def)
+    area_def = osgeo.ogr.FieldDefn('Area',osgeo.ogr.OFTReal)
+    outlayer.CreateField(area_def)
+    
+    n_feature = inlayer.GetFeatureCount()
+    j = 1
+    while infeature:
+        print str(j) + ' of ' + str(n_feature)
+        j = j+1
+        dn = infeature.GetField('DN')
+        # get the input geometry
+        geom = infeature.GetGeometryRef()
+        area = geom.Area()
+        # create a new feature
+        outfeature = osgeo.ogr.Feature(feature_def)
+        # set the geometry and attribute
+        outfeature.SetGeometry(geom)
+        seg_pos = np.where(band_list_seg[0] == dn) #returns a list of x and y coordinates related to the pixels satisfying the given condition
+        mat_pos = np.zeros(len(seg_pos[0]))
+        
+        #Extract all the pixels inside a segment
+        for b in range(0,len(band_list_class)):
+            for l in range(0,len(seg_pos[0])):
+                mat_pos[l] = band_list_class[b][seg_pos[0][l]][seg_pos[1][l]]
+            if operation == 'Mode':
+                mode_ar = scipy.stats.mode(mat_pos)
+                value = mode_ar[0][0]
+            else:
+                value = np.mean(mat_pos)
+            outfeature.SetField(operation+str(b+1),value)
+            
+        outfeature.SetField('DN',dn)
+        outfeature.SetField('Area',area)
+        outlayer.CreateFeature(outfeature)
+        outfeature.Destroy() 
+        infeature = inlayer.GetNextFeature()
+    
+    # close the shapefiles
+    infile.Destroy()
+    outfile.Destroy()    
+    
+    shutil.copyfile(input_shape[:-4]+'.prj', output_shape[:-4]+'.prj') #projection definition
+    
+    
+def get_class(target_layer):
+    
+    urban_classes_tmp = []
+    dissimilarity1_sums = []
+    dissimilarity2_sums = []
+    dissimilarity3_sums = []
+    counters = []
+    for i in range(target_layer.GetFeatureCount()):
+        urban_class = target_layer.GetFeature(i).GetField("Class")
+        dissimilarity1 = target_layer.GetFeature(i).GetField("Mean1")
+        dissimilarity2 = target_layer.GetFeature(i).GetField("Mean2")
+        dissimilarity3 = target_layer.GetFeature(i).GetField("Mean3")
+        if urban_class not in urban_classes_tmp:
+            urban_classes_tmp.append(urban_class)
+            counters.append(1)
+            dissimilarity1_sums.append(dissimilarity1)
+            dissimilarity2_sums.append(dissimilarity2)
+            dissimilarity3_sums.append(dissimilarity3)
+        else:
+            index = (i for i,urban_class_tmp in enumerate(urban_classes_tmp) if urban_class_tmp == urban_class).next()
+            counters[index] = counters[index] + 1
+            dissimilarity1_sums[index] = dissimilarity1_sums[index] + dissimilarity1
+            dissimilarity2_sums[index] = dissimilarity2_sums[index] + dissimilarity2
+            dissimilarity3_sums[index] = dissimilarity3_sums[index] + dissimilarity3
+    for i,urban_class in enumerate(urban_classes_tmp):
+        dissimilarity1_sums[i] = dissimilarity1_sums[i]/counters[i]
+        dissimilarity2_sums[i] = dissimilarity2_sums[i]/counters[i]
+        dissimilarity3_sums[i] = dissimilarity3_sums[i]/counters[i]
+    index1 = (urban_classes_tmp[i] for i,disimmilarity1_sum in enumerate(dissimilarity1_sums) if disimmilarity1_sum == max(dissimilarity1_sums)).next()
+    index2 = (urban_classes_tmp[i] for i,disimmilarity2_sum in enumerate(dissimilarity2_sums) if disimmilarity2_sum == max(dissimilarity2_sums)).next()
+    index3 = (urban_classes_tmp[i] for i,disimmilarity3_sum in enumerate(dissimilarity3_sums) if disimmilarity3_sum == max(dissimilarity3_sums)).next()
+    index_list = [index1,index2,index3]
+    return max(set(index_list), key=index_list.count)
 

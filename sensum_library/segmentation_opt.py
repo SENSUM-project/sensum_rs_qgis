@@ -410,7 +410,7 @@ def optimizer(parameters,segmentation_name,patches_list,reference_band_list,patc
     Last modified: 25/03/2014
     '''
     
-    print segmentation_name,parameters
+    #print segmentation_name,parameters
     path = os.getcwd() #working path used to save temp files
     sum_eval_criteria = 0
     
@@ -426,7 +426,7 @@ def optimizer(parameters,segmentation_name,patches_list,reference_band_list,patc
             rows,cols = patches_list[i][0].shape
             write_image(patches_list[i],np.uint16,0,path + separator + 'temp.tif',rows,cols,patches_geo_transform_list[i],projection)
             if os.path.isfile(path + separator + 'temp.tif'):
-                print 'working...'
+                #print 'working...'
                 if segmentation_name == 'Edison':
                     edison_otb(path + separator + 'temp.tif','raster',path + separator + 'temp_seg.tif',int(round(parameters[0])),float(parameters[1]),0,0)
                     seg_list = read_image(path + separator + 'temp_seg.tif',np.uint16,0)

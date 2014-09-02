@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'uis/ui_segmentation.ui'
 #
-# Created: Wed Jun 25 16:15:42 2014
+# Created: Thu Jul 10 13:53:22 2014
 #      by: PyQt4 UI code generator 4.10.4
 #
 # WARNING! All changes made in this file will be lost!
@@ -34,15 +34,9 @@ class Ui_Segmentation(object):
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
-        self.lineEdit_input = QtGui.QLineEdit(Segmentation)
-        self.lineEdit_input.setGeometry(QtCore.QRect(30, 140, 291, 27))
-        self.lineEdit_input.setObjectName(_fromUtf8("lineEdit_input"))
         self.label_input_file = QtGui.QLabel(Segmentation)
-        self.label_input_file.setGeometry(QtCore.QRect(30, 120, 67, 17))
+        self.label_input_file.setGeometry(QtCore.QRect(30, 130, 67, 17))
         self.label_input_file.setObjectName(_fromUtf8("label_input_file"))
-        self.pushButton_input = QtGui.QPushButton(Segmentation)
-        self.pushButton_input.setGeometry(QtCore.QRect(340, 140, 98, 27))
-        self.pushButton_input.setObjectName(_fromUtf8("pushButton_input"))
         self.comboBox_method = QtGui.QComboBox(Segmentation)
         self.comboBox_method.setGeometry(QtCore.QRect(31, 250, 231, 27))
         self.comboBox_method.setObjectName(_fromUtf8("comboBox_method"))
@@ -60,7 +54,7 @@ class Ui_Segmentation(object):
         self.pushButton_output.setGeometry(QtCore.QRect(340, 193, 98, 27))
         self.pushButton_output.setObjectName(_fromUtf8("pushButton_output"))
         self.lineEdit_output = QtGui.QLineEdit(Segmentation)
-        self.lineEdit_output.setGeometry(QtCore.QRect(30, 193, 291, 27))
+        self.lineEdit_output.setGeometry(QtCore.QRect(30, 193, 291, 21))
         self.lineEdit_output.setObjectName(_fromUtf8("lineEdit_output"))
         self.label_method = QtGui.QLabel(Segmentation)
         self.label_method.setGeometry(QtCore.QRect(30, 230, 151, 17))
@@ -375,6 +369,10 @@ class Ui_Segmentation(object):
         self.logo_unipv.setText(_fromUtf8(""))
         self.logo_unipv.setPixmap(QtGui.QPixmap(_fromUtf8(".sensum/unipv.png")))
         self.logo_unipv.setObjectName(_fromUtf8("logo_unipv"))
+        self.comboBox_input = QtGui.QComboBox(Segmentation)
+        self.comboBox_input.setGeometry(QtCore.QRect(30, 150, 411, 20))
+        self.comboBox_input.setObjectName(_fromUtf8("comboBox_input"))
+        self.comboBox_input.addItem(_fromUtf8(""))
 
         self.retranslateUi(Segmentation)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Segmentation.accept)
@@ -384,7 +382,6 @@ class Ui_Segmentation(object):
     def retranslateUi(self, Segmentation):
         Segmentation.setWindowTitle(_translate("Segmentation", "SensumTools", None))
         self.label_input_file.setText(_translate("Segmentation", "Input file:", None))
-        self.pushButton_input.setText(_translate("Segmentation", "...", None))
         self.comboBox_method.setItemText(0, _translate("Segmentation", "Felzenszwalb", None))
         self.comboBox_method.setItemText(1, _translate("Segmentation", "Watershed", None))
         self.comboBox_method.setItemText(2, _translate("Segmentation", "Edison", None))
@@ -463,4 +460,5 @@ class Ui_Segmentation(object):
         self.label_felzenszwalb_minsize.setText(_translate("Segmentation", "Min Size", None))
         self.lineEdit_felzenszwalb_minsize.setText(_translate("Segmentation", "0", None))
         self.checkBox_optimizer.setText(_translate("Segmentation", "Optimizer", None))
+        self.comboBox_input.setItemText(0, _translate("Segmentation", "[Choose from a file..]", "Click to select File"))
 

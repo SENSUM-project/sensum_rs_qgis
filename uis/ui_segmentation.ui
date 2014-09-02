@@ -41,40 +41,17 @@
     <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit_input">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>140</y>
-     <width>291</width>
-     <height>27</height>
-    </rect>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_input_file">
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>120</y>
+     <y>130</y>
      <width>67</width>
      <height>17</height>
     </rect>
    </property>
    <property name="text">
     <string>Input file:</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_input">
-   <property name="geometry">
-    <rect>
-     <x>340</x>
-     <y>140</y>
-     <width>98</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>...</string>
    </property>
   </widget>
   <widget class="QComboBox" name="comboBox_method">
@@ -154,7 +131,7 @@
      <x>30</x>
      <y>193</y>
      <width>291</width>
-     <height>27</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>
@@ -1007,6 +984,21 @@
    <property name="pixmap">
     <pixmap>.sensum/unipv.png</pixmap>
    </property>
+  </widget>
+  <widget class="QComboBox" name="comboBox_input">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>150</y>
+     <width>411</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <item>
+    <property name="text">
+     <string comment="Click to select File" extracomment="Click to select File">[Choose from a file..]</string>
+    </property>
+   </item>
   </widget>
  </widget>
  <resources/>

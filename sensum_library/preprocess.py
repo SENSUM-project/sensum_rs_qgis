@@ -49,6 +49,7 @@ import cv2
 import numpy as np
 import osgeo.ogr
 import otbApplication
+import shutil
 from conversion import *
 
 if os.name == 'posix': 
@@ -57,7 +58,7 @@ else:
     separator = '\\'
 
 
-def clip_rectangular(input_raster,data_type,input_shape,output_raster):
+def clip_rectangular(input_raster,data_type,input_shape,output_raster,mask=False):
     
     '''Clip a raster with a rectangular shape based on the provided polygon
     
@@ -65,6 +66,7 @@ def clip_rectangular(input_raster,data_type,input_shape,output_raster):
     :param data_type: numpy type used to read the image (e.g. np.uint8, np.int32; 0 for default: np.uint16) (numpy type)
     :param input_shape: path and name of the input shapefile (*.shp) (string)
     :param output_raster: path and name of the output raster file (*.TIF,*.tiff) (string)
+    :param mask: bool to enable the usage of the shapefile as a mask (boolean)
     :returns:  an output file is created
     :raises: AttributeError, KeyError
     
@@ -76,7 +78,8 @@ def clip_rectangular(input_raster,data_type,input_shape,output_raster):
     #TODO: would use only one argument to define input image and one to define input shp.
         
     #os.system('gdalwarp -q -cutline ' + shapefile + ' -crop_to_cutline -of GTiff ' + path + name +' '+ path + name[:-4] + '_city.TIF')
-
+    #print input_raster
+    if data_type == 0: data_type = np.uint16
     x_list = []
     y_list = []
     x_list_coordinates = []
@@ -105,20 +108,23 @@ def clip_rectangular(input_raster,data_type,input_shape,output_raster):
     # loop through the features in the layer
     feature = layer.GetNextFeature()
     while feature:
-        # get the x,y coordinates for the point
-        geom = feature.GetGeometryRef()
-        ring = geom.GetGeometryRef(0)
-        n_vertex = ring.GetPointCount()
-        for i in range(0,n_vertex-1):
-            lon,lat,z = ring.GetPoint(i)
-            #x_matrix,y_matrix = world2pixel(geoMatrix,lon,lat)
-            #x_list.append(x_matrix)
-            #y_list.append(y_matrix)
-            x_list_coordinates.append(lon)
-            y_list_coordinates.append(lat)
-        # destroy the feature and get a new one
-        feature.Destroy()
-        feature = layer.GetNextFeature()
+        try:
+            # get the x,y coordinates for the point
+            geom = feature.GetGeometryRef()
+            ring = geom.GetGeometryRef(0)
+            n_vertex = ring.GetPointCount()
+            for i in range(0,n_vertex-1):
+                lon,lat,z = ring.GetPoint(i)
+                #x_matrix,y_matrix = world2pixel(geoMatrix,lon,lat)
+                #x_list.append(x_matrix)
+                #y_list.append(y_matrix)
+                x_list_coordinates.append(lon)
+                y_list_coordinates.append(lat)
+            # destroy the feature and get a new one
+            feature.Destroy()
+            feature = layer.GetNextFeature()
+        except:
+            feature = None
     #regularize the shape
     
     x_list_coordinates.sort()
@@ -163,11 +169,18 @@ def clip_rectangular(input_raster,data_type,input_shape,output_raster):
     rows_out = y_min-y_max
     
     gdal_data_type = data_type2gdal_data_type(data_type)
+    if mask == True:
+        rows_ref,cols_ref,nbands_ref,geo_transform_ref,projection_ref = read_image_parameters(input_raster)
+        shp2rast(input_shape,input_shape[:-4]+'.tif',rows_out,cols_out,'Mask',pixel_width=geo_transform_ref[1],pixel_height=abs(geo_transform_ref[5]),x_min=0,x_max=0,y_min=0,y_max=0) 
+        mask_list = read_image(input_shape[:-4]+'.tif',np.uint8,0)
+        msk = np.equal(mask_list[0],1)
     output=driver.Create(output_raster,cols_out,rows_out,nbands,gdal_data_type) #to check
     
     for b in range (1,nbands+1):
         inband = inb.GetRasterBand(b)
         data = inband.ReadAsArray(x_min,y_max,cols_out,rows_out).astype(data_type)
+        if mask == True:
+            data = np.choose(msk,(0,data))
         outband=output.GetRasterBand(b)
         outband.WriteArray(data,0,0) #write to output image
     
@@ -413,33 +426,8 @@ def fix_tiling_raster(input_raster1,input_raster2):
     '''
     minx1,miny1,maxx1,maxy1 = get_coordinate_limit(input_raster1)
     minx2,miny2,maxx2,maxy2 = get_coordinate_limit(input_raster2)
-
-    #Get cordinate of intersation from 2 raster
-
-    if minx1-minx2 >= 0:
-        new_minx = minx1
-    else:
-        new_minx = minx2
-    if miny1-miny2 >= 0:
-        new_miny = miny1
-    else:
-        new_miny = miny2
-    if maxx1-maxx2 <= 0:
-        new_maxx = maxx1
-    else:
-        new_maxx = maxx2
-    if maxy1-maxy2 <= 0:
-        new_maxy = maxy1
-    else:
-        new_maxy = maxy2
-
-    #Rewrite a raster with new cordinate
-    #TODO   FIX CASE WITHOUT os.getcwd() WHEN FULL PATH IS DECLARED
-    os.system("gdal_translate -of GTiff -projwin "+str(minx)+" "+str(maxy)+" "+str(maxx)+" "+str(miny)+" "+os.getcwd()+'/'+input_raster+" "+os.getcwd()+'/'+input_raster+"_tmp.tif")
-    if os.name == 'posix': 
-        os.system("mv "+os.getcwd()+'/'+input_raster+"_tmp.tif "+os.getcwd()+'/'+input_raster)
-    else:
-        os.system("rename "+os.getcwd()+'/'+input_raster+"_tmp.tif "+os.getcwd()+'/'+input_raster)
+    os.system("gdal_translate -of GTiff -projwin "+str(minx1)+" "+str(maxy1)+" "+str(maxx1)+" "+str(miny1)+" "+input_raster2+" "+input_raster2+"_tmp.tif")
+    shutil.move(input_raster2+"_tmp.tif",input_raster2)
 
 
 def get_coordinate_limit(input_raster):

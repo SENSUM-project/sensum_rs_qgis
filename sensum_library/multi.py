@@ -56,7 +56,7 @@ class Multi(object):
             self.num_consumers = num_consumers
         else:
             self.num_consumers = multiprocessing.cpu_count() * 2
-        print 'Creating %d consumers' % self.num_consumers
+        #print 'Creating %d consumers' % self.num_consumers
         consumers = [ Consumer(self.tasks, self.results)
                       for i in xrange(self.num_consumers) ]
         for w in consumers:
@@ -90,10 +90,10 @@ class Consumer(multiprocessing.Process):
             next_task = self.task_queue.get()
             if next_task is None:
                 # Poison pill means shutdown
-                print '%s: Exiting' % proc_name
+                #print '%s: Exiting' % proc_name
                 self.task_queue.task_done()
                 break
-            print '%s: %s' % (proc_name, next_task)
+            #print '%s: %s' % (proc_name, next_task)
             answer = next_task()
             self.task_queue.task_done()
             self.result_queue.put(answer)
