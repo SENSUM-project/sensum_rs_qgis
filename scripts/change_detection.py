@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import config
 import os,sys
 import shutil
 import time
@@ -7,13 +8,13 @@ import osgeo.gdal, gdal
 import osgeo.ogr, ogr
 from osgeo.gdalconst import *
 import numpy as np
+from numpy.fft import fft2, ifft2, fftshift
 import math
 import argparse
 import warnings
 from utils import Bar
 
 sys.path.append(os.path.split(os.path.dirname(os.path.abspath(__file__)))[0])
-import sensum_library.config
 from sensum_library.preprocess import *
 from sensum_library.classification import *
 from sensum_library.segmentation import *
@@ -23,11 +24,28 @@ from sensum_library.features import *
 from sensum_library.secondary_indicators import *
 
 def main():
+    arg = args()
+    main_folder = str(arg.main_folder)
+    field = str(arg.field)
+    extraction = str(arg.extraction)
+    change_detection(main_folder,extraction,field)
+
+
+def args():
+    parser = argparse.ArgumentParser(description='Change Detection')
+    parser.add_argument("main_folder", help="????")
+    parser.add_argument("extraction", help="????")
+    parser.add_argument("field", help="????")
+    args = parser.parse_args()
+    return args
+
+
+def change_detection(sat_folder,extraction,field="UrbanClass"):
     factors = {"changes":1, "position_change":2, "percentual_trues":0.5}
     urban_classes = []
     years = []
     ####STACK SATELLITE CODE####
-    sat_folder = "/home/gale/Van_process"
+    #sat_folder = "/home/gale/Van_process"
     change_detection_method_EUCENTRE = True
     ref_dir = None
     if os.name == 'posix':
@@ -45,19 +63,26 @@ def main():
     ####END STACK SATELLITE CODE####
         if change_detection_method_EUCENTRE:
             #Creo la matrice urban_segments con associato True o False a seconda che il segmento sia urbano o no per ogni anno
-            data_set =  osgeo.ogr.GetDriverByName("ESRI Shapefile").Open(target_dir+'dissimilarity_class.shp')
+            if extraction == "Dissimilarity":
+                print extraction
+            data_set = (osgeo.ogr.GetDriverByName("ESRI Shapefile").Open(target_dir+'dissimilarity_class.shp') if extraction == "Dissimilarity" else osgeo.ogr.GetDriverByName("ESRI Shapefile").Open(target_dir+'pca_class.shp'))
+            #data_set =  osgeo.ogr.GetDriverByName("ESRI Shapefile").Open(target_dir+'dissimilarity_class.shp')
             target_layer = data_set.GetLayer()
-            urban_class = get_class(target_layer)
+            #urban_class = get_class(target_layer)
+            urban_class = get_class_from_shape(target_layer,field)
             urban_classes.append(urban_class)
             target_list = [(True if target_layer.GetFeature(i).GetField("Class") == urban_classes[target_index] else False) for i in range(target_layer.GetFeatureCount())]
             urban_segments = (np.vstack((target_list,urban_segments)) if target_index else target_list)
     if change_detection_method_EUCENTRE:
         years.insert(0,os.path.basename(os.path.normpath(ref_dir))[0:4])
         driver = osgeo.ogr.GetDriverByName("ESRI Shapefile")
-        ref_data_set = driver.Open(ref_dir+'dissimilarity_class.shp')
+        ref_data_set = (osgeo.ogr.GetDriverByName("ESRI Shapefile").Open(ref_dir+'dissimilarity_class.shp') if extraction == "Dissimilarity" else osgeo.ogr.GetDriverByName("ESRI Shapefile").Open(ref_dir+'pca_class.shp'))
+        #ref_data_set = driver.Open(ref_dir+'dissimilarity_class.shp')
         ref_layer = ref_data_set.GetLayer()
-        urban_class = get_class(ref_layer)
+        #urban_class = get_class(ref_layer)
+        urban_class = get_class_from_shape(ref_layer,field)
         urban_classes.insert(0, urban_class)
+        #print urban_classes
         ref_list = [(True if ref_layer.GetFeature(i).GetField("Class") == urban_classes[0] else False) for i in range(ref_layer.GetFeatureCount())]
         urban_segments = np.vstack((urban_segments,ref_list))
         features_shape = urban_segments.shape[1]
@@ -113,6 +138,9 @@ def main():
             #if np.isnan(stability_factor):
                 #feature.SetField("Class", urban_classes[0])
             output_layer.SetFeature(feature)
+
+def get_class_from_shape(target_layer,field="UrbanClass"):
+    feature = target_layer.GetFeature(0).GetField(field)
 
 def get_class(target_layer):
     urban_classes_tmp = []

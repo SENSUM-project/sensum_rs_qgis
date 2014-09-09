@@ -40,6 +40,7 @@ import scipy.signal
 import scipy as sp
 import cv2
 import subprocess
+import matplotlib.pyplot as plt
 from osgeo.gdalconst import *
 from sensum_library.preprocess import *
 from sensum_library.classification import *
@@ -53,6 +54,7 @@ from numpy.fft import fft2, ifft2, fftshift
 from skimage.morphology import square, closing
 import otbApplication
 from scripts.utils import *
+
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
@@ -72,8 +74,8 @@ def string_qmark(string):
     try: return "\""+string+"\""
     except: return None
 
-def executeScript(command, progress=None):
-    if os.name != "posix":
+def executeScript(command, progress=None,noerror=True):
+    if os.name != "posix" and noerror:
         # Found at http://stackoverflow.com/questions/5069224/handling-subprocess-crash-in-windows
         # Don't display the Windows GPF dialog if the invoked program dies.
         # See comp.os.ms-windows.programmer.win32
@@ -114,7 +116,7 @@ def executeOtb(command, progress=None,label = "OTB library recalled"):
         bit = ("64" if os.path.isdir("C:/OSGeo4W64") else "")
         osgeopath = "C:/OSGeo4W{}/bin/".format(bit)
         command = osgeopath + command
-    QMessageBox.information(None, "Info", command)    
+    #QMessageBox.information(None, "Info", command)    
     proc = subprocess.Popen(
         command,
         shell=True,
@@ -284,6 +286,19 @@ class Sensum:
         self.iface.addPluginToMenu(u"&SENSUM", self.action_density)
 
         ######################
+        ## CHANGE DETECTION
+        ######################
+        # Create action that will start plugin configuration
+        self.action_change = QAction(
+            QIcon(":/plugins/sensum_plugin/icons/change.png"),
+            u"Change", self.iface.mainWindow())
+        # connect the action to the run method
+        self.action_change.triggered.connect(self.change)
+        # Add toolbar button and menu item
+        self.toolBar.addAction(self.action_change)
+        self.iface.addPluginToMenu(u"&SENSUM", self.action_change)
+
+        ######################
         ## INDEXES
         ######################
         # Create action that will start plugin configuration
@@ -399,8 +414,8 @@ class Sensum:
                         statistic_vector.set("value",str(round(np.std(band_list[b])/2,4)))
                 tree = ET.ElementTree(root)
                 tree.write(input_raster_list[0][:-4]+'_statistics.xml')
-                input_text = "tmp.txt"
-                executeOtb("otbcl i_TrainImagesClassifier -progress 1 -io.il {} -io.vd {} -io.imstat {} -sample.mv 100 -sample.mt 100 -sample.vtr 0.5 -sample.edg 1 -sample.vfn {} -classifier {} -io.out {} -io.confmatout {} ".format(input_raster_list[0],input_shape_list[0],input_raster_list[0][:-4]+'_statistics.xml',training_field,input_classification_supervised_type,input_text,input_text[:-4] + "_ConfusionMatrix.csv"),progress=dlgProgress.ui,label="Training Classifier")
+                input_text = input_raster_list[0][:-4]+'.txt'
+                executeOtb("otbcli_TrainImagesClassifier -progress 1 -io.il {} -io.vd {} -io.imstat {} -sample.mv 100 -sample.mt 100 -sample.vtr 0.5 -sample.edg 1 -sample.vfn {} -classifier {} -io.out {} -io.confmatout {} ".format(input_raster_list[0],input_shape_list[0],input_raster_list[0][:-4]+'_statistics.xml',training_field,input_classification_supervised_type,input_text,input_text[:-4] + "_ConfusionMatrix.csv"),progress=dlgProgress.ui,label="Training Classifier")
                 rows,cols,nbands,geotransform,projection = read_image_parameters(input_raster)
                 band_list = read_image(input_raster,np.uint16,0)
                 root = ET.Element("FeatureStatistics")
@@ -553,7 +568,7 @@ class Sensum:
                     write_image([segments_baatz],0,0,output_shape[:-4]+'.TIF',rows,cols,geo_transform,projection)
                     rast2shp(output_shape[:-4]+'.TIF',output_shape)
                 elif segm_mode == "Meanshift":
-                    SpatialR = int(ui.lineEdit_meanshift_spatial.text())
+                    SpatialR = int(ui.lineEdit_meanshift_radius.text())
                     RangeR = float(ui.lineEdit_meanshift_range.text())
                     Thres = float(ui.lineEdit_meanshift_threshold.text())
                     MaxIter = int(ui.lineEdit_meanshift_iterations.text())
@@ -741,11 +756,13 @@ class Sensum:
         self.dlg_temporal = TemporalDialog()
         self.changeActive(self.dlg_temporal.ui.comboBox_mask)
         QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_temporal.ui.comboBox_mask))
+        QObject.connect(self.dlg_temporal.ui.pushButton_plot, SIGNAL("clicked()"), self.temporal_plot)
         dlgProgress = ProgressDialog()
         # show the dialog
         self.dlg_temporal.show()
         # Run the dialog event loop
         result = self.dlg_temporal.exec_()
+        #self.temporal_plot()
         # See if OK was pressed
         if result == 1:
             ui = self.dlg_temporal.ui
@@ -753,7 +770,37 @@ class Sensum:
             sat_folder = str(ui.lineEdit_folder.text())
             input_mask = parse_input(str(ui.comboBox_mask.currentText()))
             n_classes = str(ui.spinBox_nclass.text())
-            indexes = [(ui.checkBox_1,"Index1"),(ui.checkBox_2,"Index2"),(ui.checkBox_3,"Index3"),(ui.checkBox_4,"Index4"),(ui.checkBox_5,"Index5"),(ui.checkBox_6,"Index6"),(ui.checkBox_7,"Index7"),(ui.checkBox_8,"Index8"),(ui.checkBox_9,"Index9"),(ui.checkBox_10,"Index10"),(ui.checkBox_11,"Index11"),(ui.checkBox_12,"Index12")]
-            indexes_list = " ".join([index for pushButton,index in indexes if pushButton.isChecked()])
-            executeScript('/scripts/temporal.py" \"{}\" \"{}\" \"{}\" -i {}'.format(sat_folder,input_mask,n_classes,indexes_list),dlgProgress.ui)
+            executeScript('/scripts/temporal.py" \"{}\" \"{}\" \"{}\"'.format(sat_folder,input_mask,n_classes),dlgProgress.ui)
+
+    def temporal_plot(self):
+        # Create the dialog (after translation) and keep reference
+        self.dlg_temporal_plot = TemporalPlotDialog()
+        # show the dialog
+        self.dlg_temporal_plot.show()
+        # Run the dialog event loop
+        result = self.dlg_temporal_plot.exec_()
+        # See if OK was pressed
+        if result == 1:
+            ui = self.dlg_temporal_plot.ui
+            sat_folder = str(ui.lineEdit_folder.text())
+            index = str(ui.comboBox_index.currentText())
+            executeScript('/scripts/temporal.py" \"{}\" \"{}\" \"{}\" -i {} --plot'.format(sat_folder,"input_mask",0,index))
+            QMessageBox.information(None, "Info", 'Done!')
+
+    def change(self):
+        # Create the dialog (after translation) and keep reference
+        self.dlg_change = ChangeDialog()
+        dlgProgress = ProgressDialog()
+        # show the dialog
+        self.dlg_change.show()
+        # Run the dialog event loop
+        result = self.dlg_change.exec_()
+        # See if OK was pressed
+        if result == 1:
+            ui = self.dlg_change.ui
+            dlgProgress.show()
+            sat_folder = str(ui.lineEdit_tobechange.text())
+            extraction = ( "Dissimilarity" if str(ui.comboBox_extraction.currentText()) == "Dissimilarity-Based" else "PCA")
+            field = str(ui.lineEdit_field.text())
+            executeScript('/scripts/change_detection.py" \"{}\" \"{}\" \"{}\" '.format(sat_folder,extraction,field),dlgProgress.ui)
             QMessageBox.information(None, "Info", 'Done!')

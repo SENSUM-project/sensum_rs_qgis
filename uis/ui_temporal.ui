@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>578</width>
-    <height>534</height>
+    <height>392</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>340</x>
-     <y>470</y>
+     <x>310</x>
+     <y>330</y>
      <width>161</width>
      <height>32</height>
     </rect>
@@ -94,58 +94,6 @@
     <string>Input Landsat Images Folder</string>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkBox_1">
-   <property name="geometry">
-    <rect>
-     <x>80</x>
-     <y>291</y>
-     <width>85</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Index 1</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="checkBox_2">
-   <property name="geometry">
-    <rect>
-     <x>240</x>
-     <y>290</y>
-     <width>85</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Index 2</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="checkBox_3">
-   <property name="geometry">
-    <rect>
-     <x>400</x>
-     <y>290</y>
-     <width>85</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Index 3</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="checkBox_4">
-   <property name="geometry">
-    <rect>
-     <x>80</x>
-     <y>320</y>
-     <width>85</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Index 4</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="label_multiband_2">
    <property name="geometry">
     <rect>
@@ -177,8 +125,8 @@
   <widget class="QSpinBox" name="spinBox_nclass">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>440</y>
+     <x>150</x>
+     <y>300</y>
      <width>53</width>
      <height>22</height>
     </rect>
@@ -190,8 +138,8 @@
   <widget class="QLabel" name="label_multiband_3">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>420</y>
+     <x>120</x>
+     <y>280</y>
      <width>131</width>
      <height>16</height>
     </rect>
@@ -216,108 +164,17 @@
     <pixmap>.sensum/cambridge.png</pixmap>
    </property>
   </widget>
-  <widget class="QCheckBox" name="checkBox_5">
+  <widget class="QPushButton" name="pushButton_plot">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>320</y>
-     <width>85</width>
-     <height>20</height>
+     <x>360</x>
+     <y>290</y>
+     <width>75</width>
+     <height>23</height>
     </rect>
    </property>
    <property name="text">
-    <string>Index 5</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="checkBox_6">
-   <property name="geometry">
-    <rect>
-     <x>400</x>
-     <y>320</y>
-     <width>85</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Index 6</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="checkBox_7">
-   <property name="geometry">
-    <rect>
-     <x>80</x>
-     <y>350</y>
-     <width>85</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Index 7</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="checkBox_8">
-   <property name="geometry">
-    <rect>
-     <x>240</x>
-     <y>350</y>
-     <width>85</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Index 8</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="checkBox_9">
-   <property name="geometry">
-    <rect>
-     <x>400</x>
-     <y>350</y>
-     <width>85</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Index 9</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="checkBox_10">
-   <property name="geometry">
-    <rect>
-     <x>80</x>
-     <y>380</y>
-     <width>85</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Index 10</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="checkBox_11">
-   <property name="geometry">
-    <rect>
-     <x>240</x>
-     <y>380</y>
-     <width>85</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Index 11</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="checkBox_12">
-   <property name="geometry">
-    <rect>
-     <x>400</x>
-     <y>380</y>
-     <width>85</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Index 12</string>
+    <string>Graphs</string>
    </property>
   </widget>
  </widget>

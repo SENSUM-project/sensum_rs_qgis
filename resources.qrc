@@ -10,5 +10,6 @@
         <file>icons/stacksatellite.png</file>
         <file>icons/density.png</file>
         <file>icons/temporal.png</file>
+        <file>icons/change.png</file>
     </qresource>
 </RCC>

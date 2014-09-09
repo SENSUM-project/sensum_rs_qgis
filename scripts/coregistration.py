@@ -112,7 +112,7 @@ def FFT_coregistration(ref_band_mat,target_band_mat):
     :returns: the shift among the two input images 
 
     '''
-
+    status = Bar(3, "FFT")
     #Normalization - http://en.wikipedia.org/wiki/Cross-correlation#Normalized_cross-correlation 
     ref_band_mat = (ref_band_mat - ref_band_mat.mean()) / ref_band_mat.std()
     target_band_mat = (target_band_mat - target_band_mat.mean()) / target_band_mat.std() 
@@ -130,7 +130,7 @@ def FFT_coregistration(ref_band_mat,target_band_mat):
         print 'Rows - correction needed'
         diff = rows_target - rows_ref
         ref_band_mat = np.vstack((ref_band_mat,np.zeros((diff,cols_ref))))
-        
+    status(1)
     rows_target,cols_target = target_band_mat.shape
     rows_ref,cols_ref = ref_band_mat.shape
 
@@ -144,12 +144,11 @@ def FFT_coregistration(ref_band_mat,target_band_mat):
         ref_band_mat = np.hstack((ref_band_mat,np.zeros((rows_ref,diff))))
 
     rows_target,cols_target = target_band_mat.shape   
-
+    status(2)
     #translation(im_target,im_ref)
     freq_target = fft2(target_band_mat)   
     freq_ref = fft2(ref_band_mat)  
     inverse = abs(ifft2((freq_target * freq_ref.conjugate()) / (abs(freq_target) * abs(freq_ref))))   
-
     #Converts a flat index or array of flat indices into a tuple of coordinate arrays. would give the pixel of the max inverse value
     y_shift,x_shift = np.unravel_index(np.argmax(inverse),(rows_target,cols_target))
 
@@ -157,7 +156,7 @@ def FFT_coregistration(ref_band_mat,target_band_mat):
         y_shift -= rows_target
     if x_shift > cols_target // 2: # // used to truncate the division
         x_shift -= cols_target
-    
+    status(3)
     return -x_shift, -y_shift
 
 
@@ -311,6 +310,8 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
     target_new_resolution = geotransform_target_orig[1] / float(2)
 
     if enable_clip == True:
+        status = Bar(100, "Clipping")
+        status(0)
         clip_rectangular(image_ref,np.uint8,input_shape,image_ref[:-4]+'_roi.tif')
         image_ref = image_ref[:-4]+'_roi.tif'
         if enable_resampling == True:
@@ -319,7 +320,7 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
         image_target = image_target[:-4]+'_roi.tif'
         if enable_resampling == True:
             resampling(image_target,image_target[:-4]+'_rs_'+str(target_new_resolution)+'.tif',target_new_resolution,'bicubic')
-
+        status(100)
     elif enable_grid == True:
         minx_ref,miny_ref,maxx_ref,maxy_ref = get_coordinate_limit(image_ref)
         minx_target,miny_target,maxx_target,maxy_target = get_coordinate_limit(image_target)
@@ -329,6 +330,7 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
         maxx = np.min([maxx_target,maxx_ref])
         maxy = np.min([maxy_target,maxy_ref])
 
+        status = Bar(tiling_row_factor, "Clipping")
         for t_row in range(0,tiling_row_factor):
             for t_col in range(0,tiling_col_factor):
                 start_col_coord = float(maxx-minx)*(float(t_col)/float(tiling_col_factor)) + float(minx)
@@ -344,13 +346,16 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
 
                 target_tiles_prop = tile_statistics(band_mat,start_col_coord,start_row_coord,end_col_coord,end_row_coord)
                 target_tiles_prop_list.append(target_tiles_prop)
+            status(t_row)
 
         band_mat = None
         target_tiles_prop_list = sorted(target_tiles_prop_list,key=itemgetter(4),reverse=True)
         target_tiles_prop_list_sorted = sorted(target_tiles_prop_list,key=itemgetter(7))
         target_tiles_prop_list_sorted = [element for element in target_tiles_prop_list_sorted if element[4] != 0 and element[4] != 0.5]      
 
+        status = Bar(2, "Clipping")
         for et in range(0,2):
+            status(et)
             band_mat_target,start_col_coord_target,start_row_coord_target,end_col_coord_target,end_row_coord_target = extract_tiles(image_target,target_tiles_prop_list_sorted[et][0],target_tiles_prop_list_sorted[et][1],target_tiles_prop_list_sorted[et][2],target_tiles_prop_list_sorted[et][3])
             band_mat_ref,start_col_coord_ref,start_row_coord_ref,end_col_coord_ref,end_row_coord_ref = extract_tiles(image_ref,target_tiles_prop_list_sorted[et][0],target_tiles_prop_list_sorted[et][1],target_tiles_prop_list_sorted[et][2],target_tiles_prop_list_sorted[et][3])
 
@@ -384,10 +389,11 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
 
             kp_ref,kp_target,ext_points = EUC_SURF(band_list_ref[0],band_list_target[0],output_as_array=True)
             ext_points = slope_filter(ext_points)
-
+            status = Bar(ext_points, "SURF")
             x_shift_surf, y_shift_surf = 0,0
             if len(ext_points) > 1:
                 for p in range(0,len(ext_points)):
+                    status(p)
                     x_ref,y_ref,x_target,y_target = int(ext_points[p][0]),int(ext_points[p][1]),int(ext_points[p][2]),int(ext_points[p][3])
                     x_shift_surf = x_shift_surf + (x_ref-x_target)
                     y_shift_surf = y_shift_surf + (y_ref-y_target)
@@ -401,7 +407,9 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
 
         elif enable_grid == True:
             ext_points_list = []
+            status = Bar(target_tiles_list, "SURF 1/2")
             for f in range(0,len(target_tiles_list)):
+                status(f)
                 band_list_target = read_image(target_tiles_list[f],np.uint8,0)
                 band_list_ref = read_image(ref_tiles_list[f],np.uint8,0)
 
@@ -413,7 +421,9 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
                 band_list_ref = []    
 
             x_shift_surf, y_shift_surf = 0,0
+            status = Bar(ext_points_list, "SURF 2/2")
             for f in range(0,len(ext_points_list)):
+                status(f)
                 for p in range(0,len(ext_points_list[f])):
                     x_ref,y_ref,x_target,y_target = int(ext_points_list[f][p][0]),int(ext_points_list[f][p][1]),int(ext_points_list[f][p][2]),int(ext_points_list[f][p][3])
                     x_shift_surf = x_shift_surf + (x_ref-x_target)

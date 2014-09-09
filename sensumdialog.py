@@ -35,6 +35,8 @@ from uis.ui_footprints import Ui_Footprints
 from uis.ui_stacksatellite import Ui_StackSatellite
 from uis.ui_density import Ui_Density
 from uis.ui_temporal import Ui_Temporal
+from uis.ui_temporalgraph import Ui_TemporalGraph
+from uis.ui_change_detection import Ui_ChangeDetection
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
@@ -384,6 +386,17 @@ class DensityDialog(QtGui.QDialog, Ui_Density):
         if fileName !="":
             self.ui.lineEdit_output_shapefile.setText(fileName)
 
+class ChangeDialog(QtGui.QDialog, Ui_ChangeDetection):
+    def __init__(self):
+        QtGui.QDialog.__init__(self)
+        self.ui = Ui_ChangeDetection()
+        self.ui.setupUi(self)
+        QObject.connect(self.ui.pushButton_tobechange, SIGNAL("clicked()"), self.setPath_tobechange)
+    def setPath_tobechange(self):
+        fileName = QFileDialog.getExistingDirectory(self,"Select Folder", "~");
+        if fileName !="":
+            self.ui.lineEdit_tobechange.setText(fileName)
+
 class TemporalDialog(QtGui.QDialog, Ui_Temporal):
     def __init__(self):
         QtGui.QDialog.__init__(self)
@@ -404,4 +417,18 @@ class TemporalDialog(QtGui.QDialog, Ui_Temporal):
                 self.ui.comboBox_mask.setItemText(0, _translate("Pansharp", "[Choose from a file..] "+fileName, None))
             else:
                 self.ui.comboBox_mask.setItemText(0, _translate("Pansharp", "[Choose from a file..]", None))
+
+class TemporalPlotDialog(QtGui.QDialog, Ui_TemporalGraph):
+    def __init__(self):
+        QtGui.QDialog.__init__(self)
+        self.ui = Ui_TemporalGraph()
+        self.ui.setupUi(self)
+        QObject.connect(self.ui.pushButton_folder, SIGNAL("clicked()"), self.setPath_input_folder)
+
+    def setPath_input_folder(self):
+        fileName = QFileDialog.getExistingDirectory(self,"Select Folder", "~");
+        if fileName !="":
+            self.ui.lineEdit_folder.setText(fileName)
+
+ 
 

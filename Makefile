@@ -25,7 +25,7 @@ QGISDIR=.qgis2
 # Makefile for a PyQGIS plugin
 
 # translation
-SOURCES = sensum.py __init__.py sensumdialog.py uis/ui_pansharp.py uis/ui_classification.py uis/ui_segmentation.py uis/ui_features.py uis/ui_build_height.py uis/ui_progress.py uis/ui_coregistration.py uis/ui_footprints.py uis/ui_stacksatellite.py uis/ui_density.py uis/ui_temporal.py
+SOURCES = sensum.py __init__.py sensumdialog.py uis/ui_pansharp.py uis/ui_classification.py uis/ui_segmentation.py uis/ui_features.py uis/ui_build_height.py uis/ui_progress.py uis/ui_coregistration.py uis/ui_footprints.py uis/ui_stacksatellite.py uis/ui_density.py uis/ui_temporal.py uis/ui_change_detection.ui uis/ui_temporalgraph.py
 #TRANSLATIONS = i18n/sensum_en.ts
 TRANSLATIONS =
 
@@ -37,7 +37,7 @@ PY_FILES = sensum.py sensumdialog.py __init__.py
 
 EXTRAS = metadata.txt
 
-UI_FILES = uis/ui_pansharp.py uis/ui_classification.py uis/ui_segmentation.py uis/ui_features.py uis/ui_build_height.py uis/ui_progress.py uis/ui_coregistration.py uis/ui_footprints.py uis/ui_stacksatellite.py uis/ui_density.py uis/ui_temporal.py
+UI_FILES = uis/ui_pansharp.py uis/ui_classification.py uis/ui_segmentation.py uis/ui_features.py uis/ui_build_height.py uis/ui_progress.py uis/ui_coregistration.py uis/ui_footprints.py uis/ui_stacksatellite.py uis/ui_density.py uis/ui_temporal.py uis/ui_change_detection.ui uis/ui_temporalgraph.py
 
 RESOURCE_FILES = resources_rc.py
 
