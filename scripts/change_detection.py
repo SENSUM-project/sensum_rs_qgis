@@ -63,15 +63,13 @@ def change_detection(sat_folder,extraction,field="UrbanClass"):
     ####END STACK SATELLITE CODE####
         if change_detection_method_EUCENTRE:
             #Creo la matrice urban_segments con associato True o False a seconda che il segmento sia urbano o no per ogni anno
-            if extraction == "Dissimilarity":
-                print extraction
             data_set = (osgeo.ogr.GetDriverByName("ESRI Shapefile").Open(target_dir+'dissimilarity_class.shp') if extraction == "Dissimilarity" else osgeo.ogr.GetDriverByName("ESRI Shapefile").Open(target_dir+'pca_class.shp'))
             #data_set =  osgeo.ogr.GetDriverByName("ESRI Shapefile").Open(target_dir+'dissimilarity_class.shp')
             target_layer = data_set.GetLayer()
             #urban_class = get_class(target_layer)
             urban_class = get_class_from_shape(target_layer,field)
             urban_classes.append(urban_class)
-            target_list = [(True if target_layer.GetFeature(i).GetField("Class") == urban_classes[target_index] else False) for i in range(target_layer.GetFeatureCount())]
+            target_list = [(True if int(target_layer.GetFeature(i).GetField("Mean1")) == urban_classes[target_index] else False) for i in range(target_layer.GetFeatureCount())]
             urban_segments = (np.vstack((target_list,urban_segments)) if target_index else target_list)
     if change_detection_method_EUCENTRE:
         years.insert(0,os.path.basename(os.path.normpath(ref_dir))[0:4])
@@ -83,7 +81,7 @@ def change_detection(sat_folder,extraction,field="UrbanClass"):
         urban_class = get_class_from_shape(ref_layer,field)
         urban_classes.insert(0, urban_class)
         #print urban_classes
-        ref_list = [(True if ref_layer.GetFeature(i).GetField("Class") == urban_classes[0] else False) for i in range(ref_layer.GetFeatureCount())]
+        ref_list = [(True if int(ref_layer.GetFeature(i).GetField("Mean1")) == urban_classes[0] else False) for i in range(ref_layer.GetFeatureCount())]
         urban_segments = np.vstack((urban_segments,ref_list))
         features_shape = urban_segments.shape[1]
         years_shape = urban_segments.shape[0]
@@ -138,9 +136,10 @@ def change_detection(sat_folder,extraction,field="UrbanClass"):
             #if np.isnan(stability_factor):
                 #feature.SetField("Class", urban_classes[0])
             output_layer.SetFeature(feature)
+        print urban_classes, years
 
 def get_class_from_shape(target_layer,field="UrbanClass"):
-    feature = target_layer.GetFeature(0).GetField(field)
+    return int(target_layer.GetFeature(0).GetField(field))
 
 def get_class(target_layer):
     urban_classes_tmp = []

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'uis/ui_density.ui'
+# Form implementation generated from reading ui file 'ui_density.ui'
 #
-# Created: Wed Aug 27 10:14:27 2014
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Fri Sep 12 10:15:48 2014
+#      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -51,6 +51,7 @@ class Ui_Density(object):
         self.pushButton_output_shapefile.setObjectName(_fromUtf8("pushButton_output_shapefile"))
         self.doubleSpinBox_radius = QtGui.QDoubleSpinBox(self.widget)
         self.doubleSpinBox_radius.setGeometry(QtCore.QRect(10, 90, 62, 22))
+        self.doubleSpinBox_radius.setMaximum(999999999.0)
         self.doubleSpinBox_radius.setObjectName(_fromUtf8("doubleSpinBox_radius"))
         self.label_radius = QtGui.QLabel(self.widget)
         self.label_radius.setGeometry(QtCore.QRect(10, 70, 211, 16))

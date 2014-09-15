@@ -46,7 +46,7 @@ target/
 
 *.png
 *.dll
-*.ui
 *.pyc
 *.exe
 help/
+terraAIDA

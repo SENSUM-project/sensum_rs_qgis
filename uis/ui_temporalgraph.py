@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_temporalgraph.ui'
 #
-# Created: Mon Sep 08 17:00:52 2014
+# Created: Fri Sep 12 14:30:41 2014
 #      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,12 +26,9 @@ except AttributeError:
 class Ui_TemporalGraph(object):
     def setupUi(self, TemporalGraph):
         TemporalGraph.setObjectName(_fromUtf8("TemporalGraph"))
-        TemporalGraph.resize(578, 332)
-        self.buttonBox = QtGui.QDialogButtonBox(TemporalGraph)
-        self.buttonBox.setGeometry(QtCore.QRect(310, 270, 161, 32))
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
+        TemporalGraph.resize(546, 367)
+        TemporalGraph.setMinimumSize(QtCore.QSize(546, 367))
+        TemporalGraph.setMaximumSize(QtCore.QSize(546, 367))
         self.logo_sensum = QtGui.QLabel(TemporalGraph)
         self.logo_sensum.setGeometry(QtCore.QRect(70, 20, 241, 61))
         self.logo_sensum.setText(_fromUtf8(""))
@@ -55,7 +52,7 @@ class Ui_TemporalGraph(object):
         self.logo_unipv.setPixmap(QtGui.QPixmap(_fromUtf8(".sensum/cambridge.png")))
         self.logo_unipv.setObjectName(_fromUtf8("logo_unipv"))
         self.comboBox_index = QtGui.QComboBox(TemporalGraph)
-        self.comboBox_index.setGeometry(QtCore.QRect(150, 270, 69, 22))
+        self.comboBox_index.setGeometry(QtCore.QRect(150, 290, 69, 22))
         self.comboBox_index.setObjectName(_fromUtf8("comboBox_index"))
         self.comboBox_index.addItem(_fromUtf8(""))
         self.comboBox_index.addItem(_fromUtf8(""))
@@ -69,10 +66,20 @@ class Ui_TemporalGraph(object):
         self.comboBox_index.addItem(_fromUtf8(""))
         self.comboBox_index.addItem(_fromUtf8(""))
         self.comboBox_index.addItem(_fromUtf8(""))
+        self.pushButton_plot = QtGui.QPushButton(TemporalGraph)
+        self.pushButton_plot.setGeometry(QtCore.QRect(330, 290, 75, 23))
+        self.pushButton_plot.setObjectName(_fromUtf8("pushButton_plot"))
+        self.pushButton_output = QtGui.QPushButton(TemporalGraph)
+        self.pushButton_output.setGeometry(QtCore.QRect(388, 239, 75, 23))
+        self.pushButton_output.setObjectName(_fromUtf8("pushButton_output"))
+        self.label_output = QtGui.QLabel(TemporalGraph)
+        self.label_output.setGeometry(QtCore.QRect(100, 210, 282, 23))
+        self.label_output.setObjectName(_fromUtf8("label_output"))
+        self.lineEdit_output = QtGui.QLineEdit(TemporalGraph)
+        self.lineEdit_output.setGeometry(QtCore.QRect(100, 240, 282, 20))
+        self.lineEdit_output.setObjectName(_fromUtf8("lineEdit_output"))
 
         self.retranslateUi(TemporalGraph)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), TemporalGraph.accept)
-        QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), TemporalGraph.reject)
         QtCore.QMetaObject.connectSlotsByName(TemporalGraph)
 
     def retranslateUi(self, TemporalGraph):
@@ -92,4 +99,7 @@ class Ui_TemporalGraph(object):
         self.comboBox_index.setItemText(9, _translate("TemporalGraph", "Index10", None))
         self.comboBox_index.setItemText(10, _translate("TemporalGraph", "Index11", None))
         self.comboBox_index.setItemText(11, _translate("TemporalGraph", "Index12", None))
+        self.pushButton_plot.setText(_translate("TemporalGraph", "Plot", None))
+        self.pushButton_output.setText(_translate("TemporalGraph", "...", None))
+        self.label_output.setText(_translate("TemporalGraph", "Output Graph (.png)", None))
 

@@ -28,12 +28,11 @@ def main():
     sat_folder = str(arg.sat_folder)
     input_shapefile = str(arg.input_shapefile)
     n_classes = int(arg.n_classes)
+    indexes_list = map(str, arg.indexes)
     if bool(arg.plot):
-        indexes_list = map(str, arg.indexes)
-        print indexes_list
-        graph(sat_folder, indexes_list)
+        graph(sat_folder, indexes_list, input_shapefile)
     else:
-        temporal(input_shapefile, sat_folder, n_classes)
+        temporal(input_shapefile, sat_folder, n_classes, indexes_list)
 
 def args():
     parser = argparse.ArgumentParser(description='Temporal Analysis')
@@ -41,12 +40,11 @@ def args():
     parser.add_argument("input_shapefile", help="????")
     parser.add_argument("n_classes", help="????")
     parser.add_argument("-i", "--indexes", nargs="+", help="????")
-    parser.add_argument("--plot", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("--plot", default=False, const=True, nargs="?", help="????")
     args = parser.parse_args()
     return args
 
-def temporal(input_shapefile, sat_folder, n_classes):
-    indexes_list = ["Index1","Index2","Index3","Index4","Index5","Index6","Index7","Index8","Index9","Index10","Index11","Index12"]
+def temporal(input_shapefile, sat_folder, n_classes,indexes_list):
     ref_dir = None
     restrict_to_city = True
     if os.name == 'posix':
@@ -57,6 +55,7 @@ def temporal(input_shapefile, sat_folder, n_classes):
     dirs = os.listdir(sat_folder)
     band_list = []
     cd_names = []
+    cd_names_plot = []
     c = 0
     dirs.sort()
     dirs = [dir for dir in dirs if os.path.isdir(sat_folder+dir)]
@@ -81,21 +80,16 @@ def temporal(input_shapefile, sat_folder, n_classes):
         new_list = (band_list[3],band_list[4],band_list[5],band_list[6],band_list[7],band_list[0],band_list[1],band_list[8],band_list[9])
         band_list = new_list
     change_detection_list = band_calculation(band_list, indexes_list)
-    '''
-    features_list = band_calculation(band_list,['SAVI','NDVI','NDBI','MNDWI','BUILT_UP']) #extract indexes
-    features_list[3] = features_list[3]*1000
-    features_list[4] = features_list[4]*1000
-    mask_water = np.less(features_list[3],features_list[2]) #exclude water
-    cd_list_masked = []
-    for mw in range(0,len(change_detection_list)):
-        cd_list_masked.append(np.choose(mask_water[0],(0,change_detection_list[mw])))
-    '''
     write_image(change_detection_list,np.float32,0,ref_dir+'change_detection.TIF',rows_ref,cols_ref,geo_transform_ref,projection_ref) #write built-up index to file
     cd_names.append(ref_dir+'change_detection.TIF')
-    #unsupervised_classification_otb(ref_dir+'change_detection.TIF',ref_dir+'change_detection_classification.TIF',5,1000)
+
+    indexes_list_plot = ["Index1","Index2","Index3","Index4","Index5","Index6","Index7","Index8","Index9","Index10","Index11","Index12"]
+    change_detection_list_plot = band_calculation(band_list, indexes_list_plot)
+    write_image(change_detection_list_plot,np.float32,0,ref_dir+'change_detection_plot.TIF',rows_ref,cols_ref,geo_transform_ref,projection_ref) #write built-up index to file
+    cd_names_plot.append(ref_dir+'change_detection_plot.TIF')
 
     target_directories = list(sat_folder+directory+separator for directory in reversed(dirs) if not os.path.isfile(sat_folder+directory) and (ref_dir!=sat_folder+directory+separator))
-    status = Bar(len(target_directories))
+    status = Bar(len(target_directories)+1)
     for target_index,target_dir in enumerate(target_directories):
         status(target_index+2)
         band_list = []
@@ -122,36 +116,67 @@ def temporal(input_shapefile, sat_folder, n_classes):
             band_list = new_list
         rows_target,cols_target,nbands_target,geo_transform_target,projection_target = read_image_parameters(target_dir+target_list[0])
         change_detection_list = band_calculation(band_list, indexes_list)
-        '''
-        features_list = band_calculation(band_list,['SAVI','NDVI','NDBI','MNDWI','BUILT_UP']) #extract indexes
-        features_list[3] = features_list[3]*1000
-        features_list[4] = features_list[4]*1000
-        mask_water = np.less(features_list[3],features_list[2]) #exclude water
-        cd_list_masked = []
-        for mw in range(0,len(change_detection_list)):
-            cd_list_masked.append(np.choose(mask_water[0],(0,change_detection_list[mw])))
-        '''
         write_image(change_detection_list,np.float32,0,target_dir+'change_detection.TIF',rows_target,cols_target,geo_transform_target,projection_target) #write built-up index to file
         cd_names.append(target_dir+'change_detection.TIF')
-        #unsupervised_classification_otb(target_dir+'change_detection.TIF',target_dir+'change_detection_classification.TIF',n_classes,10)
+        change_detection_list_plot = band_calculation(band_list, indexes_list_plot)
+        write_image(change_detection_list_plot,np.float32,0,target_dir+'change_detection_plot.TIF',rows_target,cols_target,geo_transform_target,projection_target) #write built-up index to file
+        cd_names_plot.append(target_dir+'change_detection_plot.TIF')
 
     big_list = []
+    rows_max,cols_max = 0,0
     output_cd = sat_folder + 'change_detection_all.TIF'
+    for k in range(0,len(cd_names)):
+        rows,cols,nbands,geo_transform,projection = read_image_parameters(cd_names[k])
+        if rows > rows_max: rows_max = rows
+        if cols > cols_max: cols_max = cols
+    print 'Rows max: ' + str(rows_max)
+    print 'Cols max: ' + str(cols_max)
+
     for k in range(0,len(cd_names)):
         b_list = read_image(cd_names[k],np.float32,0)
         rows,cols,nbands,geo_transform,projection = read_image_parameters(cd_names[k])
         for b in range(0,len(b_list)):
+            if rows < rows_max:
+                diff = rows_max - rows
+                b_list[b] = np.vstack((b_list[b],np.zeros((diff,cols))))
+            rows,cols = b_list[b].shape
+            if cols < cols_max:
+                diff = cols_max - cols
+                b_list[b] = np.hstack((b_list[b],np.zeros((rows,diff))))
+            rows,cols = b_list[b].shape
             big_list.append(b_list[b])
-    write_image(big_list,np.float32,0,output_cd,rows,cols,geo_transform,projection)    
+    write_image(big_list,np.float32,0,output_cd,rows_max,cols_max,geo_transform,projection)    
     unsupervised_classification_otb(output_cd,output_cd[:-4]+'_class.TIF',n_classes,1000)
     band_list_unsup = read_image(output_cd[:-4]+'_class.TIF',np.uint8,0)
     band_list_unsup[0] = band_list_unsup[0]+np.ones(band_list_unsup[0].shape)
-    write_image(band_list_unsup,np.uint8,0,output_cd[:-4]+'_reclass.TIF',rows,cols,geo_transform,projection)
+    write_image(band_list_unsup,np.uint8,0,output_cd[:-4]+'_reclass.TIF',rows_max,cols_max,geo_transform,projection)
     clip_rectangular(output_cd[:-4]+'_reclass.TIF',np.uint8,input_shapefile,output_cd[:-4]+'_reclass_clip.TIF',mask=True)
+
+    big_list_plot = []
+    output_cd_plot = sat_folder + 'change_detection_all_plot.TIF'
+    for k in range(0,len(cd_names_plot)):
+        b_list = read_image(cd_names_plot[k],np.float32,0)
+        rows,cols,nbands,geo_transform,projection = read_image_parameters(cd_names_plot[k])
+        for b in range(0,len(b_list)):
+            if rows < rows_max:
+                diff = rows_max - rows
+                b_list[b] = np.vstack((b_list[b],np.zeros((diff,cols))))
+            rows,cols = b_list[b].shape
+            if cols < cols_max:
+                diff = cols_max - cols
+                b_list[b] = np.hstack((b_list[b],np.zeros((rows,diff))))
+            rows,cols = b_list[b].shape
+            big_list_plot.append(b_list[b])
+    write_image(big_list_plot,np.float32,0,output_cd_plot,rows_max,cols_max,geo_transform,projection)    
+    unsupervised_classification_otb(output_cd_plot,output_cd_plot[:-4]+'_class.TIF',n_classes,1000)
+    band_list_unsup = read_image(output_cd_plot[:-4]+'_class.TIF',np.uint8,0)
+    band_list_unsup[0] = band_list_unsup[0]+np.ones(band_list_unsup[0].shape)
+    write_image(band_list_unsup,np.uint8,0,output_cd_plot[:-4]+'_reclass.TIF',rows_max,cols_max,geo_transform,projection)
+    clip_rectangular(output_cd_plot[:-4]+'_reclass.TIF',np.uint8,input_shapefile,output_cd_plot[:-4]+'_reclass_clip.TIF',mask=True)
     
 
 import matplotlib.pyplot as plt
-def graph(sat_folder, indexes_list):
+def graph(sat_folder, indexes_list, graph_file):
     if os.name == 'posix':
         separator = '/'
     else:
@@ -163,24 +188,12 @@ def graph(sat_folder, indexes_list):
     output = []
     target_directories = list(sat_folder+directory+separator for directory in reversed(dirs) if not os.path.isfile(sat_folder+directory))
     for target_index,target_dir in enumerate(target_directories):
-        output.append(classification_statistics(sat_folder+"change_detection_all_class.TIF",target_dir+'change_detection.TIF',indexes_list))
-
-    # red dashes, blue squares and green triangles
-    #indexes_list = (int(indexes_list[0].replace("Index",""))-1)
-    #print indexes_list
-    #result = np.array(output)[:,indexes_list].T
-    #print result
-    '''
-    for n,res in enumerate(result):
-        plt.plot(res,label="Class"+str(n+1))
-    plt.legend(bbox_to_anchor=(0.05, 1), loc=2, borderaxespad=0.)
-    plt.show()
-    '''
-
+        output.append(classification_statistics(sat_folder+"change_detection_all_plot_reclass_clip.TIF",target_dir+'change_detection_plot.TIF',indexes_list))
     plt.plot(output)
     leg_list = [p for p in plt.plot(output)]
     leg_labels = ['Class ' + str(n+1) for n in range(0,len(leg_list))]
     plt.legend(leg_list, leg_labels,bbox_to_anchor=(0.05, 1), loc=2, borderaxespad=0.)
+    plt.savefig(graph_file)
     plt.show()
 
 
@@ -204,22 +217,29 @@ def classification_statistics(input_raster_classification,input_raster,input_ind
     band_list = read_image(input_raster,np.float32,0)
     rows,cols,nbands,geotransform,projection = read_image_parameters(input_raster)
 
+    rows_max = max(rows,rows_class)
+    cols_max = max(cols,cols_class)
     index = int(input_index[0].replace("Index",""))
-    max_class = np.max(band_list_classification[0])
-    output = []
+    if rows < rows_max:
+        diff = rows_max - rows
+        band_list[index-1] = np.vstack((band_list[index-1],np.zeros((diff,cols))))
+    elif rows_class < rows_max:
+        diff = rows_max - rows_class
+        band_list_classification[0] = np.vstack((band_list_classification[0],np.zeros((diff,cols_class))))
+        
+    rows,cols = band_list[index-1].shape
+    rows_class,cols_class = band_list_classification[0].shape
 
-    '''
-    for b in range(nbands):
-        output_band = []
-        for value in range(max_class+1):
-            mask = np.equal(band_list_classification[0],value)
-            data = np.extract(mask,band_list[b])
-            data_flat = data.flatten()
-            mean_value = np.mean(data_flat)
-            output_band.append(mean_value)
-        output.append(output_band)
-    return output
-    '''
+    if cols < cols_max:
+        diff = cols_max - cols
+        band_list[index-1] = np.hstack((band_list[index-1],np.zeros((rows,diff))))
+    elif cols_class < cols_max:
+        diff = cols_max - cols_class
+        band_list_classification[0] = np.hstack((band_list_classification[0],np.zeros((rows_class,diff))))
+
+    np.uint8(band_list_classification[0])
+    max_class = int(np.max(band_list_classification[0]))
+    output = []
 
     for value in range(max_class+1):
         mask = np.equal(band_list_classification[0],value)

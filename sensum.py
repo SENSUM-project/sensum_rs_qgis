@@ -90,7 +90,7 @@ def executeScript(command, progress=None,noerror=True):
         subprocess_flags = 0
 
     command = (os.path.dirname(os.path.abspath(__file__))+command if os.name == "posix" else 'C:/Python27/python.exe "'+os.path.dirname(os.path.abspath(__file__))+command)
-    #QMessageBox.information(None, "Info", command)
+    QMessageBox.information(None, "Info", command)
     proc = subprocess.Popen(
         command,
         shell=True,
@@ -444,6 +444,7 @@ class Sensum:
         self.dlg_segmantation = SegmentationDialog()
         self.changeActive(self.dlg_segmantation.ui.comboBox_input)
         QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_segmantation.ui.comboBox_input))
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_segmantation.ui.comboBox_optimizer_input))
         dlgProgress = ProgressDialog()
         # show the dialog
         self.dlg_segmantation.show()
@@ -458,7 +459,7 @@ class Sensum:
             checked_optimizer = bool(ui.checkBox_optimizer.isChecked())
             segm_mode = str(ui.comboBox_method.currentText())
             if checked_optimizer:
-                optimizer_shape = str(ui.lineEdit_optimizer_input.text())
+                optimizer_shape = parse_input(str(ui.comboBox_optimizer_input.currentText()))
                 nloops = int(ui.spinBox_nloops.text())
                 select_criteria = int(ui.spinBox_criteria.text())
                 floaters = bool(ui.radioButton_floaters.isChecked())
@@ -512,7 +513,6 @@ class Sensum:
                     rast2shp(output_shape[:-4]+'.TIF',output_shape)
                 if segm_mode_optimizer == 'Edison':
                     paramaters = {"spatialr": round(e[0]), "ranger": round(e[1]), "minsize": 0, "scale": 0}
-                    QMessageBox.information(None, "Info", paramaters)
                     segmentation_progress(input_image, output_shape, "edison", paramaters=paramaters,progress=dlgProgress.ui)
                     #edison_otb(input_image,"vector",output_shape,int(round(e[0])),int(round(e[1])),0,0)
                 if segm_mode_optimizer == 'Meanshift':
@@ -543,9 +543,9 @@ class Sensum:
                     rast2shp(output_shape[:-4]+'.TIF',output_shape)
             else:
                 if segm_mode == "Felzenszwalb":
-                    min_size = float(ui.lineEdit_felzenszwalb_minsize.text())
+                    min_size = int(ui.lineEdit_felzenszwalb_minsize.text())
                     scale = float(ui.lineEdit_felzenszwalb_scale.text())
-                    sigma = int(ui.lineEdit_felzenszwalb_sigma.text())
+                    sigma = float(ui.lineEdit_felzenszwalb_sigma.text())
                     input_band_list = read_image(input_image,0,0)
                     rows_fz,cols_fz,nbands_fz,geotransform_fz,projection_fz = read_image_parameters(input_image)
                     segments_fz = felzenszwalb_skimage(input_band_list, scale, sigma, min_size)
@@ -770,22 +770,26 @@ class Sensum:
             sat_folder = str(ui.lineEdit_folder.text())
             input_mask = parse_input(str(ui.comboBox_mask.currentText()))
             n_classes = str(ui.spinBox_nclass.text())
-            executeScript('/scripts/temporal.py" \"{}\" \"{}\" \"{}\"'.format(sat_folder,input_mask,n_classes),dlgProgress.ui)
+            indexes = [(ui.checkBox_1,"Index1"),(ui.checkBox_2,"Index2"),(ui.checkBox_3,"Index3"),(ui.checkBox_4,"Index4"),(ui.checkBox_5,"Index5"),(ui.checkBox_6,"Index6"),(ui.checkBox_7,"Index7"),(ui.checkBox_8,"Index8"),(ui.checkBox_9,"Index9"),(ui.checkBox_10,"Index10"),(ui.checkBox_11,"Index11"),(ui.checkBox_12,"Index12")]
+            indexes_list = " ".join([index for pushButton,index in indexes if pushButton.isChecked()])
+            executeScript('/scripts/temporal.py" \"{}\" \"{}\" \"{}\" -i {}'.format(sat_folder,input_mask,n_classes,indexes_list),dlgProgress.ui)
+            #executeScript('/scripts/temporal.py" \"{}\" \"{}\" \"{}\"'.format(sat_folder,input_mask,n_classes),dlgProgress.ui)
 
     def temporal_plot(self):
         # Create the dialog (after translation) and keep reference
         self.dlg_temporal_plot = TemporalPlotDialog()
+        QObject.connect(self.dlg_temporal_plot.ui.pushButton_plot, SIGNAL("clicked()"), self.temporale_plot_run)
         # show the dialog
         self.dlg_temporal_plot.show()
         # Run the dialog event loop
         result = self.dlg_temporal_plot.exec_()
-        # See if OK was pressed
-        if result == 1:
-            ui = self.dlg_temporal_plot.ui
-            sat_folder = str(ui.lineEdit_folder.text())
-            index = str(ui.comboBox_index.currentText())
-            executeScript('/scripts/temporal.py" \"{}\" \"{}\" \"{}\" -i {} --plot'.format(sat_folder,"input_mask",0,index))
-            QMessageBox.information(None, "Info", 'Done!')
+
+    def temporale_plot_run(self):
+        ui = self.dlg_temporal_plot.ui
+        sat_folder = str(ui.lineEdit_folder.text())
+        index = str(ui.comboBox_index.currentText())
+        input_mask = parse_input(str(ui.lineEdit_output.text()))
+        executeScript('/scripts/temporal.py" \"{}\" \"{}\" \"{}\" -i {} --plot'.format(sat_folder,input_mask,0,index))
 
     def change(self):
         # Create the dialog (after translation) and keep reference
@@ -803,4 +807,6 @@ class Sensum:
             extraction = ( "Dissimilarity" if str(ui.comboBox_extraction.currentText()) == "Dissimilarity-Based" else "PCA")
             field = str(ui.lineEdit_field.text())
             executeScript('/scripts/change_detection.py" \"{}\" \"{}\" \"{}\" '.format(sat_folder,extraction,field),dlgProgress.ui)
+            output_shape = sat_folder+"/change_detection.shp"
+            QgsMapLayerRegistry.instance().addMapLayer(QgsVectorLayer(output_shape,os.path.splitext(os.path.basename(output_shape))[0], "ogr"))
             QMessageBox.information(None, "Info", 'Done!')

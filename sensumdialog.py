@@ -138,10 +138,10 @@ class SegmentationDialog(QtGui.QDialog, Ui_Segmentation):
         self.ui.groupBox_options.show()
         self.options = [("Baatz",self.ui.frame_baatz),("Edison",self.ui.frame_edison),("Meanshift",self.ui.frame_meanshift),("Morphological Profiles",self.ui.frame_morphological),("Region Growing",self.ui.frame_region),("Watershed",self.ui.frame_watershed),("Felzenszwalb",self.ui.frame_felzenszwalb)]
         self.show_option()
-        #QObject.connect(self.ui.pushButton_input, SIGNAL("clicked()"), self.setPath_input)
         QObject.connect(self.ui.comboBox_input, SIGNAL("activated(const QString&)"), self.setPath_input)
         QObject.connect(self.ui.pushButton_output, SIGNAL("clicked()"), self.setPath_output)
-        QObject.connect(self.ui.pushButton_optimizer_input, SIGNAL("clicked()"), self.setPath_optimizer_input)
+        #QObject.connect(self.ui.pushButton_optimizer_input, SIGNAL("clicked()"), self.setPath_optimizer_input)
+        QObject.connect(self.ui.comboBox_optimizer_input, SIGNAL("activated(const QString&)"), self.setPath_optimizer_input)
         QObject.connect(self.ui.checkBox_optimizer, SIGNAL("stateChanged(int)"), self.select_optimizer_frame)
         QObject.connect(self.ui.comboBox_method, SIGNAL("currentIndexChanged(const QString&)"), self.show_option)
     def hide_options(self):
@@ -155,16 +155,12 @@ class SegmentationDialog(QtGui.QDialog, Ui_Segmentation):
                 if method == "Baatz" or method == "Region Growing":
                     self.ui.radioButton_floaters.show()
                     self.ui.radioButton_integers.show()
+                    self.ui.checkBox_optimizer.setCheckState(Qt.Unchecked)
+                    self.ui.checkBox_optimizer.hide()
                 else:
                     self.ui.radioButton_floaters.hide()
                     self.ui.radioButton_integers.hide()
-                '''
-                if seg_method == "Meanshift" or seg_method == "Morphological Profiles":
-                    self.ui.checkBox_optimizer.setChecked(0)
-                    self.ui.checkBox_optimizer.hide()
-                else:
                     self.ui.checkBox_optimizer.show()
-                '''
                 frame.show()
                 return
     def setPath_input(self):
@@ -178,10 +174,19 @@ class SegmentationDialog(QtGui.QDialog, Ui_Segmentation):
         fileName = QFileDialog.getSaveFileName(self,"Output Shapefile", "~/","ESRI Shapefile Files (*.shp)");
         if fileName !="":
             self.ui.lineEdit_output.setText(fileName)
+            '''
     def setPath_optimizer_input(self):
         fileName = QFileDialog.getOpenFileName(self,"Open Shapefile", "~/","ESRI Shapefile Files (*.shp)");
         if fileName !="":
             self.ui.lineEdit_optimizer_input.setText(fileName)
+            '''
+    def setPath_optimizer_input(self):
+         if self.ui.comboBox_optimizer_input.currentIndex() == 0:
+            fileName = QFileDialog.getOpenFileName(self,"Input Shapefile", "~/","ESRI Shapefile Files (*.shp)");
+            if fileName !="":
+                self.ui.comboBox_optimizer_input.setItemText(0, _translate("Pansharp", "[Choose from a file..] "+fileName, None))
+            else:
+                self.ui.comboBox_optimizer_input.setItemText(0, _translate("Pansharp", "[Choose from a file..]", None))
     def select_optimizer_frame(self):
         checked = bool(self.ui.checkBox_optimizer.isChecked())
         seg_method = str(self.ui.comboBox_method.currentText())
@@ -332,6 +337,12 @@ class StackSatelliteDialog(QtGui.QDialog, Ui_StackSatellite):
         QtGui.QDialog.__init__(self)
         self.ui = Ui_StackSatellite()
         self.ui.setupUi(self)
+        self.ui.lineEdit_reference_directory.setEnabled(0)
+        self.ui.pushButton_reference_directory.setEnabled(0)
+        self.ui.lineEdit_reference_directory.hide()
+        self.ui.pushButton_reference_directory.hide()
+        self.ui.pushButton_reference_directory.hide()
+        self.ui.checkBox_reference_diretory.hide()
         QObject.connect(self.ui.pushButton_satellite_folder, SIGNAL("clicked()"), self.setPath_satellite_folder)
         QObject.connect(self.ui.comboBox_input_shapefile, SIGNAL("activated(const QString&)"), self.setPath_inputshapefile)
         QObject.connect(self.ui.pushButton_reference_directory, SIGNAL("clicked()"), self.setPath_reference_directory)
@@ -424,6 +435,12 @@ class TemporalPlotDialog(QtGui.QDialog, Ui_TemporalGraph):
         self.ui = Ui_TemporalGraph()
         self.ui.setupUi(self)
         QObject.connect(self.ui.pushButton_folder, SIGNAL("clicked()"), self.setPath_input_folder)
+        QObject.connect(self.ui.pushButton_output, SIGNAL("clicked()"), self.setPath_output)
+
+    def setPath_output(self):
+        fileName = QFileDialog.getSaveFileName(self,"Output Image", "~/","Image Files (*.png)");
+        if fileName !="":
+            self.ui.lineEdit_output.setText(fileName)
 
     def setPath_input_folder(self):
         fileName = QFileDialog.getExistingDirectory(self,"Select Folder", "~");

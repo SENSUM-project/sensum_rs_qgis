@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'uis/ui_stacksatellite.ui'
+# Form implementation generated from reading ui file 'ui_stacksatellite.ui'
 #
-# Created: Tue Sep  2 14:07:46 2014
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Fri Sep 12 15:31:06 2014
+#      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -47,8 +47,9 @@ class Ui_StackSatellite(object):
         self.checkBox_pca_classification.setGeometry(QtCore.QRect(10, 80, 131, 20))
         self.checkBox_pca_classification.setObjectName(_fromUtf8("checkBox_pca_classification"))
         self.checkBox_reference_diretory = QtGui.QCheckBox(StackSatellite)
+        self.checkBox_reference_diretory.setEnabled(True)
         self.checkBox_reference_diretory.setGeometry(QtCore.QRect(40, 300, 141, 20))
-        self.checkBox_reference_diretory.setChecked(True)
+        self.checkBox_reference_diretory.setChecked(False)
         self.checkBox_reference_diretory.setObjectName(_fromUtf8("checkBox_reference_diretory"))
         self.groupBox_options = QtGui.QGroupBox(StackSatellite)
         self.groupBox_options.setGeometry(QtCore.QRect(330, 250, 111, 111))

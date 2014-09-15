@@ -73,18 +73,20 @@ def test_features(input_file,segmentation_shape,output_shape,indexes_list_spectr
     #input_list_tf = read_image(input_file,np.uint8,0) #different data type necessary for texture features
     rows,cols,nbands,geo_transform,projection = read_image_parameters(input_file)
     input_list_tf = linear_quantization(input_list,64)
+    print indexes_list_spectral
     #Conversion of the provided segmentation shapefile to raster for further processing
     shp2rast(segmentation_shape, segmentation_shape[:-4]+'.TIF', rows, cols, field)
     seg_list = read_image(segmentation_shape[:-4]+'.TIF',np.int32,0)
     if (('ndvi_mean' in indexes_list_spectral) or ('ndvi_std' in indexes_list_spectral)) and nbands > 3:
-        ndvi = (input_list[3]-input_list[2]) / (input_list[3]+input_list[2]+0.000001)
+        ndvi = (input_list[3].astype(float)-input_list[2].astype(float)) / (input_list[3].astype(float)+input_list[2].astype(float))
         ndvi_comp = [s for s in indexes_list_spectral if 'ndvi_mean' in s or 'ndvi_std' in s]
     if 'weigh_br' in indexes_list_spectral:
         band_sum = np.zeros((rows,cols))
         for b in range(0,nbands):
             band_sum = band_sum + input_list[b]
         wb_comp = [s for s in indexes_list_spectral if 'weigh_br' in s]
-    ind_list_spectral = [s for s in indexes_list_spectral if 'ndvi_mean' not in s or 'ndvi_std' not in s or 'weigh_br' not in s]
+    ind_list_spectral = [s for s in indexes_list_spectral if 'ndvi_mean' not in s and 'ndvi_std' not in s and 'weigh_br' not in s]
+
     #print ind_list_spectral
     #read input shapefile
     driver_shape=osgeo.ogr.GetDriverByName('ESRI Shapefile')
@@ -105,13 +107,7 @@ def test_features(input_file,segmentation_shape,output_shape,indexes_list_spectr
         for si in range(0,len(ind_list_spectral)):
             field_def = osgeo.ogr.FieldDefn(ind_list_spectral[si] + str(b), osgeo.ogr.OFTReal)
             outlayer.CreateField(field_def)
-        if ndvi_comp:
-            for nd in range(0,len(ndvi_comp)):
-                field_def = osgeo.ogr.FieldDefn(ndvi_comp[nd] + str(b), osgeo.ogr.OFTReal)
-                outlayer.CreateField(field_def)
-        if wb_comp:
-            field_def = osgeo.ogr.FieldDefn(wb_comp[0] + str(b), osgeo.ogr.OFTReal)
-            outlayer.CreateField(field_def)
+            
         for sp in range(0,len(indexes_list_texture)):
             if len(indexes_list_texture[sp]+str(b)) > 10:
                 cut = len(indexes_list_texture[sp]+str(b)) - 10 
@@ -119,12 +115,20 @@ def test_features(input_file,segmentation_shape,output_shape,indexes_list_spectr
             else:
                 field_def = osgeo.ogr.FieldDefn(indexes_list_texture[sp] + str(b), osgeo.ogr.OFTReal)
             outlayer.CreateField(field_def)
+        
+    if ndvi_comp:
+        for nd in range(0,len(ndvi_comp)):
+            field_def = osgeo.ogr.FieldDefn(ndvi_comp[nd], osgeo.ogr.OFTReal)
+            outlayer.CreateField(field_def)
+    if wb_comp:
+        field_def = osgeo.ogr.FieldDefn(wb_comp[0], osgeo.ogr.OFTReal)
+        outlayer.CreateField(field_def)
           
     feature_def = outlayer.GetLayerDefn()
     n_feature = inlayer.GetFeatureCount()
     i = 1
     #loop through segments
-    status = Bar(n_feature, "Testing Features.")
+    status = Bar(n_feature, "Computing Features...")
     while infeature:
         status(i+1)
         i = i+1
@@ -137,24 +141,31 @@ def test_features(input_file,segmentation_shape,output_shape,indexes_list_spectr
         #field_names = [layer_defn.GetFieldDefn(i).GetName() for i in range(layer_defn.GetFieldCount())]
         dn = infeature.GetField(field)
         outfeature.SetField(field,dn)
-        for b in range(1,nbands+1):
-            spectral_list = spectral_segments(input_list[b-1], dn, seg_list[0], ind_list_spectral, nbands)
-            for si in range(0,len(indexes_list_spectral)):
-                outfeature.SetField(indexes_list_spectral[si] + str(b),spectral_list[si])
-            texture_list = texture_segments(input_list_tf[b-1],dn,seg_list[0],indexes_list_texture)
-            for sp in range(0,len(indexes_list_texture)):
-                if len(indexes_list_texture[sp]+str(b)) > 10:
-                    cut = len(indexes_list_texture[sp]+str(b)) - 10
-                    outfeature.SetField(indexes_list_texture[sp][:-cut] + str(b),texture_list[sp])
-                else:
-                    outfeature.SetField(indexes_list_texture[sp] + str(b),texture_list[sp])
-            if ndvi_comp:
-                ndvi_list = spectral_segments(ndvi, dn, seg_list[0], ndvi_comp, nbands)
+        if len(ind_list_spectral) > 0 or len(indexes_list_texture)>0:
+            for b in range(1,nbands+1):
+                if len(ind_list_spectral) > 0:
+                    spectral_list = spectral_segments(input_list[b-1], dn, seg_list[0], ind_list_spectral, nbands)
+                    for si in range(0,len(ind_list_spectral)):
+                        outfeature.SetField(ind_list_spectral[si] + str(b),float(spectral_list[si]))
+            
+                if len(indexes_list_texture)>0:
+                    texture_list = texture_segments(input_list_tf[b-1],dn,seg_list[0],indexes_list_texture)
+                    for sp in range(0,len(indexes_list_texture)):
+                        if len(indexes_list_texture[sp]+str(b)) > 10:
+                            cut = len(indexes_list_texture[sp]+str(b)) - 10
+                            outfeature.SetField(indexes_list_texture[sp][:-cut] + str(b),float(texture_list[sp]))
+                        else:
+                            outfeature.SetField(indexes_list_texture[sp] + str(b),float(texture_list[sp]))
+        if ndvi_comp:
+            ndvi_list = spectral_segments(ndvi, dn, seg_list[0], ndvi_comp, nbands)
+            if len(ndvi_list) > 0:
                 for nd in range(0,len(ndvi_comp)):
-                    outfeature.SetField(ndvi_comp[nd] + str(b),ndvi_list[nd])
-            if wb_comp:
-                wb = spectral_segments(band_sum, dn, seg_list[0], wb_comp, nbands)
-                outfeature.SetField(wb_comp[0] + str(b),wb[0])
+                    outfeature.SetField(ndvi_comp[nd],ndvi_list[nd])
+        if wb_comp:
+            wb = spectral_segments(band_sum, dn, seg_list[0], wb_comp, nbands)
+            if len(wb) > 0:
+                outfeature.SetField(wb_comp[0],wb[0])
+
         outlayer.CreateFeature(outfeature)
         outfeature.Destroy()
         infeature = inlayer.GetNextFeature()
@@ -187,24 +198,26 @@ class Task(object):
 
     def __call__(self):
         result = []
-        for b in range(1,self.nbands+1):
-            spectral_list = spectral_segments(self.input_list[b-1], self.dn, self.seg_list[0], self.ind_list_spectral, self.nbands)
-            for si in range(0,len(self.indexes_list_spectral)):
-                result.append([self.indexes_list_spectral[si] + str(b),spectral_list[si]])
-            
-            texture_list = texture_segments(self.input_list_tf[b-1],self.dn,self.seg_list[0],self.indexes_list_texture)
-            for sp in range(0,len(self.indexes_list_texture)):
-                if len(self.indexes_list_texture[sp]+str(b)) > 10:
-                    result.append([self.indexes_list_texture[sp][:-self.cut] + str(b),texture_list[sp]])
-                else:
-                    result.append([self.indexes_list_texture[sp] + str(b),texture_list[sp]])
+        if len(self.ind_list_specral) > 0 or len(self.indexes_list_texture)>0:
+            for b in range(1,self.nbands+1):
+                if len(self.ind_list_specral) > 0:
+                    spectral_list = spectral_segments(self.input_list[b-1], self.dn, self.seg_list[0], self.ind_list_spectral, self.nbands)
+                    for si in range(0,len(self.indexes_list_spectral)):
+                        result.append([self.indexes_list_spectral[si] + str(b),spectral_list[si]])
+                if len(self.indexes_list_texture)>0:
+                    texture_list = texture_segments(self.input_list_tf[b-1],self.dn,self.seg_list[0],self.indexes_list_texture)
+                    for sp in range(0,len(self.indexes_list_texture)):
+                        if len(self.indexes_list_texture[sp]+str(b)) > 10:
+                            result.append([self.indexes_list_texture[sp][:-self.cut] + str(b),texture_list[sp]])
+                        else:
+                            result.append([self.indexes_list_texture[sp] + str(b),texture_list[sp]])
             if self.ndvi_comp:
                 ndvi_list = spectral_segments(self.input_list[b-1], self.dn, self.seg_list[0], self.ndvi_comp, self.nbands)
                 for nd in range(0,len(self.ndvi_comp)):
-                    result.append([self.ndvi_comp[nd] + str(b),ndvi_list[nd]])
+                    result.append([self.ndvi_comp[nd],ndvi_list[nd]])
             if self.wb_comp:
                 wb = spectral_segments(self.input_list[b-1], self.dn, self.seg_list[0], self.wb_comp, self.nbands)
-                result.append([self.wb_comp[0] + str(b),wb[0]])
+                result.append([self.wb_comp[0],wb[0]])
         #print str(self.index+1) + ' of ' + str(self.n_feature)
 #        print result
         return result,self.index
@@ -225,7 +238,7 @@ def test_features_multi(input_file,segmentation_shape,output_shape,indexes_list_
     shp2rast(segmentation_shape, segmentation_shape[:-4]+'.TIF', rows, cols, field)
     seg_list = read_image(segmentation_shape[:-4]+'.TIF',np.int32,0)
     if (('ndvi_mean' in indexes_list_spectral) or ('ndvi_std' in indexes_list_spectral)) and nbands > 3:
-        ndvi = (input_list[3]-input_list[2]) / (input_list[3]+input_list[2]+0.000001)
+        ndvi = (input_list[3].astype(float)-input_list[2].astype(float)) / (input_list[3].astype(float)+input_list[2].astype(float))
         ndvi_comp = [s for s in indexes_list_spectral if 'ndvi_mean' in s or 'ndvi_std' in s]
     if 'weigh_br' in indexes_list_spectral:
         band_sum = np.zeros((rows,cols))
@@ -251,13 +264,7 @@ def test_features_multi(input_file,segmentation_shape,output_shape,indexes_list_
         for si in range(0,len(ind_list_spectral)):
             field_def = osgeo.ogr.FieldDefn(ind_list_spectral[si] + str(b), osgeo.ogr.OFTReal)
             outlayer.CreateField(field_def)
-        if ndvi_comp:
-            for nd in range(0,len(ndvi_comp)):
-                field_def = osgeo.ogr.FieldDefn(ndvi_comp[nd] + str(b), osgeo.ogr.OFTReal)
-                outlayer.CreateField(field_def)
-        if wb_comp:
-            field_def = osgeo.ogr.FieldDefn(wb_comp[0] + str(b), osgeo.ogr.OFTReal)
-            outlayer.CreateField(field_def)
+            
         for sp in range(0,len(indexes_list_texture)):
             if len(indexes_list_texture[sp]+str(b)) > 10:
                 cut = len(indexes_list_texture[sp]+str(b)) - 10 
@@ -265,6 +272,15 @@ def test_features_multi(input_file,segmentation_shape,output_shape,indexes_list_
             else:
                 field_def = osgeo.ogr.FieldDefn(indexes_list_texture[sp] + str(b), osgeo.ogr.OFTReal)
             outlayer.CreateField(field_def)
+        
+    if ndvi_comp:
+        for nd in range(0,len(ndvi_comp)):
+            field_def = osgeo.ogr.FieldDefn(ndvi_comp[nd], osgeo.ogr.OFTReal)
+            outlayer.CreateField(field_def)
+    if wb_comp:
+        field_def = osgeo.ogr.FieldDefn(wb_comp[0], osgeo.ogr.OFTReal)
+        outlayer.CreateField(field_def)
+
     feature_def = outlayer.GetLayerDefn()
     n_feature = inlayer.GetFeatureCount()
     n_division = 1000
@@ -306,7 +322,7 @@ def test_features_multi(input_file,segmentation_shape,output_shape,indexes_list_
             index = matrix[i][0] 
             result = matrix[i][1]
             for n in range(len(result)):
-                outfeature.SetField(result[n][0],result[n][1])
+                outfeature.SetField(result[n][0],float(result[n][1]))
             outlayer.CreateFeature(outfeature)
             outfeature.Destroy()
         del matrix

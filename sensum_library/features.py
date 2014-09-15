@@ -288,36 +288,38 @@ def spectral_segments(input_band,dn_value,input_band_segmentation,indexes_list,b
     weigh_br = 0.0
     
     mask = np.equal(input_band_segmentation,dn_value)
-    seg_pos = np.where(input_band_segmentation==dn_value)
-    mat_pos = np.zeros(len(seg_pos[0]))
-    if len(seg_pos[0]!=0):
-        for l in range(0,len(seg_pos[0])):
-            mat_pos[l] = input_band[seg_pos[0][l]][seg_pos[1][l]]
-        for indx in range(0,len(indexes_list)):
-            if indexes_list[indx] == 'mean' or indexes_list[indx] == 'ndvi_mean':
-                mean = mat_pos.mean()
-                output_list.append(mean)
-            if indexes_list[indx] == 'std' or indexes_list[indx] == 'ndvi_std':
-                std = mat_pos.std()
-                output_list.append(std)
-            if indexes_list[indx] == 'mode':
-                mode_ar = scipy.stats.mode(mat_pos)
-                mode = mode_ar[0][0]
-                output_list.append(mode)
-            if indexes_list[indx] == 'max_br':
-                maxbr = np.amax(mat_pos)
-                output_list.append(maxbr)
-            if indexes_list[indx] == 'min_br':
-                minbr = np.amin(mat_pos)
-                output_list.append(minbr)
-            if indexes_list[indx] == 'weigh_br':
-                npixels = np.sum(mask)
-                outmask_band_sum = np.choose(mask,(0,input_band)) 
-                values = np.sum(outmask_band_sum)
-                nbp = bands_number*npixels
-                div = 1.0/nbp
-                weigh_br = div*values
-                output_list.append(weigh_br)
+    data = np.extract(mask,input_band)
+    mat_pos = data.flatten()
+    #seg_pos = np.where(input_band_segmentation==dn_value)
+    #mat_pos = np.zeros(len(seg_pos[0]))
+    #if len(seg_pos[0]!=0):
+        #for l in range(0,len(seg_pos[0])):
+         #   mat_pos[l] = input_band[seg_pos[0][l]][seg_pos[1][l]]
+    for indx in range(0,len(indexes_list)):
+        if indexes_list[indx] == 'mean' or indexes_list[indx] == 'ndvi_mean':
+            mean = mat_pos.mean()
+            output_list.append(mean)
+        if indexes_list[indx] == 'std' or indexes_list[indx] == 'ndvi_std':
+            std = mat_pos.std()
+            output_list.append(std)
+        if indexes_list[indx] == 'mode':
+            mode_ar = scipy.stats.mode(mat_pos)
+            mode = mode_ar[0][0]
+            output_list.append(mode)
+        if indexes_list[indx] == 'max_br':
+            maxbr = np.amax(mat_pos)
+            output_list.append(maxbr)
+        if indexes_list[indx] == 'min_br':
+            minbr = np.amin(mat_pos)
+            output_list.append(minbr)
+        if indexes_list[indx] == 'weigh_br':
+            npixels = np.sum(mask)
+            outmask_band_sum = np.choose(mask,(0,input_band)) 
+            values = np.sum(outmask_band_sum)
+            nbp = bands_number*npixels
+            div = 1.0/nbp
+            weigh_br = div*values
+            output_list.append(weigh_br)
     
     mat_pos=None
     seg_pos=None

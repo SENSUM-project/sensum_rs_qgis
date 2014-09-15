@@ -305,6 +305,9 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
     target_images = os.listdir(target_folder)
     print target_images
     target_file = [s for s in target_images if "B1.TIF" in s or "B1.tif" in s and "aux.xml" not in s]
+    print "\n\n\n\n\n"
+    print  target_file[0]
+    print "PROVA"
     image_target = target_folder + separator + target_file[0]
     rows_target_orig,cols_target_orig,nbands_target_orig,geotransform_target_orig,projection_target_orig = read_image_parameters(image_target)
     target_new_resolution = geotransform_target_orig[1] / float(2)
@@ -389,7 +392,7 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
 
             kp_ref,kp_target,ext_points = EUC_SURF(band_list_ref[0],band_list_target[0],output_as_array=True)
             ext_points = slope_filter(ext_points)
-            status = Bar(ext_points, "SURF")
+            status = Bar(len(ext_points), "SURF")
             x_shift_surf, y_shift_surf = 0,0
             if len(ext_points) > 1:
                 for p in range(0,len(ext_points)):

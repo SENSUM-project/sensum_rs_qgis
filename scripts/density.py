@@ -81,7 +81,8 @@ def density(buildingShape,radius,outputShape):
         spatialFeature = spatialLayer.GetNextFeature()
         sum_area = 0.0
         while spatialFeature:
-            area_ft = spatialFeature.GetField("Area")
+            #area_ft = spatialFeature.GetField("Area")
+            area_ft = spatialFeature.GetGeometryRef().Area()
             sum_area = area_ft + sum_area
             spatialFeature = spatialLayer.GetNextFeature()
         spatialLayerFeatureCount = spatialLayer.GetFeatureCount() -1 #(-1) for remove itself
