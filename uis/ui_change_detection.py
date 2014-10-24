@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'uis/ui_change_detection.ui'
+# Form implementation generated from reading ui file 'ui_change_detection.ui'
 #
-# Created: Wed Sep  3 17:20:58 2014
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Thu Oct 16 22:51:43 2014
+#      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
 

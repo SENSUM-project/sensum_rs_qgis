@@ -286,6 +286,19 @@ class Sensum:
         self.iface.addPluginToMenu(u"&SENSUM", self.action_density)
 
         ######################
+        ## REGULARITY
+        ######################
+        # Create action that will start plugin configuration
+        self.action_regularity = QAction(
+            QIcon(":/plugins/sensum_plugin/icons/regularity.png"),
+            u"regularity", self.iface.mainWindow())
+        # connect the action to the run method
+        self.action_regularity.triggered.connect(self.regularity)
+        # Add toolbar button and menu item
+        self.toolBar.addAction(self.action_regularity)
+        self.iface.addPluginToMenu(u"&SENSUM", self.action_regularity)
+
+        ######################
         ## CHANGE DETECTION
         ######################
         # Create action that will start plugin configuration
@@ -310,6 +323,19 @@ class Sensum:
         # Add toolbar button and menu item
         self.toolBar.addAction(self.action_temporal)
         self.iface.addPluginToMenu(u"&SENSUM", self.action_temporal)
+
+        ######################
+        ## CHANGE DETECTION DILKUSHI
+        ######################
+        # Create action that will start plugin configuration
+        self.action_change_dilkushi = QAction(
+            QIcon(":/plugins/sensum_plugin/icons/change_dilkushi.png"),
+            u"Change Dilkushi", self.iface.mainWindow())
+        # connect the action to the run method
+        self.action_change_dilkushi.triggered.connect(self.change_dilkushi)
+        # Add toolbar button and menu item
+        self.toolBar.addAction(self.action_change_dilkushi)
+        self.iface.addPluginToMenu(u"&SENSUM", self.action_change_dilkushi)
 
     def unload(self):
         self.iface.removePluginMenu(u"&SENSUM", self.action_pansharp)
@@ -725,7 +751,27 @@ class Sensum:
             input_shapefile = ("--restrict_to_city "+string_qmark(parse_input(str(ui.comboBox_input_shapefile.currentText()))) if bool(ui.checkBox_restrict_to_city.isChecked()) else "")
             options = [(ui.checkBox_coregistration , "--coregistration"),(ui.checkBox_builtup_index, "--builtup_index_method" ),(ui.checkBox_pca_index, "--pca_index_method"),(ui.checkBox_pca_classification , "--pca_classification_method"),(ui.checkBox_dissimilarity, "--dissimilarity_method" ),(ui.checkBox_pca_ob, "--pca_ob_method" )]
             options = " ".join([index for pushButton,index in options if pushButton.isChecked()])
-            executeScript('/scripts/stacksatellite.py" \"{}\" \"{}\" \"{}\" {} {} {}'.format(sat_folder,segmentation_name,n_classes,ref_dir,input_shapefile,options),dlgProgress.ui)
+            segmentation_paramaters = list()
+            if segmentation_name == "Edison":
+                segmentation_paramaters.append(int(ui.lineEdit_edison_radius.text()))
+                segmentation_paramaters.append(int(ui.lineEdit_edison_range.text()))
+                segmentation_paramaters.append(int(ui.lineEdit_edison_size.text()))
+                segmentation_paramaters.append(int(ui.lineEdit_edison_scale.text()))
+            elif segmentation_name == "Meanshift":
+                segmentation_paramaters.append(int(ui.lineEdit_meanshift_radius.text()))
+                segmentation_paramaters.append(float(ui.lineEdit_meanshift_range.text()))
+                segmentation_paramaters.append(float(ui.lineEdit_meanshift_threshold.text()))
+                segmentation_paramaters.append(int(ui.lineEdit_meanshift_iterations.text()))
+                segmentation_paramaters.append(int(ui.lineEdit_meanshift_minsize.text()))
+            string_segmentation_paramaters = " ".join([str(paramater) for paramater in segmentation_paramaters])
+            executeScript('/scripts/stacksatellite.py" \"{}\" \"{}\" \"{}\" {} {} {} --segmentation_paramaters {}'.format(
+                sat_folder,
+                segmentation_name,
+                n_classes,
+                ref_dir,
+                input_shapefile,
+                options,
+                string_segmentation_paramaters),dlgProgress.ui)
             QMessageBox.information(None, "Info", 'Done!')
 
     def density(self):
@@ -809,4 +855,59 @@ class Sensum:
             executeScript('/scripts/change_detection.py" \"{}\" \"{}\" \"{}\" '.format(sat_folder,extraction,field),dlgProgress.ui)
             output_shape = sat_folder+"/change_detection.shp"
             QgsMapLayerRegistry.instance().addMapLayer(QgsVectorLayer(output_shape,os.path.splitext(os.path.basename(output_shape))[0], "ogr"))
+            QMessageBox.information(None, "Info", 'Done!')
+
+    def change_dilkushi(self):
+        # Create the dialog (after translation) and keep reference
+        self.dlg_change_dilkushi = ChangeDetectionDilkushiDialog()
+        self.changeActive(self.dlg_change_dilkushi.ui.comboBox_multiband_pre)
+        self.changeActive(self.dlg_change_dilkushi.ui.comboBox_panchromatic_post)
+        self.changeActive(self.dlg_change_dilkushi.ui.comboBox_multiband_post)
+        self.changeActive(self.dlg_change_dilkushi.ui.comboBox_panchromatic_post)
+        self.changeActive(self.dlg_change_dilkushi.ui.comboBox_clip_shapefile)
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_change_dilkushi.ui.comboBox_multiband_pre))
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_change_dilkushi.ui.comboBox_panchromatic_pre))
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_change_dilkushi.ui.comboBox_multiband_post))
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_change_dilkushi.ui.comboBox_panchromatic_post))
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_change_dilkushi.ui.comboBox_clip_shapefile))
+        dlgProgress = ProgressDialog()
+        # show the dialog
+        self.dlg_change_dilkushi.show()
+        # Run the dialog event loop
+        result = self.dlg_change_dilkushi.exec_()
+        if result == 1:
+            ui = self.dlg_change_dilkushi.ui
+            dlgProgress.show()
+            multiband_image_pre = parse_input(str(ui.comboBox_multiband_pre.currentText()))
+            panchromatic_image_pre = parse_input(str(ui.comboBox_panchromatic_pre.currentText()))
+            multiband_image_post = parse_input(str(ui.comboBox_multiband_post.currentText()))
+            panchromatic_image_post = parse_input(str(ui.comboBox_panchromatic_post.currentText()))
+            clip_shapefile = parse_input(str(ui.comboBox_clip_shapefile.currentText()))
+            executeScript('/scripts/change_detection_dilkushi.py" \"{}\" \"{}\" \"{}\" \"{}\" \"{}\"" '.format(
+                multiband_image_pre,
+                panchromatic_image_pre,
+                multiband_image_post,
+                panchromatic_image_post,
+                clip_shapefile),dlgProgress.ui)
+            QMessageBox.information(None, "Info", 'Done!')
+
+    def regularity(self):
+        # Create the dialog (after translation) and keep reference
+        self.dlg_regularity = RegularityDialog()
+        self.changeActive(self.dlg_regularity.ui.comboBox_building_shape)
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_regularity.ui.comboBox_building_shape))
+        dlgProgress = ProgressDialog()
+        # show the dialog
+        self.dlg_regularity.show()
+        # Run the dialog event loop
+        result = self.dlg_regularity.exec_()
+        # See if OK was pressed
+        if result == 1:
+            ui = self.dlg_regularity.ui
+            dlgProgress.show()
+            buildingShape = parse_input(str(ui.comboBox_building_shape.currentText()))
+            outputShape = str(ui.lineEdit_output_shapefile.text())
+            if os.path.isfile(outputShape): os.remove(outputShape)
+            executeScript('/scripts/regularity.py" \"{}\" \"{}\"'.format(buildingShape,outputShape),dlgProgress.ui)
+            QgsMapLayerRegistry.instance().addMapLayer(QgsVectorLayer(outputShape,os.path.splitext(os.path.basename(outputShape))[0], "ogr"))
             QMessageBox.information(None, "Info", 'Done!')

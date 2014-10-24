@@ -11,5 +11,7 @@
         <file>icons/density.png</file>
         <file>icons/temporal.png</file>
         <file>icons/change.png</file>
+        <file>icons/change_dilkushi.png</file>
+        <file>icons/regularity.png</file>
     </qresource>
 </RCC>

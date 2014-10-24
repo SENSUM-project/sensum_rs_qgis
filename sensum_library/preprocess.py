@@ -58,7 +58,7 @@ else:
     separator = '\\'
 
 
-def clip_rectangular(input_raster,data_type,input_shape,output_raster,mask=False):
+def clip_rectangular(input_raster,data_type,input_shape,output_raster,mask=False,resize=0):
     
     '''Clip a raster with a rectangular shape based on the provided polygon
     
@@ -151,13 +151,14 @@ def clip_rectangular(input_raster,data_type,input_shape,output_raster,mask=False
     if x_max > geoMatrix[0]+cols*geoMatrix[1]: x_max = geoMatrix[0]+cols*geoMatrix[1]
     if y_max > geoMatrix[3]: y_max = geoMatrix[3]
 
+    x_min = x_min - resize
+    y_max = y_max + resize
     lon_min = x_min
     lat_min = y_max
 
 
     x_min, y_max = world2pixel(geoMatrix, x_min, y_max)
     x_max, y_min = world2pixel(geoMatrix, x_max, y_min)
-
     #compute the new starting coordinates
     #lon_min = float(x_min*geoMatrix[1]+geoMatrix[0]) 
     #lat_min = float(geoMatrix[3]+y_min*geoMatrix[5])
@@ -165,8 +166,8 @@ def clip_rectangular(input_raster,data_type,input_shape,output_raster,mask=False
     geotransform = [lon_min,geoMatrix[1],0.0,lat_min,0.0,geoMatrix[5]]
     print x_max,x_min
     print y_max,y_min
-    cols_out = x_max-x_min
-    rows_out = y_min-y_max
+    cols_out = x_max-x_min + resize
+    rows_out = y_min-y_max + resize
     
     gdal_data_type = data_type2gdal_data_type(data_type)
     if mask == True:

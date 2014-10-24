@@ -7,6 +7,7 @@ import osgeo.gdal, gdal
 import osgeo.ogr, ogr
 from osgeo.gdalconst import *
 import numpy as np
+import numpy
 import math
 import argparse
 import warnings
@@ -23,88 +24,160 @@ from sensum_library.segmentation_opt import *
 from sensum_library.features import *
 from sensum_library.secondary_indicators import *
 
+RSZ = 10
+
 def main():
-    multiband_pre = "/home/gale/Test_HR_change_detection/Muzaffarabad_QB_pre_post_R1_RAW/052006380010_01-20040813/052006380010_01_P001_MUL/04AUG13055047-M2AS-052006380010_01_P001.TIF"
-    panchromatic_pre = "/home/gale/Test_HR_change_detection/Muzaffarabad_QB_pre_post_R1_RAW/052006380010_01-20040813/052006380010_01_P001_PAN/04AUG13055047-P2AS-052006380010_01_P001.TIF"
-    multiband_post = "/home/gale/Test_HR_change_detection/Muzaffarabad_QB_pre_post_R1_RAW/052006380030_01-20051022/052006380030_01_P001_MUL/05OCT22060051-M2AS-052006380030_01_P001.TIF"
-    panchromatic_post = "/home/gale/Test_HR_change_detection/Muzaffarabad_QB_pre_post_R1_RAW/052006380030_01-20051022/052006380030_01_P001_PAN/05OCT22060051-P2AS-052006380030_01_P001.TIF"
-    clip_shape = "/home/gale/Test_HR_change_detection/Building_set1.shp"
+    arg = args()
+    multiband_pre = str(arg.multiband_pre)
+    panchromatic_pre = str(arg.panchromatic_pre)
+    multiband_post = str(arg.multiband_post)
+    panchromatic_post = str(arg.panchromatic_post)
+    clip_shape = str(arg.clip_shape)
     change_detection(multiband_pre,panchromatic_pre,multiband_post,panchromatic_post,clip_shape)
 
+
+def args():
+    parser = argparse.ArgumentParser(description='Change Detection')
+    parser.add_argument("multiband_pre", help="????")
+    parser.add_argument("panchromatic_pre", help="????")
+    parser.add_argument("multiband_post", help="????")
+    parser.add_argument("panchromatic_post", help="????")
+    parser.add_argument("clip_shape", help="????")
+    args = parser.parse_args()
+    return args
+
+'''
+def main():
+    multiband_pre = "C:/Users/DanielAurelio/Desktop/Work/Test_HR_change_detection/Muzaffarabad_QB_pre_post_R1_RAW/052006380010_01-20040813/052006380010_01_P001_MUL/04AUG13055047-M2AS-052006380010_01_P001.TIF"
+    panchromatic_pre = "C:/Users/DanielAurelio/Desktop/Work/Test_HR_change_detection/Muzaffarabad_QB_pre_post_R1_RAW/052006380010_01-20040813/052006380010_01_P001_PAN/04AUG13055047-P2AS-052006380010_01_P001.TIF"
+    multiband_post = "C:/Users/DanielAurelio/Desktop/Work/Test_HR_change_detection/Muzaffarabad_QB_pre_post_R1_RAW/052006380030_01-20051022/052006380030_01_P001_MUL/05OCT22060051-M2AS-052006380030_01_P001.TIF"
+    panchromatic_post = "C:/Users/DanielAurelio/Desktop/Work/Test_HR_change_detection/Muzaffarabad_QB_pre_post_R1_RAW/052006380030_01-20051022/052006380030_01_P001_PAN/05OCT22060051-P2AS-052006380030_01_P001.TIF"
+    clip_shape = "C:/Users/DanielAurelio/Desktop/Work/Test_HR_change_detection/Building_set1.shp"
+    change_detection(multiband_pre,panchromatic_pre,multiband_post,panchromatic_post,clip_shape)
+'''
+
 def change_detection(multiband_pre,panchromatic_pre,multiband_post,panchromatic_post,clip_shape):
-    pansharp_pre = os.path.splitext(multiband_pre)[0]+'_pansharp.tif'
-    pansharp_post = os.path.splitext(multiband_post)[0]+'_pansharp.tif'
-    pansharp_pre_clipped = os.path.splitext(multiband_pre)[0]+'_pansharp_clipped.tif'
-    pansharp_post_clipped = os.path.splitext(multiband_post)[0]+'_pansharp_clipped.tif'
-    panchromatic_pre_clipped = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_clipped.tif'
-    panchromatic_post_clipped = os.path.splitext(panchromatic_post)[0]+'_panchromatic_clipped.tif'
-    panchromatic_roughness_pre = os.path.splitext(multiband_pre)[0]+'_roughness.tif'
-    panchromatic_roughness_post = os.path.splitext(multiband_post)[0]+'_roughness.tif'
-    pansharp_roughness_pre = os.path.splitext(pansharp_pre)[0]+'_roughness.tif'
-    pansharp_roughness_post = os.path.splitext(pansharp_post)[0]+'_roughness.tif'
-    panchromatic_pre_buffer = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_buffer.tif'
-    panchromatic_post_buffer = os.path.splitext(panchromatic_post)[0]+'_panchromatic_buffer.tif'
-    panchromatic_pre_canny = os.path.splitext(panchromatic_pre)[0]+'_canny.tif'
-    panchromatic_post_canny = os.path.splitext(panchromatic_post)[0]+'_canny.tif'
-    panchromatic_pre_clipped_slope = os.path.splitext(panchromatic_pre)[0]+'_slope.tif'
-    panchromatic_post_clipped_slope = os.path.splitext(panchromatic_post)[0]+'_slope.tif'
-    '''
-    #1
+    pansharp_pre = os.path.splitext(multiband_pre)[0]+'_pansharp_pre.tif'
+    pansharp_post = os.path.splitext(multiband_post)[0]+'_pansharp_post.tif'
+    panchromatic_pre_clipped = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_pre_clipped.tif'
+    panchromatic_post_clipped = os.path.splitext(panchromatic_post)[0]+'_panchromatic_post_clipped.tif'
+    panchromatic_ncdi = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_ncdi.tif'
+    panchromatic_ncdi_clipped = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_ncdi_clipped.tif'
+    panchromatic_ncdi_roughness = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_ncdi_roughness.tif'
+    pansharp_pre_clipped = os.path.splitext(pansharp_pre)[0]+'_pre_clipped.tif'
+    pansharp_post_clipped = os.path.splitext(pansharp_post)[0]+'_post_clipped.tif'
+    panchromatic_pre_clipped_slope = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_pre_slope.tif'
+    panchromatic_post_clipped_slope = os.path.splitext(panchromatic_post)[0]+'_panchromatic_post_slope.tif'
+    multiband_pre_clipped_slope = os.path.splitext(multiband_pre)[0]+'_multiband_pre_slope.tif'
+    multiband_post_clipped_slope = os.path.splitext(multiband_post)[0]+'_multiband_post_slope.tif'
+    pansharp_ncdi = os.path.splitext(pansharp_pre)[0]+'pasharp_ncdi.tif'
+    pansharp_ncdi_roughness = os.path.splitext(pansharp_pre)[0]+'pansharp_ncdi_roughness.tif'
+    multiband_pre_clipped = os.path.splitext(multiband_pre)[0]+'_multiband_pre_clipped.tif'
+    multiband_post_clipped = os.path.splitext(multiband_post)[0]+'_multiband_post_clipped.tif'
+    multiband_ncdi = os.path.splitext(multiband_pre)[0]+'_multiband_ncdi.tif'
+    panchromatic_pre_buffer = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_pre_buffer.tif'
+    panchromatic_post_buffer = os.path.splitext(panchromatic_post)[0]+'_panchromatic_post_buffer.tif'
+    panchromatic_pre_canny = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_pre_canny.tif'
+    panchromatic_post_canny = os.path.splitext(panchromatic_post)[0]+'_panchromatic_post_canny.tif'
+    panchromatic_canny_ncdi = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_canny_ncdi.tif'
+    status = Bar(27)
+    #0
+    select_bands(multiband_pre,'_multiband_pre.tif')
+    multiband_pre = os.path.splitext(multiband_pre)[0]+'_multiband_pre.tif'
+    select_bands(multiband_pre,'_multiband_post.tif')
+    multiband_pre = os.path.splitext(multiband_pre)[0]+'_multiband_post.tif'
+    status(1)
+    #1-2
     pansharp(multiband_pre, panchromatic_pre)
     pansharp(multiband_post, panchromatic_post)
-    #2
-    ####CO-REGISTRATION####
+    status(2)
     #3
-    clip_rectangular(pansharp_pre,0,clip_shape,pansharp_pre_clipped)
-    clip_rectangular(pansharp_post,0,clip_shape,pansharp_post_clipped)
-    clip_rectangular(panchromatic_pre,0,clip_shape,panchromatic_pre_clipped)
-    clip_rectangular(panchromatic_post,0,clip_shape,panchromatic_post_clipped)
-    #4
-    '''
-    ncdi_panchromatic_clipped = NCDI(panchromatic_pre_clipped,panchromatic_post_clipped)
-    ncdi_pansharp_clipped = NCDI(pansharp_pre_clipped,pansharp_post_clipped)
-    '''
-    roughness(panchromatic_pre_clipped, panchromatic_roughness_pre)
-    roughness(panchromatic_post_clipped, panchromatic_roughness_post)
-    roughness(pansharp_pre_clipped, pansharp_roughness_pre)
-    roughness(pansharp_post_clipped, pansharp_post_clipped)
-    #5
-    pansharp_pre_stats = zonal_stats(clip_shape,pansharp_pre_clipped)
-    pansharp_post_stats = zonal_stats(clip_shape,pansharp_post_clipped)
-    panchromatic_pre_stats_clipped = zonal_stats(clip_shape,panchromatic_pre_clipped)
-    panchromatic_post_stats_clipped = zonal_stats(clip_shape,panchromatic_post_clipped)
+    ####CO-REGISTRATION####
+    #4-5
+    clip_rectangular(panchromatic_pre,0,clip_shape,panchromatic_pre_clipped,resize=RSZ)
+    clip_rectangular(panchromatic_post,0,clip_shape,panchromatic_post_clipped,resize=RSZ)
+    status(5)
     #6
-    buffer_2meters(clip_shape, panchromatic_pre, panchromatic_pre_buffer)
-    buffer_2meters(clip_shape, panchromatic_post, panchromatic_post_buffer)
+    NCDI(panchromatic_pre_clipped,panchromatic_post_clipped,panchromatic_ncdi)
+    status(6)
     #7
-    canny(panchromatic_pre_buffer, panchromatic_pre_canny)
-    canny(panchromatic_post_buffer, panchromatic_post_canny)
+    roughness(panchromatic_ncdi, panchromatic_ncdi_roughness)
+    status(7)
     #8
-    ncdi_panchromatic_buffer = NCDI(panchromatic_pre_buffer,panchromatic_post_buffer)
-    #9
-    panchromatic_pre_stats_buffer = zonal_stats(clip_shape,panchromatic_pre_buffer)
-    panchromatic_post_stats_buffer = zonal_stats(clip_shape,panchromatic_post_buffer)
-    #10
-    slope(panchromatic_pre_clipped, panchromatic_pre_clipped_slope)
-    slope(panchromatic_post_clipped, panchromatic_post_clipped_slope)
-    clip_rectangular(multiband_pre,0,clip_shape,multiband_pre_clipped)
-    clip_rectangular(multiband_post,0,clip_shape,multiband_post_clipped)
-    slope(multiband_pre_clipped, multiband_pre_clipped_slope)
-    slope(multiband_post_clipped, multiband_post_clipped_slope)
+    clip_rectangular(panchromatic_ncdi,0,clip_shape,panchromatic_ncdi_clipped,mask=True,resize=RSZ)
+    loop_zonal_stats(clip_shape,panchromatic_ncdi_clipped,"1")
+    status(8)
+    #9-10
+    clip_rectangular(pansharp_pre,0,clip_shape,pansharp_pre_clipped,resize=RSZ)
+    clip_rectangular(pansharp_post,0,clip_shape,pansharp_post_clipped,resize=RSZ)
+    status(10)
     #11
-    ncdi_multiband_clipped = NCDI(multiband_pre_clipped,multiband_post_clipped)
+    NCDI(pansharp_pre_clipped,pansharp_post_clipped,pansharp_ncdi)
+    status(11)
     #12
-    multiband_pre_stats = zonal_stats(clip_shape,multiband_pre_clipped)
-    multiband_post_stats = zonal_stats(clip_shape,multiband_post_clipped)
-    '''
+    roughness(pansharp_ncdi, pansharp_ncdi_roughness)
+    status(12)
+    #13
+    clip_rectangular(pansharp_ncdi_roughness,0,clip_shape,panchromatic_ncdi_clipped,mask=True,resize=RSZ)
+    loop_zonal_stats(clip_shape,pansharp_ncdi_roughness_clipped,"2")
+    status(13)
+    #14
+    buffer_2meters(clip_shape, panchromatic_pre, panchromatic_pre_buffer)
+    status(14)
+    #15
+    buffer_2meters(clip_shape, panchromatic_post, panchromatic_post_buffer)
+    status(15)
+    #16    
+    canny(panchromatic_pre_buffer, panchromatic_pre_canny)
+    status(16)
+    #17
+    canny(panchromatic_post_buffer, panchromatic_post_canny)
+    status(17)
+    #18-19
+    NCDI(panchromatic_pre_canny,panchromatic_post_canny,panchromatic_canny_ncdi)
+    status(19)
+    #20
+    loop_zonal_stats(clip_shape,panchromatic_canny_ncdi,"3")
+    status(20)
+    #21
+    slope(panchromatic_pre_clipped,panchromatic_pre_clipped_slope)
+    status(21)
+    #22
+    slope(panchromatic_post_clipped,panchromatic_post_clipped_slope)
+    status(22)
+    #23
+    clip_rectangular(multiband_pre,0,clip_shape,multiband_pre_clipped,resize=RSZ)
+    slope(multiband_pre_clipped, multiband_pre_clipped_slope)
+    status(23)
+    #24
+    clip_rectangular(multiband_post,0,clip_shape,multiband_post_clipped,resize=RSZ)
+    slope(multiband_post_clipped, multiband_post_clipped_slope)
+    status(24)
+    #25
+    NCDI(multiband_pre_clipped,multiband_post_clipped,multiband_ncdi)
+    #26 (uguale al punto 6)
+    #NCDI(panchromatic_pre_clipped,panchromatic_post_clipped,panchromatic_ncdi)
+    #27
+    loop_zonal_stats(clip_shape,multiband_ncdi,"4")
+    loop_zonal_stats(clip_shape,panchromatic_ncdi,"5")
+    status(27)
 
 def executeCmd(command):
     os.system(command)
 
-def executeGdal(command):
-    command = (command if os.name == "posix" else "python.exe "+os.path.dirname(os.path.abspath(__file__))+command)
-    print command
-    executeCmd(command)
+
+def select_bands(input_raster,ext):
+    band_list = read_image(input_raster,0,0)
+    rows,cols,nbands,geo_transform,projection = read_image_parameters(input_raster)
+    if nbands > 3:
+        band_list_tmp = list()
+        for i in range (1,4):
+            band_list_tmp.append(band_list[i])
+        band_list = band_list_tmp
+        del band_list_tmp
+    output_raster = os.path.splitext(input_raster)[0]+ext
+    write_image(band_list,0,0,output_raster,rows,cols,geo_transform,projection)
+
 
 def pansharp(multiband_image, panchromatic_image):
     band_list = read_image(multiband_image,0,0)
@@ -118,127 +191,187 @@ def pansharp(multiband_image, panchromatic_image):
     fix_tiling_raster(panchromatic_image,multiband_image[:-4]+'_resampled.tif')
     executeCmd("otbcli_Pansharpening -progress 1 -inp {} -inxs {} -out {} uint16".format(panchromatic_image,multiband_image[:-4]+'_resampled.tif',multiband_image[:-4]+'_pansharp.tif'))
 
-def NCDI(raster_pre,raster_post):
-    pre = np.array(read_image(raster_pre,0,0))
-    post = np.array(read_image(raster_post,0,0))
-    return ((pre-post)/(pre+post)*np.sqrt(np.absolute((pre-post)/(pre+post))))/np.absolute((pre-post)/(pre+post)++0.00001)
+def NCDI(raster_pre,raster_post,output):
+    rows,cols,nbands,geo_transform,projection = read_image_parameters(raster_pre)
+    pre = np.array(read_image(raster_pre,0,0))[0]
+    post = np.array(read_image(raster_post,0,0))[0]
+    ncdi = ((pre-post)/(pre+post)*np.sqrt(np.absolute((pre-post)/(pre+post))))/(np.absolute((pre-post)/(pre+post))+0.00001)
+    write_image([ncdi],0,0,output,rows,cols,geo_transform,projection)
 
 def roughness(input_dem,output_roughness_map):
-    executeGdal("gdaldem roughness {} {}".format(input_dem, output_roughness_map))
+    executeCmd("gdaldem roughness {} {}".format(input_dem, output_roughness_map))
 
-def bbox_to_pixel_offsets(gt, bbox):
-    originX = gt[0]
-    originY = gt[3]
-    pixel_width = gt[1]
-    pixel_height = gt[5]
-    x1 = int((bbox[0] - originX) / pixel_width)
-    x2 = int((bbox[1] - originX) / pixel_width) + 1
-    y1 = int((bbox[3] - originY) / pixel_height)
-    y2 = int((bbox[2] - originY) / pixel_height) + 1
-    xsize = x2 - x1
-    ysize = y2 - y1
-    return (x1, y1, xsize, ysize)
+def zonal_stats(feat, input_zone_polygon, input_value_raster):
+    # Open data
+    raster = gdal.Open(input_value_raster)
+    shp = ogr.Open(input_zone_polygon)
+    lyr = shp.GetLayer()
+    # Get raster georeference info
+    transform = raster.GetGeoTransform()
+    xOrigin = transform[0]
+    yOrigin = transform[3]
+    pixelWidth = transform[1]
+    pixelHeight = transform[5]
+    # Get extent of feat
+    geom = feat.GetGeometryRef()
+    if (geom.GetGeometryName() == 'MULTIPOLYGON'):
+        count = 0
+        pointsX = []; pointsY = []
+        for polygon in geom:
+            geomInner = geom.GetGeometryRef(count)    
+            ring = geomInner.GetGeometryRef(0)
+            numpoints = ring.GetPointCount()
+            for p in range(numpoints):
+                    lon, lat, z = ring.GetPoint(p)
+                    pointsX.append(lon)
+                    pointsY.append(lat)    
+            count += 1
+    elif (geom.GetGeometryName() == 'POLYGON'):
+        ring = geom.GetGeometryRef(0)
+        numpoints = ring.GetPointCount()
+        pointsX = []; pointsY = []
+        for p in range(numpoints):
+                lon, lat, z = ring.GetPoint(p)
+                pointsX.append(lon)
+                pointsY.append(lat)
+    else:
+        sys.exit()
+    xmin = min(pointsX)
+    xmax = max(pointsX)
+    ymin = min(pointsY)
+    ymax = max(pointsY)
+    # Specify offset and rows and columns to read
+    xoff = int((xmin - xOrigin)/pixelWidth)
+    yoff = int((yOrigin - ymax)/pixelWidth)
+    xcount = int((xmax - xmin)/pixelWidth)+1
+    ycount = int((ymax - ymin)/pixelWidth)+1
+    # Create memory target raster
+    target_ds = gdal.GetDriverByName('MEM').Create('', xcount, ycount, gdal.GDT_Byte)
+    target_ds.SetGeoTransform((
+        xmin, pixelWidth, 0,
+        ymax, 0, pixelHeight,
+    ))
+    # Create for target raster the same projection as for the value raster
+    raster_srs = osr.SpatialReference()
+    raster_srs.ImportFromWkt(raster.GetProjectionRef())
+    target_ds.SetProjection(raster_srs.ExportToWkt())
+    # Rasterize zone polygon to raster
+    gdal.RasterizeLayer(target_ds, [1], lyr, burn_values=[1])
+    # Read raster as arrays
+    banddataraster = raster.GetRasterBand(1)
+    dataraster = banddataraster.ReadAsArray(xoff, yoff, xcount, ycount).astype(numpy.uint16)
+    bandmask = target_ds.GetRasterBand(1)
+    datamask = bandmask.ReadAsArray(0, 0, xcount, ycount).astype(numpy.uint16)
+    # Mask zone of raster
+    masked = numpy.ma.masked_array(dataraster,  numpy.logical_not(datamask))
+    # Calculate statistics of zonal raster
+    feature_stats = {
+        'min': masked.min(),
+        'max': masked.max(),
+        'sum': masked.sum(),
+        'count': masked.count(),
+        'mean': masked.mean(),
+        'std': masked.std(),
+        'unique': numpy.unique(masked.compressed()).size,
+        'range': masked.max() - masked.min(),
+        'cv': masked.var()}
+    return feature_stats
 
-def zonal_stats(vector_path, raster_path):
-    rds = gdal.Open(raster_path, GA_ReadOnly)
-    assert(rds)
-    rb = rds.GetRasterBand(1)
-    rgt = rds.GetGeoTransform()
-    vds = ogr.Open(vector_path, GA_ReadOnly)  # TODO maybe open update if we want to write stats
-    assert(vds)
-    vlyr = vds.GetLayer(0)
-    mem_drv = ogr.GetDriverByName('Memory')
-    driver = gdal.GetDriverByName('MEM')
-    # Loop through vectors
-    stats = []
-    feat = vlyr.GetNextFeature()
-    while feat is not None:
-        # use local source extent
-        src_offset = bbox_to_pixel_offsets(rgt, feat.geometry().GetEnvelope())
-        src_array = rb.ReadAsArray(*src_offset)
-        # calculate new geotransform of the feature subset
-        new_gt = (
-            (rgt[0] + (src_offset[0] * rgt[1])),
-            rgt[1],
-            0.0,
-            (rgt[3] + (src_offset[1] * rgt[5])),
-            0.0,
-            rgt[5]
-        )
-        # Create a temporary vector layer in memory
-        mem_ds = mem_drv.CreateDataSource('out')
-        mem_layer = mem_ds.CreateLayer('poly', None, ogr.wkbPolygon)
-        mem_layer.CreateFeature(feat.Clone())
-        # Rasterize it
-        rvds = driver.Create('', src_offset[2], src_offset[3], 1, gdal.GDT_Byte)
-        rvds.SetGeoTransform(new_gt)
-        gdal.RasterizeLayer(rvds, [1], mem_layer, burn_values=[1])
-        rv_array = rvds.ReadAsArray()
-        # Mask the source data array with our current feature
-        # we take the logical_not to flip 0<->1 to get the correct mask effect
-        # we also mask out nodata values explictly
-        masked = np.ma.MaskedArray(
-            src_array,
-            mask=np.logical_or(
-                src_array == None,
-                np.logical_not(rv_array)
-            )
-        )
-        feature_stats = {
-            'min': float(masked.min()),
-            'mean': float(masked.mean()),
-            'max': float(masked.max()),
-            'std': float(masked.std()),
-            'sum': float(masked.sum()),
-            'count': int(masked.count()),
-            'fid': int(feat.GetFID())}
-        stats.append(feature_stats)
-        rvds = None
-        mem_ds = None
-        feat = vlyr.GetNextFeature()
-    vds = None
-    rds = None
-    return stats
+def loop_zonal_stats(input_zone_polygon, input_value_raster,category):
+    shp = ogr.Open(input_zone_polygon, update=1)
+    lyr = shp.GetLayer()
+    featList = range(lyr.GetFeatureCount())
+    lyr.CreateField(ogr.FieldDefn("min_"+category, ogr.OFTInteger))
+    lyr.CreateField(ogr.FieldDefn("max_"+category, ogr.OFTInteger))
+    lyr.CreateField(ogr.FieldDefn("sum_"+category, ogr.OFTInteger))
+    lyr.CreateField(ogr.FieldDefn("count_"+category, ogr.OFTInteger))
+    lyr.CreateField(ogr.FieldDefn("mean_"+category, ogr.OFTInteger))
+    lyr.CreateField(ogr.FieldDefn("std_"+category, ogr.OFTInteger))
+    lyr.CreateField(ogr.FieldDefn("unique_"+category, ogr.OFTInteger))
+    lyr.CreateField(ogr.FieldDefn("range_"+category, ogr.OFTInteger))
+    lyr.CreateField(ogr.FieldDefn("cv_"+category, ogr.OFTInteger))
+    for feature_id in featList:
+        feat = lyr.GetFeature(feature_id)
+        stats = zonal_stats(feat, input_zone_polygon, input_value_raster)
+        feat.SetField("min_"+category,stats["min"])
+        feat.SetField("max_"+category,stats["max"])
+        feat.SetField("sum_"+category,stats["sum"])
+        feat.SetField("count_"+category,stats["count"])
+        feat.SetField("mean_"+category,stats["mean"])
+        feat.SetField("std_"+category,stats["std"])
+        feat.SetField("unique_"+category,stats["unique"])
+        feat.SetField("range_"+category,stats["range"])
+        feat.SetField("cv_"+category,stats["cv"])
+
 
 class Donut(object):
 
-    def init(self,feature,radius=0):
-        self.feature = feature
+    def __init__(self,x_min,x_max,y_min,y_max,resize):
+        self.x_min,self.x_max,self.y_min,self.y_max,self.resize = x_min,x_max,y_min,y_max,resize
 
     def add(self):
-        geom = self.feature.GetGeometryRef()
-        donut = geom.Buffer(radius,40)
-        return donut
+        outWindow = osgeo.ogr.Geometry(osgeo.ogr.wkbLinearRing)
+        outWindow.AddPoint(self.x_min-self.resize, self.y_max+self.resize)
+        outWindow.AddPoint(self.x_max+self.resize, self.y_max+self.resize)
+        outWindow.AddPoint(self.x_max+self.resize, self.y_min-self.resize)
+        outWindow.AddPoint(self.x_min-self.resize, self.y_min-self.resize)
+        outWindow.CloseRings()
+        innerWindow = osgeo.ogr.Geometry(osgeo.ogr.wkbLinearRing)
+        innerWindow.AddPoint(self.x_min+self.resize, self.y_max-self.resize)
+        innerWindow.AddPoint(self.x_max-self.resize, self.y_max-self.resize)
+        innerWindow.AddPoint(self.x_max-self.resize, self.y_min+self.resize)
+        innerWindow.AddPoint(self.x_min+self.resize, self.y_min+self.resize)
+        innerWindow.CloseRings()
+        poly = osgeo.ogr.Geometry(osgeo.ogr.wkbPolygon)
+        poly.AddGeometry(outWindow)
+        poly.AddGeometry(innerWindow)
+        return poly
+
+def clip_mask(input_raster,input_vector,output_raster):
+    clip_rectangular(input_raster,0,input_vector,os.path.splitext(input_raster)[0]+'_mask.tif',mask=True,resize=RSZ)
+    clip_rectangular(input_raster,0,input_vector,os.path.splitext(input_raster)[0]+'_mask_clipped.tif',resize=RSZ)
+    mask = read_image(os.path.splitext(input_raster)[0]+'_mask.tif',0,0)[0]
+    image = read_image(os.path.splitext(input_raster)[0]+'_mask_clipped.tif',0,0)
+    rows,cols,nbands,geo_transform,projection = read_image_parameters(os.path.splitext(input_raster)[0]+'_mask_clipped.tif')
+    band_list = list()
+    for b in range (0,nbands):
+        masked = numpy.ma.masked_array(mask, image[b])
+        band_list.append(masked)
+    write_image(band_list,0,0,output_raster,rows,cols,geo_transform,projection)
 
 def buffer_2meters(inputShape,panchromatic,panchromatic_output):
     driver = ogr.GetDriverByName("ESRI Shapefile")
     inputDS = driver.Open(inputShape)
     inputLayer = inputDS.GetLayer()
     inputFeaturesCount = inputLayer.GetFeatureCount()
-    outDS = driver.CreateDataSource("tmp.shp")
-    outLayer = outDS.CreateLayer("Donuts", None, ogr.wkbPoint )
+    output_shape_name =  os.path.splitext(inputShape)[0]+'_buffered.shp'
+    if os.path.isfile(output_shape_name): os.remove(output_shape_name)
+    outDS = driver.CreateDataSource(output_shape_name)
+    outLayer = outDS.CreateLayer("Donuts", inputLayer.GetSpatialRef(), ogr.wkbPolygon)
+    outLayer.CreateField(ogr.FieldDefn("id", ogr.OFTInteger))
+    outLayer.CreateField(ogr.FieldDefn("Mask", ogr.OFTInteger))
     for i in range(inputFeaturesCount):
         print "{} di {} features".format(i+1,inputFeaturesCount)
         inputFeature = inputLayer.GetFeature(i)
         maker = WindowsMaker(inputFeature,2)
         donutFeature = maker.make_feature(polygon=Donut)
         outLayer.CreateFeature(donutFeature)
-    clip_rectangular(panchromatic,0,"tmp.shp",panchromatic_output)
+        outFeature = outLayer.GetFeature(i)
+        outFeature.SetField('Mask',1)
+        outLayer.SetFeature(outFeature)
+    del outDS
+    clip_mask(panchromatic,output_shape_name,panchromatic_output)
 
-import cv2
+import cv2 
 from matplotlib import pyplot as plt
-def canny(input,output):
-    rows,cols,nbands,geo_transform,projection = read_image_parameters(input)
-    img = cv2.imread('messi5.jpg',0)
-    edges = cv2.Canny(img,rows,cols)
-    plt.subplot(121),plt.imshow(img,cmap = 'gray')
-    plt.title(input), plt.xticks([]), plt.yticks([])
-    plt.subplot(122),plt.imshow(edges,cmap = 'gray')
-    plt.title(output), plt.xticks([]), plt.yticks([])
-    plt.show()
+def canny(input_raster,output_raster):
+    rows,cols,nbands,geo_transform,projection = read_image_parameters(input_raster)
+    img = read_image(input_raster,np.uint16,0)
+    edges = cv2.Canny(img[0],1,1)
+    write_image([edges],np.uint16,0,output_raster,rows,cols,geo_transform,projection)
 
 def slope(input_dem,output_slope_map):
-    executeGdal("gdaldem slope {} {}".format(input_dem, output_slope_map))
+    executeCmd("gdaldem slope {} {}".format(input_dem, output_slope_map))
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ChangeDetectionDilkushi</class>
+ <widget class="QDialog" name="ChangeDetectionDilkushi">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>467</width>
+    <height>493</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>SensumTools</string>
+  </property>
+  <widget class="QWidget" name="widget" native="true">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>140</y>
+     <width>441</width>
+     <height>301</height>
+    </rect>
+   </property>
+   <widget class="QLabel" name="label_panchromatic">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>63</y>
+      <width>123</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Panchromatic Pre</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_multiband">
+    <property name="geometry">
+     <rect>
+      <x>9</x>
+      <y>9</y>
+      <width>101</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Multiband Pre</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox_multiband_pre">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>30</y>
+      <width>411</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string comment="Click to select File" extracomment="Click to select File">[Choose from a file..]</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QComboBox" name="comboBox_panchromatic_pre">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>90</y>
+      <width>411</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string comment="Click to select File" extracomment="Click to select File">[Choose from a file..]</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QComboBox" name="comboBox_multiband_post">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>147</y>
+      <width>411</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string comment="Click to select File" extracomment="Click to select File">[Choose from a file..]</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label_panchromatic_2">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>120</y>
+      <width>123</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Multiband Post</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox_panchromatic_post">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>210</y>
+      <width>411</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string comment="Click to select File" extracomment="Click to select File">[Choose from a file..]</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label_panchromatic_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>183</y>
+      <width>123</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Panchromatic Post</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="comboBox_clip_shapefile">
+    <property name="geometry">
+     <rect>
+      <x>11</x>
+      <y>270</y>
+      <width>411</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string comment="Click to select File" extracomment="Click to select File">[Choose from a file..]</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label_panchromatic_4">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>243</y>
+      <width>123</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Clip Shapefile</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QLabel" name="label_title">
+   <property name="geometry">
+    <rect>
+     <x>130</x>
+     <y>100</y>
+     <width>211</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:16pt;&quot;&gt;CHANGE DETECTION&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </widget>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>160</x>
+     <y>450</y>
+     <width>160</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="logo_unipv">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>10</y>
+     <width>91</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap>.sensum/cambridge.png</pixmap>
+   </property>
+  </widget>
+  <widget class="QLabel" name="logo_sensum">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>20</y>
+     <width>241</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap>.sensum/sensum.png</pixmap>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>ChangeDetectionDilkushi</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>ChangeDetectionDilkushi</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

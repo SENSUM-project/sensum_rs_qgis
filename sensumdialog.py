@@ -37,6 +37,8 @@ from uis.ui_density import Ui_Density
 from uis.ui_temporal import Ui_Temporal
 from uis.ui_temporalgraph import Ui_TemporalGraph
 from uis.ui_change_detection import Ui_ChangeDetection
+from uis.ui_change_detection_dlks import Ui_ChangeDetectionDilkushi
+from uis.ui_regularity import Ui_Regularity
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
@@ -82,7 +84,7 @@ class PansharpDialog(QtGui.QDialog, Ui_Pansharp):
             else:
                 self.ui.comboBox_multiband.setItemText(0, _translate("Pansharp", "[Choose from a file..]", None))
     def setPath_panchromatic(self):
-        if self.ui.comboBox_multiband.currentIndex() == 0:
+        if self.ui.comboBox_panchromatic.currentIndex() == 0:
             fileName = QFileDialog.getOpenFileName(self,"Open Image", "~/","Image Files (*.tif)");
             if fileName !="":
                 self.ui.comboBox_panchromatic.setItemText(0, _translate("Pansharp", "[Choose from a file..] "+fileName, None))
@@ -343,11 +345,24 @@ class StackSatelliteDialog(QtGui.QDialog, Ui_StackSatellite):
         self.ui.pushButton_reference_directory.hide()
         self.ui.pushButton_reference_directory.hide()
         self.ui.checkBox_reference_diretory.hide()
+        self.options = [("Edison",self.ui.groupBox_edison),("Meanshift",self.ui.groupBox_meanshift)]
+        self.show_option()
         QObject.connect(self.ui.pushButton_satellite_folder, SIGNAL("clicked()"), self.setPath_satellite_folder)
         QObject.connect(self.ui.comboBox_input_shapefile, SIGNAL("activated(const QString&)"), self.setPath_inputshapefile)
         QObject.connect(self.ui.pushButton_reference_directory, SIGNAL("clicked()"), self.setPath_reference_directory)
         QObject.connect(self.ui.checkBox_reference_diretory, SIGNAL("stateChanged(int)"), self.reference_directory)
         QObject.connect(self.ui.checkBox_restrict_to_city, SIGNAL("stateChanged(int)"), self.restrict_to_city)
+        QObject.connect(self.ui.comboBox_segmentation, SIGNAL("currentIndexChanged(const QString&)"), self.show_option)
+    def hide_options(self):
+        for method,frame in self.options:
+            frame.hide()
+    def show_option(self):
+        self.hide_options()
+        seg_method = str(self.ui.comboBox_segmentation.currentText())
+        for method,frame in self.options:
+            if method == seg_method:
+                frame.show()
+                return
     def setPath_satellite_folder(self):
         fileName = QFileDialog.getExistingDirectory(self,"Select Folder", "~");
         if fileName !="":
@@ -380,6 +395,27 @@ class DensityDialog(QtGui.QDialog, Ui_Density):
     def __init__(self):
         QtGui.QDialog.__init__(self)
         self.ui = Ui_Density()
+        self.ui.setupUi(self)
+        #QObject.connect(self.ui.pushButton_building_shape, SIGNAL("clicked()"), self.setPath_building_shape)
+        QObject.connect(self.ui.comboBox_building_shape, SIGNAL("activated(const QString&)"), self.setPath_building_shape)
+        QObject.connect(self.ui.pushButton_output_shapefile, SIGNAL("clicked()"), self.setPath_output_shapefile)
+
+    def setPath_building_shape(self):
+        if self.ui.comboBox_building_shape.currentIndex() == 0:
+            fileName = QFileDialog.getOpenFileName(self,"Output Shapefile", "~/","ESRI Shapefile Files (*.shp)");
+            if fileName !="":
+                self.ui.comboBox_building_shape.setItemText(0, _translate("Pansharp", "[Choose from a file..] "+fileName, None))
+            else:
+                self.ui.comboBox_building_shape.setItemText(0, _translate("Pansharp", "[Choose from a file..]", None))
+    def setPath_output_shapefile(self):
+        fileName = QFileDialog.getSaveFileName(self,"Output Shapefile", "~/","ESRI Shapefile Files (*.shp)");
+        if fileName !="":
+            self.ui.lineEdit_output_shapefile.setText(fileName)
+
+class RegularityDialog(QtGui.QDialog, Ui_Regularity):
+    def __init__(self):
+        QtGui.QDialog.__init__(self)
+        self.ui = Ui_Regularity()
         self.ui.setupUi(self)
         #QObject.connect(self.ui.pushButton_building_shape, SIGNAL("clicked()"), self.setPath_building_shape)
         QObject.connect(self.ui.comboBox_building_shape, SIGNAL("activated(const QString&)"), self.setPath_building_shape)
@@ -447,5 +483,50 @@ class TemporalPlotDialog(QtGui.QDialog, Ui_TemporalGraph):
         if fileName !="":
             self.ui.lineEdit_folder.setText(fileName)
 
- 
+class ChangeDetectionDilkushiDialog(QtGui.QDialog, Ui_ChangeDetectionDilkushi):
+    def __init__(self):
+        QtGui.QDialog.__init__(self)
+        self.ui = Ui_ChangeDetectionDilkushi()
+        self.ui.setupUi(self)
+        QObject.connect(self.ui.comboBox_multiband_pre, SIGNAL("activated(const QString&)"), self.setPath_multiband_pre)
+        QObject.connect(self.ui.comboBox_panchromatic_pre, SIGNAL("activated(const QString&)"), self.setPath_panchromatic_pre)
+        QObject.connect(self.ui.comboBox_multiband_post, SIGNAL("activated(const QString&)"), self.setPath_multiband_post)
+        QObject.connect(self.ui.comboBox_panchromatic_post, SIGNAL("activated(const QString&)"), self.setPath_panchromatic_post)
+        QObject.connect(self.ui.comboBox_clip_shapefile, SIGNAL("activated(const QString&)"), self.setPath_clip_shapefile)
+
+    def setPath_multiband_pre(self):
+        if self.ui.comboBox_multiband_pre.currentIndex() == 0:
+            fileName = QFileDialog.getOpenFileName(self,"Open Image", "~/","Image Files (*.tiff *.tif)");
+            if fileName !="":
+                self.ui.comboBox_multiband_pre.setItemText(0, _translate("Pansharp", "[Choose from a file..] "+fileName, None))
+            else:
+                self.ui.comboBox_multiband_pre.setItemText(0, _translate("Pansharp", "[Choose from a file..]", None))
+    def setPath_multiband_post(self):
+        if self.ui.comboBox_multiband_post.currentIndex() == 0:
+            fileName = QFileDialog.getOpenFileName(self,"Open Image", "~/","Image Files (*.tiff *.tif)");
+            if fileName !="":
+                self.ui.comboBox_multiband_post.setItemText(0, _translate("Pansharp", "[Choose from a file..] "+fileName, None))
+            else:
+                self.ui.comboBox_multiband_post.setItemText(0, _translate("Pansharp", "[Choose from a file..]", None))
+    def setPath_panchromatic_pre(self):
+        if self.ui.comboBox_panchromatic_pre.currentIndex() == 0:
+            fileName = QFileDialog.getOpenFileName(self,"Open Image", "~/","Image Files (*.tiff *.tif)");
+            if fileName !="":
+                self.ui.comboBox_panchromatic_pre.setItemText(0, _translate("Pansharp", "[Choose from a file..] "+fileName, None))
+            else:
+                self.ui.comboBox_panchromatic_pre.setItemText(0, _translate("Pansharp", "[Choose from a file..]", None))
+    def setPath_panchromatic_post(self):
+        if self.ui.comboBox_panchromatic_post.currentIndex() == 0:
+            fileName = QFileDialog.getOpenFileName(self,"Open Image", "~/","Image Files (*.tiff *.tif)");
+            if fileName !="":
+                self.ui.comboBox_panchromatic_post.setItemText(0, _translate("Pansharp", "[Choose from a file..] "+fileName, None))
+            else:
+                self.ui.comboBox_panchromatic_post.setItemText(0, _translate("Pansharp", "[Choose from a file..]", None))
+    def setPath_clip_shapefile(self):
+        if self.ui.comboBox_clip_shapefile.currentIndex() == 0:
+            fileName = QFileDialog.getOpenFileName(self,"Input Shapefile", "~/","ESRI Shapefile Files (*.shp)");
+            if fileName !="":
+                self.ui.comboBox_clip_shapefile.setItemText(0, _translate("Pansharp", "[Choose from a file..] "+fileName, None))
+            else:
+                self.ui.comboBox_clip_shapefile.setItemText(0, _translate("Pansharp", "[Choose from a file..]", None))
 

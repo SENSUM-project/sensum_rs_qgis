@@ -42,6 +42,8 @@ def main():
         restrict_to_city = False
         input_shapefile = None
     ref_dir = (arg.ref_dir[0] if arg.ref_dir else None)
+    segmentation_paramaters = map(float, arg.segmentation_paramaters)
+    print segmentation_paramaters
     stacksatellite(
         sat_folder,
         input_shapefile,
@@ -54,7 +56,8 @@ def main():
         pca_index_method,
         pca_classification_method,
         dissimilarity_method,
-        pca_ob_method)
+        pca_ob_method,
+        segmentation_paramaters=segmentation_paramaters)
 
 def args():
     parser = argparse.ArgumentParser(description='Stack Satellite')
@@ -69,11 +72,24 @@ def args():
     parser.add_argument("--pca_ob_method", default=False, const=True, nargs='?', help="????")
     parser.add_argument("--ref_dir", nargs=1, help="????")
     parser.add_argument("--restrict_to_city", nargs=1, help="????")
+    parser.add_argument("--segmentation_paramaters", nargs="+", help="????")
     args = parser.parse_args()
     return args
 
-def stacksatellite(sat_folder, input_shapefile, segmentation_name, n_classes, ref_dir, restrict_to_city, coregistration, builtup_index_method, pca_index_method, pca_classification_method, dissimilarity_method, pca_ob_method):
-    
+def stacksatellite(sat_folder,
+    input_shapefile,
+    segmentation_name,
+    n_classes,
+    ref_dir,
+    restrict_to_city,
+    coregistration,
+    builtup_index_method,
+    pca_index_method,
+    pca_classification_method,
+    dissimilarity_method,
+    pca_ob_method,
+    segmentation_paramaters=None):
+    print segmentation_paramaters
     if os.name == 'posix':
         separator = '/'
     else:
@@ -161,9 +177,28 @@ def stacksatellite(sat_folder, input_shapefile, segmentation_name, n_classes, re
     if pca_ob_method == True or dissimilarity_method == True:
         ##print 'Segmentation'
         if segmentation_name == 'Edison':
-            edison_otb(ref_dir+'built_up_index.TIF','vector',ref_dir+'built_up_index_seg.shp',0,0,0,0)
+            if segmentation_paramaters == None:
+                edison_otb(ref_dir+'built_up_index.TIF','vector',ref_dir+'built_up_index_seg.shp',0,0,0,0)
+            else:
+                edison_otb(ref_dir+'built_up_index.TIF',
+                    'vector',
+                    ref_dir+'built_up_index_seg.shp',
+                    int(segmentation_paramaters[0]),
+                    int(segmentation_paramaters[1]),
+                    int(segmentation_paramaters[2]),
+                    int(segmentation_paramaters[3]))
         if segmentation_name == 'Meanshift':
-            meanshift_otb(ref_dir+'built_up_index.TIF','vector',ref_dir+'built_up_index_seg.shp',0,0,0,0,0)  
+            if segmentation_paramaters == None:
+                meanshift_otb(ref_dir+'built_up_index.TIF','vector',ref_dir+'built_up_index_seg.shp',0,0,0,0,0)  
+            else:
+                meanshift_otb(ref_dir+'built_up_index.TIF',
+                    'vector',
+                    ref_dir+'built_up_index_seg.shp',
+                    int(segmentation_paramaters[0]),
+                    float(segmentation_paramaters[1]),
+                    float(segmentation_paramaters[2]),
+                    int(segmentation_paramaters[3]),
+                    int(segmentation_paramaters[4]))
     '''   
     #Extract mode from segments
     if supervised_method == True or unsupervised_method == True:

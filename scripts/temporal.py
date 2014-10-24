@@ -22,6 +22,19 @@ from sensum_library.segmentation_opt import *
 from sensum_library.features import *
 from sensum_library.secondary_indicators import *
 
+def unsupervised_classification_otb(input_raster,output_raster,n_classes,n_iterations):
+    KMeansClassification = otbApplication.Registry.CreateApplication("KMeansClassification") 
+    # The following lines set all the application parameters: 
+    KMeansClassification.SetParameterString("in", input_raster) 
+    KMeansClassification.SetParameterInt("ts", 10000) 
+    KMeansClassification.SetParameterInt("nc", n_classes) 
+    KMeansClassification.SetParameterInt("maxit", n_iterations) 
+    KMeansClassification.SetParameterFloat("ct", 0.0001) 
+    KMeansClassification.SetParameterString("out", output_raster) 
+    
+    # The following line execute the application 
+    KMeansClassification.ExecuteAndWriteOutput()
+
 def main():
     warnings.filterwarnings("ignore")
     arg = args()
@@ -146,7 +159,7 @@ def temporal(input_shapefile, sat_folder, n_classes,indexes_list):
             rows,cols = b_list[b].shape
             big_list.append(b_list[b])
     write_image(big_list,np.float32,0,output_cd,rows_max,cols_max,geo_transform,projection)    
-    unsupervised_classification_otb(output_cd,output_cd[:-4]+'_class.TIF',n_classes,1000)
+    unsupervised_classification_otb(output_cd,output_cd[:-4]+'_class.TIF',n_classes,100000)
     band_list_unsup = read_image(output_cd[:-4]+'_class.TIF',np.uint8,0)
     band_list_unsup[0] = band_list_unsup[0]+np.ones(band_list_unsup[0].shape)
     write_image(band_list_unsup,np.uint8,0,output_cd[:-4]+'_reclass.TIF',rows_max,cols_max,geo_transform,projection)
@@ -168,14 +181,30 @@ def temporal(input_shapefile, sat_folder, n_classes,indexes_list):
             rows,cols = b_list[b].shape
             big_list_plot.append(b_list[b])
     write_image(big_list_plot,np.float32,0,output_cd_plot,rows_max,cols_max,geo_transform,projection)    
-    unsupervised_classification_otb(output_cd_plot,output_cd_plot[:-4]+'_class.TIF',n_classes,1000)
+    unsupervised_classification_otb(output_cd_plot,output_cd_plot[:-4]+'_class.TIF',n_classes,100000)
     band_list_unsup = read_image(output_cd_plot[:-4]+'_class.TIF',np.uint8,0)
     band_list_unsup[0] = band_list_unsup[0]+np.ones(band_list_unsup[0].shape)
     write_image(band_list_unsup,np.uint8,0,output_cd_plot[:-4]+'_reclass.TIF',rows_max,cols_max,geo_transform,projection)
     clip_rectangular(output_cd_plot[:-4]+'_reclass.TIF',np.uint8,input_shapefile,output_cd_plot[:-4]+'_reclass_clip.TIF',mask=True)
     
+    for i in range(1,13):
+        indexes_list = ["Index"+str(i)]
+        sat_folder = sat_folder + separator     
+        dirs = os.listdir(sat_folder)
+        dirs.sort()
+        dirs = [dir for dir in dirs if os.path.isdir(sat_folder+dir)]
+        output = ["Class"+str(c)+"\t" for c in range(n_classes+1)]
+        output.insert(0,"\t")
+        output = [output]
+        target_directories = list(sat_folder+directory+separator for directory in dirs if not os.path.isfile(sat_folder+directory))
+        for target_index,target_dir in enumerate(target_directories):
+            out = classification_statistics(sat_folder+"change_detection_all_plot_reclass_clip.TIF",target_dir+'change_detection_plot.TIF',indexes_list)
+            out.insert(0,os.path.basename(os.path.normpath(target_dir)))
+            output.append(out)
+        np.savetxt('{}/{}.txt'.format(sat_folder,"Index"+str(i)),np.array(output, dtype=np.str_),fmt="%s",delimiter='\t',)
 
 import matplotlib.pyplot as plt
+
 def graph(sat_folder, indexes_list, graph_file):
     if os.name == 'posix':
         separator = '/'
@@ -193,7 +222,7 @@ def graph(sat_folder, indexes_list, graph_file):
     leg_list = [p for p in plt.plot(output)]
     leg_labels = ['Class ' + str(n+1) for n in range(0,len(leg_list))]
     plt.legend(leg_list, leg_labels,bbox_to_anchor=(0.05, 1), loc=2, borderaxespad=0.)
-    plt.savefig(graph_file)
+    #plt.savefig(graph_file)
     plt.show()
 
 
