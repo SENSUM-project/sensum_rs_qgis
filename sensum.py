@@ -105,7 +105,6 @@ def executeScript(command, progress=None,noerror=True):
             idx = line.find('[*')
             perc = line[idx:(idx+102)].count("*")
             status = line[line.find('STATUS: ')+8:idx]
-            print status
             if perc != 0 and progress:
                 progress.progressBar.setValue(perc)
                 progress.label_title.setText(status)
@@ -721,8 +720,8 @@ class Sensum:
             training_set = parse_input(str(ui.comboBox_training.currentText()))
             training_attribute = str(ui.lineEdit_training_field.text())
             output_shape = str(ui.lineEdit_output.text())
-            checked_optimizer = ("--optimazer" if bool(ui.checkBox_filter.isChecked()) else "")
-            if checked_optimizer == "--optimazer":
+            checked_optimizer = ("--optimizer" if bool(ui.checkBox_filter.isChecked()) else "")
+            if checked_optimizer == "--optimizer":
                 executeOtb("otbcli_MeanShiftSmoothing -progress 1 -in {} -spatialr {} -ranger {} -thres {} -maxiter {} -fout {} -foutpos {}".format(pansharp_file,30,30,0.1,100,pansharp_file[:-4]+'_smooth.tif',pansharp_file[:-4]+'_sp.tif'),progress=dlgProgress.ui,label="Smooth Filter")
                 pansharp_file = pansharp_file[:-4]+'_smooth.tif'
                 checked_optimizer = ""

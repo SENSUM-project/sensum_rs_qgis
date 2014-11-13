@@ -42,7 +42,7 @@ def args():
     parser.add_argument("training_attribute", help="????")
     parser.add_argument("output_shape", help="????")
     parser.add_argument("-c", "--classes", nargs="+", help="????")
-    parser.add_argument("--optimazer", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("--optimizer", default=False, const=True, nargs='?', help="????")
     args = parser.parse_args()
     return args
 
@@ -141,7 +141,7 @@ def footprints(pansharp_file,training_set,training_attribute,building_classes,ou
             #build_feature = build_layer.GetFeature(f)
             geom = build_feature.GetGeometryRef()
             area = geom.Area()
-            if area > 10 and area < 100000:
+            if area > 10 and area < 20000:
                 final_feature = osgeo.ogr.Feature(feature_def_fin)
                 final_feature.SetGeometry(geom)
                 final_feature.SetField('Class',int(building_classes[c]))

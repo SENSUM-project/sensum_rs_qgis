@@ -70,29 +70,32 @@ def density(buildingShape,radius,outputShape):
     status = Bar(buindingsFeaturesCount)
     for i in range(buindingsFeaturesCount):
         status(i+1)
-        buildingFeature = outLayer.GetFeature(i)
-        #make a spatial layer and get the layer
-        maker = WindowsMaker(buildingFeature)
-        centroid = buildingFeature.GetGeometryRef().Centroid()
-        maker.make_feature(geom=CircleDensity(centroid,radius).add())
-        area = radius**2 * math.pi
-        spatialDS = maker.get_shapeDS(buildingsLayer)
-        spatialLayer = spatialDS.GetLayer()
-        spatialFeature = spatialLayer.GetNextFeature()
-        sum_area = 0.0
-        while spatialFeature:
-            #area_ft = spatialFeature.GetField("Area")
-            area_ft = spatialFeature.GetGeometryRef().Area()
-            sum_area = area_ft + sum_area
+        try:
+            buildingFeature = outLayer.GetFeature(i)
+            #make a spatial layer and get the layer
+            maker = WindowsMaker(buildingFeature)
+            centroid = buildingFeature.GetGeometryRef().Centroid()
+            maker.make_feature(geom=CircleDensity(centroid,radius).add())
+            area = radius**2 * math.pi
+            spatialDS = maker.get_shapeDS(buildingsLayer)
+            spatialLayer = spatialDS.GetLayer()
             spatialFeature = spatialLayer.GetNextFeature()
-        spatialLayerFeatureCount = spatialLayer.GetFeatureCount() -1 #(-1) for remove itself
-        outFeature = outLayer.GetFeature(i)
-        outFeature.SetField("N_Building",spatialLayerFeatureCount)
-        if spatialLayerFeatureCount:
-            outFeature.SetField("Density",float(sum_area/area))
-        else:
-            outFeature.SetField("Density",0)
-        outLayer.SetFeature(outFeature)
+            sum_area = 0.0
+            while spatialFeature:
+                #area_ft = spatialFeature.GetField("Area")
+                area_ft = spatialFeature.GetGeometryRef().Area()
+                sum_area = area_ft + sum_area
+                spatialFeature = spatialLayer.GetNextFeature()
+            spatialLayerFeatureCount = spatialLayer.GetFeatureCount() -1 #(-1) for remove itself
+            outFeature = outLayer.GetFeature(i)
+            outFeature.SetField("N_Building",spatialLayerFeatureCount)
+            if spatialLayerFeatureCount:
+                outFeature.SetField("Density",float(sum_area/area))
+            else:
+                outFeature.SetField("Density",0)
+            outLayer.SetFeature(outFeature)
+        except:
+            continue
     return outDS
 
 if __name__ == "__main__":

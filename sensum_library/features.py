@@ -585,8 +585,8 @@ def value_to_segments(input_raster,input_shape,output_shape,operation = 'Mode'):
     #TODO: this is only a spatial union operation, isn't it? So it is not part of the hybrid approach where you aggregate pixel classes to segments!?
     rows,cols,nbands,geotransform,projection = read_image_parameters(input_raster) 
     band_list_class = read_image(input_raster,np.int32,0) #read original raster file
-    shp2rast(input_shape,input_shape[:-4]+'.TIF',rows,cols,'DN',0,0,0,0,0,0) #conversion of the segmentation results from shape to raster for further processing
-    band_list_seg = read_image(input_shape[:-4]+'.TIF',np.int32,0) #read segmentation raster file
+    shp2rast(input_shape,input_shape[:-4]+'_conv.TIF',rows,cols,'DN',0,0,0,0,0,0) #conversion of the segmentation results from shape to raster for further processing
+    band_list_seg = read_image(input_shape[:-4]+'_conv.TIF',np.int32,0) #read segmentation raster file
     
     driver_shape=osgeo.ogr.GetDriverByName('ESRI Shapefile')
     infile=driver_shape.Open(input_shape)
@@ -608,7 +608,8 @@ def value_to_segments(input_raster,input_shape,output_shape,operation = 'Mode'):
     n_feature = inlayer.GetFeatureCount()
     j = 1
     while infeature:
-        print str(j) + ' of ' + str(n_feature)
+        if j%50 == 0:
+            print str(j) + ' of ' + str(n_feature)
         j = j+1
         dn = infeature.GetField('DN')
         # get the input geometry
@@ -618,13 +619,15 @@ def value_to_segments(input_raster,input_shape,output_shape,operation = 'Mode'):
         outfeature = osgeo.ogr.Feature(feature_def)
         # set the geometry and attribute
         outfeature.SetGeometry(geom)
-        seg_pos = np.where(band_list_seg[0] == dn) #returns a list of x and y coordinates related to the pixels satisfying the given condition
-        mat_pos = np.zeros(len(seg_pos[0]))
+        #seg_pos = np.where(band_list_seg[0] == dn) #returns a list of x and y coordinates related to the pixels satisfying the given condition
+        #mat_pos = np.zeros(len(seg_pos[0]))
+        mask = np.equal(band_list_seg[0],dn)
         
         #Extract all the pixels inside a segment
         for b in range(0,len(band_list_class)):
-            for l in range(0,len(seg_pos[0])):
-                mat_pos[l] = band_list_class[b][seg_pos[0][l]][seg_pos[1][l]]
+            mat_pos = np.extract(mask,band_list_class[b])
+            #for l in range(0,len(seg_pos[0])):
+                #mat_pos[l] = band_list_class[b][seg_pos[0][l]][seg_pos[1][l]]
             if operation == 'Mode':
                 mode_ar = scipy.stats.mode(mat_pos)
                 value = mode_ar[0][0]

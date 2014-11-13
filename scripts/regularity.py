@@ -55,12 +55,18 @@ def regularity(buildingShape, pixelWidth, pixelHeight, outShape):
     outDS.CopyLayer(buildingLayer,"buildings")
     outLayer = outDS.GetLayer()
     regularity_def = osgeo.ogr.FieldDefn('Regularity', osgeo.ogr.OFTString)
+    alignment_def = osgeo.ogr.FieldDefn('Alignment', osgeo.ogr.OFTInteger)
     outLayer.CreateField(regularity_def)
+    outLayer.CreateField(alignment_def)
     status = Bar(buildingFeaturesCount, "Regularity")
     for i in range(buildingFeaturesCount):
         status(i+1)
         #Convert Shape to Raster
-        buildingFeature = buildingLayer.GetFeature(i)
+        try:
+            buildingFeature = buildingLayer.GetFeature(i)
+        except:
+            i = i+1
+            buildingFeature = buildingLayer.GetFeature(i)
         x_min, x_max, y_min, y_max = WindowsMaker(buildingFeature).make_coordinates()
         cols = int(math.ceil(float((x_max-x_min)) / float(pixelWidth))) #definition of the dimensions according to the extent and pixel resolution
         rows = int(math.ceil(float((y_max-y_min)) / float(pixelHeight)))
@@ -78,11 +84,11 @@ def regularity(buildingShape, pixelWidth, pixelHeight, outShape):
         '''
         #Calculate regularity
         alpha,length_a,length_b = building_alignment(band_list)
-        result = str(building_regularity(length_a,length_b))
-        print result
+        regularity = str(building_regularity(length_a,length_b))
         #Fill field
         outFeature = outLayer.GetFeature(i)
-        outFeature.SetField('Regularity',result)
+        outFeature.SetField('Regularity',regularity)
+        outFeature.SetField('Alignment',int(alpha))
         outLayer.SetFeature(outFeature)
     buildingDS.Destroy()
     return outDS

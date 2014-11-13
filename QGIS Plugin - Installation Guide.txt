@@ -7,8 +7,6 @@ This is the cleanest way to install the plugin.
 	- scipy-stack (amd64)
 	- skimage (amd64)
 	- pyephem (amd64)
-	- matplotlib (amd46)
-	- six (amd64)
 3. Download OSGeo4W64 from http://trac.osgeo.org/osgeo4w/ (64 bit version)
 4. Select advanced installation
 5. Search using keywords "otb", "opencv", "qgis", "gdal"

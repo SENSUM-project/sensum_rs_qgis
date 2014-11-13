@@ -114,9 +114,10 @@ def height(shadowShape, pixelWidth, pixelHeight, date, outShape=''):
         outFeature.SetField('Shadow_Len',int(shadowLen))
         outFeature.SetField('Height',buildingHeight)
         outLayer.SetFeature(outFeature)
-
+        outFeature.Destroy()
     shadowDS.Destroy()
-    return outDS
+    del rasterDS
+    outDS.Destroy
 
 def shadow_checker(buildingShape, shadowShape, date, idfield="ID", outputShape='', resize=0):
 
@@ -169,62 +170,67 @@ def shadow_checker(buildingShape, shadowShape, date, idfield="ID", outputShape='
     status = Bar(buindingsFeaturesCount, "2/2 Calculating heights.")
     for i in range(buindingsFeaturesCount):
         status(i+1)
-        buildingFeature = outLayer.GetFeature(i)
+        
         #make a spatial layer and get the layer
-        maker = WindowsMaker(buildingFeature,resize)
-        maker.make_feature()
-        spatialDS = maker.get_shapeDS(shadowLayer)
-        spatialLayer = spatialDS.GetLayer()
-        spatialLayerFeatureCount = spatialLayer.GetFeatureCount()
-        #check if there are any features into the spatial layer
-        if spatialLayerFeatureCount:
-            spatialFeature = spatialLayer.GetNextFeature()
-            outFeature = outLayer.GetFeature(i)
-            outGeometry = outFeature.GetGeometryRef().Centroid()
-            xOutGeometry = float(outGeometry.GetX())
-            yOutGeometry = float(outGeometry.GetY())
-            #if the count of features is > 1 need to find the less distant feature
-            if spatialLayerFeatureCount > 1:
-                fields = []
-                centros = []
-                heights = []
-                #loop into spatial layer
-                while spatialFeature:
-                    #calc of centroid of spatial feature
+        try:
+            buildingFeature = outLayer.GetFeature(i)
+            maker = WindowsMaker(buildingFeature,resize)
+            maker.make_feature()
+            spatialDS = maker.get_shapeDS(shadowLayer)
+            spatialLayer = spatialDS.GetLayer()
+            spatialLayerFeatureCount = spatialLayer.GetFeatureCount()
+            #check if there are any features into the spatial layer
+            if spatialLayerFeatureCount:
+                spatialFeature = spatialLayer.GetNextFeature()
+                outFeature = outLayer.GetFeature(i)
+                outGeometry = outFeature.GetGeometryRef().Centroid()
+                xOutGeometry = float(outGeometry.GetX())
+                yOutGeometry = float(outGeometry.GetY())
+                #if the count of features is > 1 need to find the less distant feature
+                if spatialLayerFeatureCount > 1:
+                    fields = []
+                    centros = []
+                    heights = []
+                    #loop into spatial layer
+                    while spatialFeature:
+                        #calc of centroid of spatial feature
+                        spatialGeometry = spatialFeature.GetGeometryRef().Centroid()
+                        xSpatialGeometry = float(spatialGeometry.GetX())
+                        ySpatialGeometry = float(spatialGeometry.GetY())
+                        #filter the position of shadow, need to respect the right azimuth
+                        if xOperator(xSpatialGeometry,xOutGeometry) and yOperator(ySpatialGeometry,yOutGeometry):
+                            #saving id,centroid and heights into lists
+                            fields.append(spatialFeature.GetField(idfield))
+                            centros.append(spatialFeature.GetGeometryRef().Centroid())
+                            heights.append(spatialFeature.GetField('Height'))
+                        spatialFeature = spatialLayer.GetNextFeature()
+                    #calc distance from centroids
+                    distances = [outGeometry.Distance(centro) for centro in centros]
+                    #make multilist named datas with: datas[0] = distances, datas[1] = fields, datas[2] = heights and order for distances
+                    datas = sorted(zip(distances,fields,heights))
+                    #take less distant
+                    if datas:
+                        outFeature.SetField("ShadowID",datas[0][1])
+                        outFeature.SetField("Height",datas[0][2])
+                        outLayer.SetFeature(outFeature)
+                #spatialFeature = 1 so don't need to check less distant
+                else:
                     spatialGeometry = spatialFeature.GetGeometryRef().Centroid()
                     xSpatialGeometry = float(spatialGeometry.GetX())
                     ySpatialGeometry = float(spatialGeometry.GetY())
-                    #filter the position of shadow, need to respect the right azimuth
                     if xOperator(xSpatialGeometry,xOutGeometry) and yOperator(ySpatialGeometry,yOutGeometry):
-                        #saving id,centroid and heights into lists
-                        fields.append(spatialFeature.GetField(idfield))
-                        centros.append(spatialFeature.GetGeometryRef().Centroid())
-                        heights.append(spatialFeature.GetField('Height'))
-                    spatialFeature = spatialLayer.GetNextFeature()
-                #calc distance from centroids
-                distances = [outGeometry.Distance(centro) for centro in centros]
-                #make multilist named datas with: datas[0] = distances, datas[1] = fields, datas[2] = heights and order for distances
-                datas = sorted(zip(distances,fields,heights))
-                #take less distant
-                if datas:
-                    outFeature.SetField("ShadowID",datas[0][1])
-                    outFeature.SetField("Height",datas[0][2])
-                    outLayer.SetFeature(outFeature)
-            #spatialFeature = 1 so don't need to check less distant
-            else:
-                spatialGeometry = spatialFeature.GetGeometryRef().Centroid()
-                xSpatialGeometry = float(spatialGeometry.GetX())
-                ySpatialGeometry = float(spatialGeometry.GetY())
-                if xOperator(xSpatialGeometry,xOutGeometry) and yOperator(ySpatialGeometry,yOutGeometry):
-                    field = spatialFeature.GetField(idfield)
-                    outFeature.SetField("ShadowID",field)
-                    field = spatialFeature.GetField("Height")
-                    outFeature.SetField("Height",field)
-                    outLayer.SetFeature(outFeature)
-                    spatialFeature = spatialLayer.GetNextFeature()
+                        field = spatialFeature.GetField(idfield)
+                        outFeature.SetField("ShadowID",field)
+                        field = spatialFeature.GetField("Height")
+                        outFeature.SetField("Height",field)
+                        outLayer.SetFeature(outFeature)
+                        spatialFeature = spatialLayer.GetNextFeature()
+                outFeature.Destroy()
+        except:
+            continue
     buildingsDS.Destroy()
     shadowDS.Destroy()
-    return outDS
+    outDS.Destroy()
 
 if __name__ == "__main__":
     main()

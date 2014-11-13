@@ -89,7 +89,7 @@ def stacksatellite(sat_folder,
     dissimilarity_method,
     pca_ob_method,
     segmentation_paramaters=None):
-    print segmentation_paramaters
+    #print segmentation_paramaters
     if os.name == 'posix':
         separator = '/'
     else:
@@ -111,6 +111,7 @@ def stacksatellite(sat_folder,
     dirs.sort()
     dirs = [dir for dir in dirs if os.path.isdir(sat_folder+dir)]
     if ref_dir is None or ref_dir == '': ref_dir = sat_folder+dirs[-1]+separator
+    print ref_dir
     ref_files = os.listdir(ref_dir)
     if restrict_to_city == True: #Clip the original images with the provided shapefile
         ref_list = [s for s in ref_files if ".TIF" in s and not "_city" in s and "aux.xml" not in s] #look for original landsat files
@@ -184,9 +185,9 @@ def stacksatellite(sat_folder,
                     'vector',
                     ref_dir+'built_up_index_seg.shp',
                     int(segmentation_paramaters[0]),
-                    int(segmentation_paramaters[1]),
+                    float(segmentation_paramaters[1]),
                     int(segmentation_paramaters[2]),
-                    int(segmentation_paramaters[3]))
+                    float(segmentation_paramaters[3]))
         if segmentation_name == 'Meanshift':
             if segmentation_paramaters == None:
                 meanshift_otb(ref_dir+'built_up_index.TIF','vector',ref_dir+'built_up_index_seg.shp',0,0,0,0,0)  
@@ -199,7 +200,8 @@ def stacksatellite(sat_folder,
                     float(segmentation_paramaters[2]),
                     int(segmentation_paramaters[3]),
                     int(segmentation_paramaters[4]))
-    '''   
+    
+    '''
     #Extract mode from segments
     if supervised_method == True or unsupervised_method == True:
         #built-up -> polygon around vegetation or water -> optimizer -> edison -> feature extraction mode -> unsupervised classification (4 classes)
@@ -210,7 +212,7 @@ def stacksatellite(sat_folder,
         shp2rast(ref_dir+'mode_b1.shp',ref_dir+'mode_b1.TIF',rows_ref,cols_ref,'Class',0,0,0,0,0,0)
         unsupervised_classification_otb(ref_dir+'mode.TIF',ref_dir+'mode_class.TIF',n_classes,10)
         unsupervised_classification_otb(ref_dir+'mode_b1.TIF',ref_dir+'mode_b1_class.TIF',n_classes,10)
-    '''    
+    '''
     if dissimilarity_method == True:
         #include Daniel's function with multiprocessing
         output_list = []
@@ -275,12 +277,16 @@ def stacksatellite(sat_folder,
         rast2shp(ref_dir+'pca_mean_class.tif',ref_dir+'pca_mean_class.shp')
         value_to_segments(ref_dir+'pca_mean_class.tif',ref_dir+'pca.shp',ref_dir+'pca_class.shp',operation='Mean')
         
-        
+       
     #### Target directories ####
     target_directories = list(sat_folder+directory+separator for directory in reversed(dirs) if not os.path.isfile(sat_folder+directory) and (ref_dir!=sat_folder+directory+separator))
+    #print target_directories
+    #target_directories = [sat_folder + '2009' + separator]
+    #print target_directories
     status = Bar(len(target_directories)+1, "Processing")
     status(1)
     for target_index,target_dir in enumerate(target_directories):
+        print target_dir
         band_list = []
         img_files = os.listdir(target_dir)
         if restrict_to_city == True: #Clip the original images with the provided shapefile

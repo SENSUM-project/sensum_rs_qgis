@@ -164,8 +164,8 @@ def clip_rectangular(input_raster,data_type,input_shape,output_raster,mask=False
     #lat_min = float(geoMatrix[3]+y_min*geoMatrix[5])
 
     geotransform = [lon_min,geoMatrix[1],0.0,lat_min,0.0,geoMatrix[5]]
-    print x_max,x_min
-    print y_max,y_min
+    #print x_max,x_min
+    #print y_max,y_min
     cols_out = x_max-x_min + resize
     rows_out = y_min-y_max + resize
     
