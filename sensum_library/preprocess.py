@@ -51,6 +51,8 @@ import osgeo.ogr
 import otbApplication
 import shutil
 from conversion import *
+from utils import Bar
+from numpy.fft import fft2, ifft2, fftshift
 
 if os.name == 'posix': 
     separator = '/'
@@ -240,7 +242,7 @@ def layer_split(input_raster,band_selection,data_type):
         write_image(band_list,data_type,band_selection,input_raster[:-4]+'_B'+str(band_selection)+'.TIF',rows,cols,geo_transform,projection)  
     
 
-def gcp_extraction(input_band_ref,input_band,ref_geo_transform,output_option):
+#def gcp_extraction(input_band_ref,input_band,ref_geo_transform,output_option):
     
     '''GCP extraction and filtering using the SURF algorithm
     
@@ -255,13 +257,14 @@ def gcp_extraction(input_band_ref,input_band,ref_geo_transform,output_option):
     Author: Daniele De Vecchi - Mostapha Harb
     Last modified: 19/03/2014
     '''
+    '''
     #TODO: It takes only a 2d array (so only one image band) and not the full image content?
     #TODO: 2d array is created by using Read_Image() -> band_list[i]?
     #TODO: So we have two type of functions: 1. functions that take directly a file (e.g. geotiff) and 2. functions that take an array?
     #TODO: Would rename function to something like auto_gcp()
     #TODO: Output a list of gcps following the structure required by gdal_transform -> this way we could use gdal for the actual transformation and only focus on a robuts and flexible gcp detection
     #TODO: We should think of an option to manually adjust auto gcps for example using QGIS georeferencer (comment from Dilkushi during skype call 7.3.2014)
-    #C:\OSGeo4W\bin
+    
     detector = cv2.FeatureDetector_create("SURF") 
     descriptor = cv2.DescriptorExtractor_create("BRIEF")
     matcher = cv2.DescriptorMatcher_create("BruteForce-Hamming")
@@ -306,7 +309,7 @@ def gcp_extraction(input_band_ref,input_band,ref_geo_transform,output_option):
             lon_tg,lat_tg = pixel2world(ref_geo_transform, points[j][2], points[j][3]) #check how the gdal correction function works
             points_coordinates[j][:] = [lon_ref,lat_ref,lon_tg,lat_tg]
         return points_coordinates 
-
+    '''
 
 def linear_offset_comp(common_points):
     
@@ -553,19 +556,20 @@ def Extraction(image1,image2):
     #Ordino lo stack
     compar_stack = compar_stack[compar_stack[:,0].argsort()]#Returns the indices that would sort an array.
     #print compar_stack#[0:30]
-    print len(compar_stack)
+    #print len(compar_stack)
 
     best = best_row_2(compar_stack[0:90])#The number of sorted points to be passed
-    print 'BEST!!!!!', best
+    #print 'BEST!!!!!', best
         
-    report = os.path.join(os.path.dirname(image1),'report.txt')
-    out_file = open(report,"a")
-    out_file.write("\n")
-    out_file.write("Il migliore ha un reliability value pari a "+str(best[0])+" \n")
-    out_file.close()
+    #report = os.path.join(os.path.dirname(image1),'report.txt')
+    #out_file = open(report,"a")
+    #out_file.write("\n")
+    #out_file.write("Il migliore ha un reliability value pari a "+str(best[0])+" \n")
+    #out_file.close()
     migliore = [best[3:7]]
     #return migliore,best[0]
     return migliore
+
 
 def best_row_2(compstack):
     '''
@@ -640,25 +644,225 @@ def F_B(path,floating,ref):
     ..............................
     ###################################################################################################################
     '''
-    dir1 = os.listdir(floating)
-    dir2 = os.listdir(ref)
+    dir1 = os.listdir(ref)
+    dir2 = os.listdir(floating)
     a_list=[]
-    for i in ban:#range(1,6):#(1,6):
-        ref_list = [s for s in dir1 if "_B"+str(i)+'_city' in s ]
+    for i in range(1,2):
+        ref_list = [s for s in dir1 if "_B"+str(i)+'_roi' in s ]
         if len(ref_list):
-            floating_list = [s for s in dir2 if "_B"+str(i)+'_city' in s ]
-            rows,cols_q,nbands,geotransform,projection = read_image_parameters(floating+ref_list[0])
-            rows,cols_q,nbands,geotransform,projection = read_image_parameters(ref+floating_list[0])
-            band_list0 = read_image(floating+ref_list[0],np.uint8,0)
-            band_list1 = read_image(ref+floating_list[0],np.uint8,0)
+            floating_list = [s for s in dir2 if "_B"+str(i)+'_roi' in s ]
+            rows,cols_q,nbands,geotransform,projection = read_image_parameters(ref+ref_list[0])
+            rows,cols_q,nbands,geotransform,projection = read_image_parameters(floating+floating_list[0])
+            band_list0 = read_image(ref+ref_list[0],np.uint8,0)
+            band_list1 = read_image(floating+floating_list[0],np.uint8,0)
             im0=band_list0[0]
             im1=band_list1[0]       
-            a=Extraction(floating+ref_list[0],ref+floating_list[0])# the coordinates of the max point which is supposed to be the invariant point
+            a=Extraction(ref+ref_list[0],floating+floating_list[0])# the coordinates of the max point which is supposed to be the invariant point
             a_list.append(a[0][0] - a[0][2])
             a_list.append(a[0][1] - a[0][3])
-            b=affine_corrected(im0,a[0][2] - a[0][0],a[0][3] - a[0][1])
+            #b=affine_corrected(im1,a[0][2] - a[0][0],a[0][3] - a[0][1])
+            print a[0][0] - a[0][2]
+            print a[0][1] - a[0][3]
+            b = affine_corrected(im1,a[0][0] - a[0][2],a[0][1] - a[0][3])
             out_list=[]
             out_list.append(b)
-            write_image(out_list,0,i,path+'corrected_Transl._'+floating[-11:-1]+'_B'+str(i)+'.tif',rows,cols_q,geotransform,projection)       
+            write_image(out_list,0,i,path+'corrected_Transl_B'+str(i)+'.tif',rows,cols_q,geotransform,projection)       
     return a_list
     
+
+def FFT_coregistration(ref_band_mat,target_band_mat):
+
+    '''
+    Alternative method used to coregister the images based on the FFT
+
+    :param ref_band_mat: numpy 8 bit array containing reference image
+    :param target_band_mat: numpy 8 bit array containing target image
+    :returns: the shift among the two input images 
+
+    '''
+    status = Bar(3, "FFT")
+    #Normalization - http://en.wikipedia.org/wiki/Cross-correlation#Normalized_cross-correlation 
+    ref_band_mat = (ref_band_mat - ref_band_mat.mean()) / ref_band_mat.std()
+    target_band_mat = (target_band_mat - target_band_mat.mean()) / target_band_mat.std() 
+
+    #Check dimensions - they have to match
+    rows_ref,cols_ref =  ref_band_mat.shape
+    rows_target,cols_target = target_band_mat.shape
+
+    if rows_target < rows_ref:
+        print 'Rows - correction needed'
+
+        diff = rows_ref - rows_target
+        target_band_mat = np.vstack((target_band_mat,np.zeros((diff,cols_target))))
+    elif rows_ref < rows_target:
+        print 'Rows - correction needed'
+        diff = rows_target - rows_ref
+        ref_band_mat = np.vstack((ref_band_mat,np.zeros((diff,cols_ref))))
+    status(1)
+    rows_target,cols_target = target_band_mat.shape
+    rows_ref,cols_ref = ref_band_mat.shape
+
+    if cols_target < cols_ref:
+        print 'Columns - correction needed'
+        diff = cols_ref - cols_target
+        target_band_mat = np.hstack((target_band_mat,np.zeros((rows_target,diff))))
+    elif cols_ref < cols_target:
+        print 'Columns - correction needed'
+        diff = cols_target - cols_ref
+        ref_band_mat = np.hstack((ref_band_mat,np.zeros((rows_ref,diff))))
+
+    rows_target,cols_target = target_band_mat.shape   
+    status(2)
+    #translation(im_target,im_ref)
+    freq_target = fft2(target_band_mat)   
+    freq_ref = fft2(ref_band_mat)  
+    inverse = abs(ifft2((freq_target * freq_ref.conjugate()) / (abs(freq_target) * abs(freq_ref))))   
+    #Converts a flat index or array of flat indices into a tuple of coordinate arrays. would give the pixel of the max inverse value
+    y_shift,x_shift = np.unravel_index(np.argmax(inverse),(rows_target,cols_target))
+
+    if y_shift > rows_target // 2: # // used to truncate the division
+        y_shift -= rows_target
+    if x_shift > cols_target // 2: # // used to truncate the division
+        x_shift -= cols_target
+    status(3)
+    return -x_shift, -y_shift
+
+
+def points_extraction(ref_band_mat,target_band_mat,output_as_array):
+     
+    '''
+    SURF version used for Landsat by EUCENTRE
+    
+    :param ref_band_mat: numpy 8 bit array containing reference image
+    :param target_band_mat: numpy 8 bit array containing target image
+    :param output_as_array: if True the output is converted to matrix for visualization purposes
+    :returns: points from reference, points from target, result of matching function or array of points (depending on the output_as_array flag)
+    
+    '''
+    detector = cv2.FeatureDetector_create("SURF") #Detector definition
+    descriptor = cv2.DescriptorExtractor_create("BRIEF") #Descriptor definition
+    matcher = cv2.DescriptorMatcher_create("BruteForce-Hamming") #Matcher definition
+    
+    #Extraction of features from REFERENCE
+    ref_mask_zeros = np.ma.masked_equal(ref_band_mat, 0).astype('uint8')
+    k_ref = detector.detect(ref_band_mat.astype(np.uint8), mask=ref_mask_zeros)
+    kp_ref, d_ref = descriptor.compute(ref_band_mat, k_ref)
+    h_ref, w_ref = ref_band_mat.shape[:2]
+    ref_band_mat = []
+
+    #Extration of features from TARGET
+    target_mask_zeros = np.ma.masked_equal(target_band_mat, 0).astype('uint8')
+    k_target = detector.detect(target_band_mat.astype(np.uint8), mask=target_mask_zeros)
+    kp_target, d_target = descriptor.compute(target_band_mat, k_target)
+    h_target, w_target = target_band_mat.shape[:2]
+    target_band_mat = []
+
+    '''
+    #Matching
+    matches = matcher.match(d_ref, d_target)
+    matches = sorted(matches, key = lambda x:x.distance)
+    matches_disp = matches[:3]
+    if output_as_array == True:
+        ext_points = np.zeros(shape=(len(matches_disp),4))
+        i = 0
+        for m in matches_disp:
+            ext_points[i][:]= [int(kp_ref[m.queryIdx].pt[0]),int(kp_ref[m.queryIdx].pt[1]),int(kp_target[m.trainIdx].pt[0]),int(kp_target[m.trainIdx].pt[1])]
+            i = i+1
+        return kp_ref,kp_target,ext_points
+    else:
+        return kp_ref,kp_target,matches
+    '''
+    matches = matcher.match(d_ref, d_target)
+    # visualize the matches
+    dist = [m.distance for m in matches] #extract the distances
+  
+    thres_dist = 100
+    sel_matches = [m for m in matches if m.distance <= thres_dist]
+
+    points=np.zeros(shape=(len(sel_matches),4))
+    points_shift = np.zeros(shape=(len(sel_matches),2))
+    points_shift_abs = np.zeros(shape=(len(sel_matches),1))
+
+    # Creo una variabile dove vado a scrivere, per ogni coppia: distanza hamming, shift, pendenza
+   
+    compar_stack = np.array([100,1.5,0.0,1,1,2,2])
+
+    #vishualization(img1,img2,sel_matches)
+    i = 0
+    for m in sel_matches:
+        points[i][:]= [int(kp_ref[m.queryIdx].pt[0]),int(kp_ref[m.queryIdx].pt[1]),int(kp_target[m.trainIdx].pt[0]),int(kp_target[m.trainIdx].pt[1])]
+        points_shift[i][:] = [int(kp_target[m.trainIdx].pt[0])-int(kp_ref[m.queryIdx].pt[0]),int(kp_target[m.trainIdx].pt[1])-int(kp_ref[m.queryIdx].pt[1])]
+        points_shift_abs [i][:] = [np.sqrt((int(w_ref + kp_target[m.trainIdx].pt[0])-int(kp_ref[m.queryIdx].pt[0]))**2+
+                                           (int(kp_target[m.trainIdx].pt[1])-int(kp_ref[m.queryIdx].pt[1]))**2)]
+        
+        #print m.distance,'   ' , [np.sqrt((int(kp_target[m.trainIdx].pt[0])-int(kp_ref[m.queryIdx].pt[0]))**2+
+                                          # (int(kp_target[m.trainIdx].pt[1])-int(kp_ref[m.queryIdx].pt[1]))**2)]
+        
+        deltax = np.float(int(kp_target[m.trainIdx].pt[0])-int(kp_ref[m.queryIdx].pt[0]))
+        deltay = np.float(int(kp_target[m.trainIdx].pt[1])-int(kp_ref[m.queryIdx].pt[1]))
+        
+        if deltax == 0 and deltay != 0:
+            slope = 90
+        elif deltax == 0 and deltay == 0:
+            slope = 0
+        else:
+            slope = (np.arctan(deltay/deltax)*360)/(2*np.pi)
+        
+        compar_stack = np.vstack([compar_stack,[m.distance,points_shift_abs [i][:],slope,
+                                                int(kp_ref[m.queryIdx].pt[0]),
+                                                int(kp_ref[m.queryIdx].pt[1]),
+                                                int(kp_target[m.trainIdx].pt[0]),
+                                                int(kp_target[m.trainIdx].pt[1])]])
+        i=i+1
+
+    #Ordino lo stack
+    compar_stack = compar_stack[compar_stack[:,0].argsort()]#Returns the indices that would sort an array.
+    #print compar_stack#[0:30]
+    #print len(compar_stack)
+
+    best = best_row_2(compar_stack[0:90])#The number of sorted points to be passed
+    best_point = [best[3:7]]
+    return best_point
+
+
+def slope_filter(ext_points):
+
+    '''
+    Filter based on the deviation of the slope
+
+    :param ext_points: array with coordinates of extracted points
+    :returns: an array of filtered points
+
+    Author: Daniele De Vecchi
+    Last modified: 19/08/2014
+    '''
+    
+    discard_list = []
+    for p in range(0,len(ext_points)):
+        #The first point is the one with minimum distance so it is supposed to be for sure correct
+        x_ref,y_ref,x_target,y_target = int(ext_points[p][0]),int(ext_points[p][1]),int(ext_points[p][2]),int(ext_points[p][3])
+        if x_target-x_ref != 0:
+            istant_slope = float((y_ref-y_target)) / float((x_ref-x_target))
+        else:
+            istant_slope = 0
+        if p == 0:
+            slope_mean = istant_slope
+        else:
+            slope_mean = float(slope_mean+istant_slope) / float(2)
+        slope_std = istant_slope - slope_mean
+        if abs(slope_std) >= 0.4:
+            discard_list.append(p)
+        #print 'istant_slope: ' + str(istant_slope)
+        #print 'slope_mean: ' + str(slope_mean)
+        #print 'slope_std: ' + str(slope_std)
+        
+    new_points = np.zeros(shape=(len(ext_points)-len(discard_list),4))
+    p = 0
+    if len(new_points)>1:
+        for dp in range(0,len(ext_points)):
+            if dp not in discard_list:
+                new_points[p][:]= int(ext_points[dp][0]),int(ext_points[dp][1]),int(ext_points[dp][2]),int(ext_points[dp][3])
+                p = p+1
+            else:
+                dp = dp+1
+    return new_points

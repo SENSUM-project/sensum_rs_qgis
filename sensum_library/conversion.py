@@ -868,5 +868,37 @@ def normalize_to_L8(input_band_list):
     
     return out_list 
     
-if __name__ == "__main__":
-    reproject_shapefile("C:/Van_process/New_Mask_Inner_lake.shp","C:/Van_process/mask.shp",32638)
+
+def extract_tiles(input_raster,start_col_coord,start_row_coord,end_col_coord,end_row_coord):
+    
+    '''
+    Extract a subset of a raster according to the desired coordinates
+
+    :param input_raster: path and name of the input raster file (*.TIF,*.tiff) (string)
+    :param output_raster: path and name of the output raster file (*.TIF,*.tiff) (string)
+    :param start_col_coord: starting longitude coordinate
+    :param start_row_coord: starting latitude coordinate
+    :param end_col_coord: ending longitude coordinate
+    :param end_row_coord: ending latitude coordinate
+
+    :returns: an output file is created and also a level of confidence on the tile is returned
+
+    Author: Daniele De Vecchi
+    Last modified: 20/08/2014
+    '''
+
+    #Read input image
+    rows,cols,nbands,geotransform,projection = read_image_parameters(input_raster)
+    band_list = read_image(input_raster,np.uint8,0)
+    #Definition of the indices used to tile
+    start_col_ind,start_row_ind = world2pixel(geotransform,start_col_coord,start_row_coord)
+    end_col_ind,end_row_ind = world2pixel(geotransform,end_col_coord,end_row_coord)
+    #print start_col_ind,start_row_ind
+    #print end_col_ind,end_row_ind
+    #New geotransform matrix
+    new_geotransform = [start_col_coord,geotransform[1],0.0,start_row_coord,0.0,geotransform[5]]
+    #Extraction
+    data = band_list[0][start_row_ind:end_row_ind,start_col_ind:end_col_ind]
+    
+    band_list = []
+    return data,start_col_coord,start_row_coord,end_col_coord,end_row_coord

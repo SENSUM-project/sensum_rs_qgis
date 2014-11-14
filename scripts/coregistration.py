@@ -28,8 +28,8 @@ def main():
     arg = args()
     reference_folder = str(arg.reference_path)
     target_folder = str(arg.target_folder)
-    enable_clip = (True if arg.enable_clip else None)
-    if enable_clip:
+    enable_clip = (True if arg.enable_clip else False)
+    if enable_clip == True:
         input_shape = str(arg.enable_clip[0])
     else:
         input_shape = ""
@@ -37,6 +37,7 @@ def main():
     if enable_grid: 
         tiling_row_factor = int(arg.enable_grid[0])
         tiling_col_factor = int(arg.enable_grid[1])
+        print tiling_row_factor,tiling_col_factor
     else:
         tiling_row_factor = tiling_col_factor = 0
     enable_resampling = bool(arg.enable_resampling)
@@ -58,232 +59,6 @@ def args():
     return args
 
 
-def EUC_SURF(ref_band_mat,target_band_mat,output_as_array):
-     
-    '''
-    SURF version used for Landsat by EUCENTRE
-    
-    :param ref_band_mat: numpy 8 bit array containing reference image
-    :param target_band_mat: numpy 8 bit array containing target image
-    :param output_as_array: if True the output is converted to matrix for visualization purposes
-    :returns: points from reference, points from target, result of matching function or array of points (depending on the output_as_array flag)
-    
-    '''
-    detector = cv2.FeatureDetector_create("SURF") #Detector definition
-    descriptor = cv2.DescriptorExtractor_create("BRIEF") #Descriptor definition
-    matcher = cv2.DescriptorMatcher_create("BruteForce-Hamming") #Matcher definition
-    
-    #Extraction of features from REFERENCE
-    ref_mask_zeros = np.ma.masked_equal(ref_band_mat, 0).astype('uint8')
-    k_ref = detector.detect(ref_band_mat.astype(np.uint8), mask=ref_mask_zeros)
-    kp_ref, d_ref = descriptor.compute(ref_band_mat, k_ref)
-    h_ref, w_ref = ref_band_mat.shape[:2]
-    ref_band_mat = []
-
-    #Extration of features from TARGET
-    target_mask_zeros = np.ma.masked_equal(target_band_mat, 0).astype('uint8')
-    k_target = detector.detect(target_band_mat.astype(np.uint8), mask=target_mask_zeros)
-    kp_target, d_target = descriptor.compute(target_band_mat, k_target)
-    h_target, w_target = target_band_mat.shape[:2]
-    target_band_mat = []
-
-    #Matching
-    matches = matcher.match(d_ref, d_target)
-    matches = sorted(matches, key = lambda x:x.distance)
-    matches_disp = matches[:3]
-    if output_as_array == True:
-        ext_points = np.zeros(shape=(len(matches_disp),4))
-        i = 0
-        for m in matches_disp:
-            ext_points[i][:]= [int(kp_ref[m.queryIdx].pt[0]),int(kp_ref[m.queryIdx].pt[1]),int(kp_target[m.trainIdx].pt[0]),int(kp_target[m.trainIdx].pt[1])]
-            i = i+1
-        return kp_ref,kp_target,ext_points
-    else:
-        return kp_ref,kp_target,matches
-
-
-def FFT_coregistration(ref_band_mat,target_band_mat):
-
-    '''
-    Alternative method used to coregister the images based on the FFT
-
-    :param ref_band_mat: numpy 8 bit array containing reference image
-    :param target_band_mat: numpy 8 bit array containing target image
-    :returns: the shift among the two input images 
-
-    '''
-    status = Bar(3, "FFT")
-    #Normalization - http://en.wikipedia.org/wiki/Cross-correlation#Normalized_cross-correlation 
-    ref_band_mat = (ref_band_mat - ref_band_mat.mean()) / ref_band_mat.std()
-    target_band_mat = (target_band_mat - target_band_mat.mean()) / target_band_mat.std() 
-
-    #Check dimensions - they have to match
-    rows_ref,cols_ref =  ref_band_mat.shape
-    rows_target,cols_target = target_band_mat.shape
-
-    if rows_target < rows_ref:
-        print 'Rows - correction needed'
-
-        diff = rows_ref - rows_target
-        target_band_mat = np.vstack((target_band_mat,np.zeros((diff,cols_target))))
-    elif rows_ref < rows_target:
-        print 'Rows - correction needed'
-        diff = rows_target - rows_ref
-        ref_band_mat = np.vstack((ref_band_mat,np.zeros((diff,cols_ref))))
-    status(1)
-    rows_target,cols_target = target_band_mat.shape
-    rows_ref,cols_ref = ref_band_mat.shape
-
-    if cols_target < cols_ref:
-        print 'Columns - correction needed'
-        diff = cols_ref - cols_target
-        target_band_mat = np.hstack((target_band_mat,np.zeros((rows_target,diff))))
-    elif cols_ref < cols_target:
-        print 'Columns - correction needed'
-        diff = cols_target - cols_ref
-        ref_band_mat = np.hstack((ref_band_mat,np.zeros((rows_ref,diff))))
-
-    rows_target,cols_target = target_band_mat.shape   
-    status(2)
-    #translation(im_target,im_ref)
-    freq_target = fft2(target_band_mat)   
-    freq_ref = fft2(ref_band_mat)  
-    inverse = abs(ifft2((freq_target * freq_ref.conjugate()) / (abs(freq_target) * abs(freq_ref))))   
-    #Converts a flat index or array of flat indices into a tuple of coordinate arrays. would give the pixel of the max inverse value
-    y_shift,x_shift = np.unravel_index(np.argmax(inverse),(rows_target,cols_target))
-
-    if y_shift > rows_target // 2: # // used to truncate the division
-        y_shift -= rows_target
-    if x_shift > cols_target // 2: # // used to truncate the division
-        x_shift -= cols_target
-    status(3)
-    return -x_shift, -y_shift
-
-
-def extract_tiles(input_raster,start_col_coord,start_row_coord,end_col_coord,end_row_coord):
-    
-    '''
-    Extract a subset of a raster according to the desired coordinates
-
-    :param input_raster: path and name of the input raster file (*.TIF,*.tiff) (string)
-    :param output_raster: path and name of the output raster file (*.TIF,*.tiff) (string)
-    :param start_col_coord: starting longitude coordinate
-    :param start_row_coord: starting latitude coordinate
-    :param end_col_coord: ending longitude coordinate
-    :param end_row_coord: ending latitude coordinate
-
-    :returns: an output file is created and also a level of confidence on the tile is returned
-
-    Author: Daniele De Vecchi
-    Last modified: 20/08/2014
-    '''
-
-    #Read input image
-    rows,cols,nbands,geotransform,projection = read_image_parameters(input_raster)
-    band_list = read_image(input_raster,np.uint8,0)
-    #Definition of the indices used to tile
-    start_col_ind,start_row_ind = world2pixel(geotransform,start_col_coord,start_row_coord)
-    end_col_ind,end_row_ind = world2pixel(geotransform,end_col_coord,end_row_coord)
-    #print start_col_ind,start_row_ind
-    #print end_col_ind,end_row_ind
-    #New geotransform matrix
-    new_geotransform = [start_col_coord,geotransform[1],0.0,start_row_coord,0.0,geotransform[5]]
-    #Extraction
-    data = band_list[0][start_row_ind:end_row_ind,start_col_ind:end_col_ind]
-    
-    band_list = []
-    return data,start_col_coord,start_row_coord,end_col_coord,end_row_coord
-
-
-def tile_statistics(band_mat,start_col_coord,start_row_coord,end_col_coord,end_row_coord):
-
-    '''
-    Compute statistics related to the input tile
-
-    :param band_mat: numpy 8 bit array containing the extracted tile
-    :param start_col_coord: starting longitude coordinate
-    :param start_row_coord: starting latitude coordinate
-    :param end_col_coord: ending longitude coordinate
-    :param end_row_coord: ending latitude coordinate
-
-    :returns: a list of statistics (start_col_coord,start_row_coord,end_col_coord,end_row_coord,confidence, min frequency value, max frequency value, standard deviation value, distance among frequent values)
-
-    Author: Daniele De Vecchi
-    Last modified: 22/08/2014
-    '''
-
-    #Histogram definition
-    data_flat = band_mat.flatten()
-    data_counter = collections.Counter(data_flat)
-    data_common = (data_counter.most_common(20)) #20 most common values
-    data_common_sorted = sorted(data_common,key=itemgetter(0)) #reverse=True for inverse order
-    hist_value = [elt for elt,count in data_common_sorted]
-    hist_count = [count for elt,count in data_common_sorted]
-
-    #Define the level of confidence according to the computed statistics 
-    min_value = hist_value[0]
-    max_value = hist_value[-1]
-    std_value = np.std(hist_count)
-    diff_value = max_value - min_value
-    min_value_count = hist_count[0]
-    max_value_count = hist_count[-1] 
-    tot_count = np.sum(hist_count)
-    min_value_freq = (float(min_value_count) / float(tot_count)) * 100
-    max_value_freq = (float(max_value_count) / float(tot_count)) * 100
-
-    if max_value_freq > 20.0 or min_value_freq > 20.0 or diff_value < 18 or std_value > 100000:
-        confidence = 0
-    elif max_value_freq > 5.0: #or std_value < 5.5: #or min_value_freq > 5.0:
-        confidence = 0.5
-    else:
-        confidence = 1
-
-    return (start_col_coord,start_row_coord,end_col_coord,end_row_coord,confidence,min_value_freq,max_value_freq,std_value,diff_value)
-
-
-def slope_filter(ext_points):
-
-    '''
-    Filter based on the deviation of the slope
-
-    :param ext_points: array with coordinates of extracted points
-    :returns: an array of filtered points
-
-    Author: Daniele De Vecchi
-    Last modified: 19/08/2014
-    '''
-    
-    discard_list = []
-    for p in range(0,len(ext_points)):
-        #The first point is the one with minimum distance so it is supposed to be for sure correct
-        x_ref,y_ref,x_target,y_target = int(ext_points[p][0]),int(ext_points[p][1]),int(ext_points[p][2]),int(ext_points[p][3])
-        if x_target-x_ref != 0:
-            istant_slope = float((y_target-y_ref)) / float((x_target-x_ref))
-        else:
-            istant_slope = 0
-        if p == 0:
-            slope_mean = istant_slope
-        else:
-            slope_mean = float(slope_mean+istant_slope) / float(2)
-        slope_std = istant_slope - slope_mean
-        if abs(slope_std) >= 0.1:
-            discard_list.append(p)
-        #print 'istant_slope: ' + str(istant_slope)
-        #print 'slope_mean: ' + str(slope_mean)
-        #print 'slope_std: ' + str(slope_std)
-        
-    new_points = np.zeros(shape=(len(ext_points)-len(discard_list),4))
-    p = 0
-    if len(new_points)>1:
-        for dp in range(0,len(ext_points)):
-            if dp not in discard_list:
-                new_points[p][:]= int(ext_points[dp][0]),int(ext_points[dp][1]),int(ext_points[dp][2]),int(ext_points[dp][3])
-                p = p+1
-            else:
-                dp = dp+1
-    return new_points
-
-
 def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable_grid,tiling_row_factor,tiling_col_factor,enable_resampling,enable_SURF,enable_FFT):
 
     '''
@@ -303,11 +78,8 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
     ref_new_resolution = geotransform_ref_orig[1] / float(2) 
 
     target_images = os.listdir(target_folder)
-    print target_images
     target_file = [s for s in target_images if "B1.TIF" in s or "B1.tif" in s and "aux.xml" not in s]
     print "\n\n\n\n\n"
-    print  target_file[0]
-    print "PROVA"
     image_target = target_folder + separator + target_file[0]
     rows_target_orig,cols_target_orig,nbands_target_orig,geotransform_target_orig,projection_target_orig = read_image_parameters(image_target)
     target_new_resolution = geotransform_target_orig[1] / float(2)
@@ -332,8 +104,8 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
         miny = np.max([miny_target,miny_ref])
         maxx = np.min([maxx_target,maxx_ref])
         maxy = np.min([maxy_target,maxy_ref])
-
-        status = Bar(tiling_row_factor, "Clipping")
+        target_tiles_prop_list = []
+        status = Bar(tiling_row_factor, "Tile definition")
         for t_row in range(0,tiling_row_factor):
             for t_col in range(0,tiling_col_factor):
                 start_col_coord = float(maxx-minx)*(float(t_col)/float(tiling_col_factor)) + float(minx)
@@ -356,9 +128,12 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
         target_tiles_prop_list_sorted = sorted(target_tiles_prop_list,key=itemgetter(7))
         target_tiles_prop_list_sorted = [element for element in target_tiles_prop_list_sorted if element[4] != 0 and element[4] != 0.5]      
 
-        status = Bar(2, "Clipping")
+        status = Bar(2, "Tile extraction")
+        target_tiles_list = []
+        ref_tiles_list = []
         for et in range(0,2):
             status(et)
+            rows_target,cols_target,nbands_target,geotransform_target,projection_target = read_image_parameters(image_target)
             band_mat_target,start_col_coord_target,start_row_coord_target,end_col_coord_target,end_row_coord_target = extract_tiles(image_target,target_tiles_prop_list_sorted[et][0],target_tiles_prop_list_sorted[et][1],target_tiles_prop_list_sorted[et][2],target_tiles_prop_list_sorted[et][3])
             band_mat_ref,start_col_coord_ref,start_row_coord_ref,end_col_coord_ref,end_row_coord_ref = extract_tiles(image_ref,target_tiles_prop_list_sorted[et][0],target_tiles_prop_list_sorted[et][1],target_tiles_prop_list_sorted[et][2],target_tiles_prop_list_sorted[et][3])
 
@@ -385,58 +160,51 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
     if enable_SURF == True:
 
         if enable_clip == True:
+            
             band_list_ref = read_image(image_ref,np.uint8,0)
             rows_ref,cols_ref,nbands_ref,geotransform_ref,projection_ref = read_image_parameters(image_ref)
             band_list_target = read_image(image_target,np.uint8,0)
             rows_target,cols_target,nbands_target,geotransform_target,projection_target = read_image_parameters(image_target)
 
-            kp_ref,kp_target,ext_points = EUC_SURF(band_list_ref[0],band_list_target[0],output_as_array=True)
-            ext_points = slope_filter(ext_points)
-            status = Bar(len(ext_points), "SURF")
-            x_shift_surf, y_shift_surf = 0,0
-            if len(ext_points) > 1:
-                for p in range(0,len(ext_points)):
-                    status(p)
-                    x_ref,y_ref,x_target,y_target = int(ext_points[p][0]),int(ext_points[p][1]),int(ext_points[p][2]),int(ext_points[p][3])
-                    x_shift_surf = x_shift_surf + (x_ref-x_target)
-                    y_shift_surf = y_shift_surf + (y_ref-y_target)
+            #kp_ref,kp_target,ext_points = points_extraction(band_list_ref[0],band_list_target[0],output_as_array=True)
+            ext_point = points_extraction(band_list_ref[0],band_list_target[0],output_as_array=True)
+            #print ext_point
+            x_shift_surf = ext_point[0][0] - ext_point[0][2]
+            y_shift_surf = ext_point[0][1] - ext_point[0][3]
+            
 
-                x_shift_surf = float(x_shift_surf) / float(len(ext_points))
-                y_shift_surf = float(y_shift_surf) / float(len(ext_points))
-
-            #M = np.float32([[1,0,x_shift_surf],[0,1,y_shift_surf]])
             band_list_ref = []
             band_list_target = []
+            os.remove(image_ref)
+            os.remove(image_target)
 
         elif enable_grid == True:
-            ext_points_list = []
-            status = Bar(target_tiles_list, "SURF 1/2")
+            x_shift_surf_tot = 0
+            y_shift_surf_tot = 0
+            #status = Bar(target_tiles_list, "SURF 1/2")
             for f in range(0,len(target_tiles_list)):
                 status(f)
                 band_list_target = read_image(target_tiles_list[f],np.uint8,0)
                 band_list_ref = read_image(ref_tiles_list[f],np.uint8,0)
 
-                kp_ref,kp_target,ext_points = EUC_SURF(band_list_ref[0],band_list_target[0],output_as_array=True)
-                ext_points = slope_filter(ext_points)
-                ext_points_list.append(ext_points)
+                #kp_ref,kp_target,ext_points = points_extraction(band_list_ref[0],band_list_target[0],output_as_array=True)
+                #ext_points = slope_filter(ext_points)
+                ext_point = points_extraction(band_list_ref[0],band_list_target[0],output_as_array=True)
                 
                 band_list_target = []
-                band_list_ref = []    
+                band_list_ref = []   
+                os.remove(target_tiles_list[f]) 
+                os.remove(ref_tiles_list[f])
+                x_shift_surf_tot = x_shift_surf_tot + x_shift_surf
+                y_shift_surf_tot = y_shift_surf_tot + y_shift_surf
 
-            x_shift_surf, y_shift_surf = 0,0
-            status = Bar(ext_points_list, "SURF 2/2")
-            for f in range(0,len(ext_points_list)):
-                status(f)
-                for p in range(0,len(ext_points_list[f])):
-                    x_ref,y_ref,x_target,y_target = int(ext_points_list[f][p][0]),int(ext_points_list[f][p][1]),int(ext_points_list[f][p][2]),int(ext_points_list[f][p][3])
-                    x_shift_surf = x_shift_surf + (x_ref-x_target)
-                    y_shift_surf = y_shift_surf + (y_ref-y_target)
+            x_shift_surf = float(x_shift_surf_tot) / float(len(target_tiles_list))
+            y_shift_surf = float(y_shift_surf_tot) / float(len(target_tiles_list))
 
-            
-            x_shift_surf = float(x_shift_surf) / float(len(ext_points_list[0])+len(ext_points_list[1]))
-            y_shift_surf = float(y_shift) / float(len(ext_points_list[0])+len(ext_points_list[1]))
-
+        if (x_shift_surf == 1 and y_shift_surf == 0) or (x_shift_surf == 0 and y_shift_surf == 1):
+                x_shift_surf,y_shift_surf = [0, 0]
         M_surf = np.float32([[1,0,x_shift_surf],[0,1,y_shift_surf]])
+        print M_surf
 
     if enable_FFT == True:
 
@@ -444,6 +212,7 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
             band_list_ref = read_image(image_ref,np.uint8,0)
             band_list_target = read_image(image_target,np.uint8,0)
             x_shift_fft,y_shift_fft = FFT_coregistration(band_list_ref[0],band_list_target[0])
+            print 'FFT Shift -> X:' + str(x_shift_fft) +' Y: ' + str(y_shift_fft)
 
             band_list_ref = []
             band_list_target = []
@@ -455,6 +224,7 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
                 band_list_target = read_image(target_tiles_list[f],np.uint8,0)
                 band_list_ref = read_image(ref_tiles_list[f],np.uint8,0)
                 x_shift_fft,y_shift_fft = FFT_coregistration(band_list_ref[0],band_list_target[0])
+                print 'FFT Shift -> X:' + str(x_shift_fft) +' Y: ' + str(y_shift_fft)
                 x_shift_fft_tot = x_shift_fft_tot + x_shift_fft
                 y_shift_fft_tot = y_shift_fft_tot + y_shift_fft
 
@@ -465,7 +235,7 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
             y_shift_fft = float(y_shift_fft_tot) / float(len(target_tiles_list))
 
         M_fft = np.float32([[1,0,x_shift_fft],[0,1,y_shift_fft]])
-
+    
     target_rs = [s for s in target_images if ".TIF" in s or ".tif" in s and "aux.xml" not in s]
     for tg_file in target_rs:
         tg_file = target_folder + separator + tg_file
@@ -476,24 +246,38 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
             rows_target,cols_target,nbands_target,geotransform_target,projection = read_image_parameters(tg_file)
         else:
             band_list_target = read_image(tg_file,np.uint8,0)
-            rows_target,cols_target,nbands_target,geotransform_target,projection = read_image_parameters(tg_file)
+            rows_target,cols_target,nbands_target,geotransform_target,projection_target = read_image_parameters(tg_file)
             
         if enable_FFT == True:
-            dst = cv2.warpAffine(band_list_target[0],M_fft,(cols_target,rows_target))
-            write_image([dst],np.uint8,0,tg_file[:-4]+'_adj_fft.tif',rows_target,cols_target,geotransform_target,projection_target)
+            shutil.copyfile(tg_file,tg_file[:-4]+'_adj_surf.tif')
+            rows_target,cols_target,nbands_target,geotransform_target,projection = read_image_parameters(tg_file)
+            new_lon = float(x_shift_fft*geotransform_target[1]+geotransform_target[0]) 
+            new_lat = float(geotransform_target[3]+y_shift_fft*geotransform_target[5])
+            fixed_geotransform = [new_lon,geotransform_target[1],0.0,new_lat,0.0,geotransform_target[5]]
+    
+            up_image = osgeo.gdal.Open(tg_file[:-4]+'_adj_surf.tif', GA_Update)
+            up_image.SetGeoTransform(fixed_geotransform)
+            up_image = None
 
             if enable_resampling == True:
                 target_original_resolution = geotransform_target_orig[1]
                 resampling(tg_file[:-4]+'_adj_fft.tif',tg_file[:-4]+'adj_fft_rs_'+str(target_original_resolution)+'.tif',target_original_resolution,'bicubic')
-            
+           
         if enable_SURF == True:
-            dst = cv2.warpAffine(band_list_target[0],M_surf,(cols_target,rows_target))
-            write_image([dst],np.uint8,0,tg_file[:-4]+'_adj_surf.tif',rows_target,cols_target,geotransform_target,projection_target)
+            shutil.copyfile(tg_file,tg_file[:-4]+'_adj_surf.tif')
+            rows_target,cols_target,nbands_target,geotransform_target,projection = read_image_parameters(tg_file)
+            new_lon = float(x_shift_surf*geotransform_target[1]+geotransform_target[0]) 
+            new_lat = float(geotransform_target[3]+y_shift_surf*geotransform_target[5])
+            fixed_geotransform = [new_lon,geotransform_target[1],0.0,new_lat,0.0,geotransform_target[5]]
+    
+            up_image = osgeo.gdal.Open(tg_file[:-4]+'_adj_surf.tif', GA_Update)
+            up_image.SetGeoTransform(fixed_geotransform)
+            up_image = None
 
             if enable_resampling == True:
                 target_original_resolution = geotransform_target_orig[1]
                 resampling(tg_file[:-4]+'_adj_surf.tif',tg_file[:-4]+'_adj_surf_rs_'+str(target_original_resolution)+'.tif',target_original_resolution,'bicubic')
-
+        
 if __name__ == "__main__":
     main()
     

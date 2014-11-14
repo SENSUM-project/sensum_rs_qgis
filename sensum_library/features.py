@@ -44,6 +44,8 @@ import os
 import numpy as np
 import scipy.stats
 import os,sys
+import collections
+from operator import itemgetter, attrgetter
 sys.path.append("C:\\OSGeo4W64\\apps\\Python27\\Lib\\site-packages")
 sys.path.append("C:\\OSGeo4W64\\apps\\orfeotoolbox\\python")
 os.environ["PATH"] = os.environ["PATH"] + "C:\\OSGeo4W64\\bin"
@@ -681,4 +683,50 @@ def get_class(target_layer):
     index3 = (urban_classes_tmp[i] for i,disimmilarity3_sum in enumerate(dissimilarity3_sums) if disimmilarity3_sum == max(dissimilarity3_sums)).next()
     index_list = [index1,index2,index3]
     return max(set(index_list), key=index_list.count)
+
+
+def tile_statistics(band_mat,start_col_coord,start_row_coord,end_col_coord,end_row_coord):
+
+    '''
+    Compute statistics related to the input tile
+
+    :param band_mat: numpy 8 bit array containing the extracted tile
+    :param start_col_coord: starting longitude coordinate
+    :param start_row_coord: starting latitude coordinate
+    :param end_col_coord: ending longitude coordinate
+    :param end_row_coord: ending latitude coordinate
+
+    :returns: a list of statistics (start_col_coord,start_row_coord,end_col_coord,end_row_coord,confidence, min frequency value, max frequency value, standard deviation value, distance among frequent values)
+
+    Author: Daniele De Vecchi
+    Last modified: 22/08/2014
+    '''
+
+    #Histogram definition
+    data_flat = band_mat.flatten()
+    data_counter = collections.Counter(data_flat)
+    data_common = (data_counter.most_common(20)) #20 most common values
+    data_common_sorted = sorted(data_common,key=itemgetter(0)) #reverse=True for inverse order
+    hist_value = [elt for elt,count in data_common_sorted]
+    hist_count = [count for elt,count in data_common_sorted]
+
+    #Define the level of confidence according to the computed statistics 
+    min_value = hist_value[0]
+    max_value = hist_value[-1]
+    std_value = np.std(hist_count)
+    diff_value = max_value - min_value
+    min_value_count = hist_count[0]
+    max_value_count = hist_count[-1] 
+    tot_count = np.sum(hist_count)
+    min_value_freq = (float(min_value_count) / float(tot_count)) * 100
+    max_value_freq = (float(max_value_count) / float(tot_count)) * 100
+
+    if max_value_freq > 20.0 or min_value_freq > 20.0 or diff_value < 18 or std_value > 100000:
+        confidence = 0
+    elif max_value_freq > 5.0: #or std_value < 5.5: #or min_value_freq > 5.0:
+        confidence = 0.5
+    else:
+        confidence = 1
+
+    return (start_col_coord,start_row_coord,end_col_coord,end_row_coord,confidence,min_value_freq,max_value_freq,std_value,diff_value)
 
