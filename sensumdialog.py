@@ -265,6 +265,7 @@ class CoregistrationDialog(QtGui.QDialog, Ui_Coregistration):
         self.ui.setupUi(self)
         self.ui.groupBox_clip.show()
         self.ui.groupBox_grid.hide()
+        self.ui.groupBox_unsupervised_classification.hide()
         QObject.connect(self.ui.pushButton_reference, SIGNAL("clicked()"), self.setPath_reference)
         QObject.connect(self.ui.pushButton_tobechange, SIGNAL("clicked()"), self.setPath_tobechange)
         QObject.connect(self.ui.comboBox_input_shape, SIGNAL("activated(const QString&)"), self.setPath_input_shapefile)
@@ -289,9 +290,15 @@ class CoregistrationDialog(QtGui.QDialog, Ui_Coregistration):
         if option == "Clip":
             self.ui.groupBox_clip.show()
             self.ui.groupBox_grid.hide()
-        else:
+            self.ui.groupBox_unsupervised_classification.hide()
+        elif option == "Grid":
             self.ui.groupBox_clip.hide()
             self.ui.groupBox_grid.show()
+            self.ui.groupBox_unsupervised_classification.hide()
+        elif option == "Unsupervised Classification":
+            self.ui.groupBox_clip.hide()
+            self.ui.groupBox_grid.hide()
+            self.ui.groupBox_unsupervised_classification.show()
 
 class FootprintsDialog(QtGui.QDialog, Ui_Footprints):
     def __init__(self):

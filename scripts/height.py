@@ -42,6 +42,9 @@ def main():
     shadow_checker(input_buildings, input_shadow[:-4]+'_temp.shp', date, idfield=idfield, outputShape=output_shape, resize=window_resize)
     #shutil.rmtree(tmp_shadow_processed)
     os.remove(input_shadow[:-4]+'_temp.shp')
+    os.remove(input_shadow[:-4]+'_temp.shx')
+    os.remove(input_shadow[:-4]+'_temp.dbf')
+    os.remove(input_shadow[:-4]+'_temp.prj')
 
 def args():
     parser = argparse.ArgumentParser(description='Calculate Height')
@@ -108,7 +111,9 @@ def height(shadowShape, pixelWidth, pixelHeight, date, outShape=''):
         a = utm2wgs84(easting, northing, zone)
         lon,lat = a[0],a[1]
         shadowLen = shadow_length(band_list,lat,lon,date)
+        shadowLen = shadowLen * pixelWidth
         buildingHeight = building_height(lat,lon,date,shadowLen)
+        if buildingHeight < 5.0: buildingHeight = 5.0
         #insert value to init shape
         outFeature = outLayer.GetFeature(i)
         outFeature.SetField('Shadow_Len',int(shadowLen))

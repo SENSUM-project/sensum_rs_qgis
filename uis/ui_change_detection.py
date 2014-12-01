@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_change_detection.ui'
 #
-# Created: Thu Oct 16 22:51:43 2014
+# Created: Wed Nov 26 12:11:41 2014
 #      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
@@ -62,16 +62,19 @@ class Ui_ChangeDetection(object):
         self.logo_unipv.setPixmap(QtGui.QPixmap(_fromUtf8(".sensum/unipv.png")))
         self.logo_unipv.setObjectName(_fromUtf8("logo_unipv"))
         self.label_tobechange_2 = QtGui.QLabel(ChangeDetection)
-        self.label_tobechange_2.setGeometry(QtCore.QRect(60, 200, 61, 20))
+        self.label_tobechange_2.setGeometry(QtCore.QRect(40, 200, 61, 20))
         self.label_tobechange_2.setObjectName(_fromUtf8("label_tobechange_2"))
         self.lineEdit_field = QtGui.QLineEdit(ChangeDetection)
-        self.lineEdit_field.setGeometry(QtCore.QRect(60, 220, 161, 21))
+        self.lineEdit_field.setGeometry(QtCore.QRect(40, 220, 161, 21))
         self.lineEdit_field.setObjectName(_fromUtf8("lineEdit_field"))
         self.comboBox_extraction = QtGui.QComboBox(ChangeDetection)
-        self.comboBox_extraction.setGeometry(QtCore.QRect(270, 210, 111, 22))
+        self.comboBox_extraction.setGeometry(QtCore.QRect(270, 220, 161, 22))
         self.comboBox_extraction.setObjectName(_fromUtf8("comboBox_extraction"))
         self.comboBox_extraction.addItem(_fromUtf8(""))
         self.comboBox_extraction.addItem(_fromUtf8(""))
+        self.checkBox_spatial_filter = QtGui.QCheckBox(ChangeDetection)
+        self.checkBox_spatial_filter.setGeometry(QtCore.QRect(90, 260, 111, 17))
+        self.checkBox_spatial_filter.setObjectName(_fromUtf8("checkBox_spatial_filter"))
 
         self.retranslateUi(ChangeDetection)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), ChangeDetection.accept)
@@ -87,4 +90,5 @@ class Ui_ChangeDetection(object):
         self.lineEdit_field.setText(_translate("ChangeDetection", "UrbanClass", None))
         self.comboBox_extraction.setItemText(0, _translate("ChangeDetection", "Dissimilarity-Based", None))
         self.comboBox_extraction.setItemText(1, _translate("ChangeDetection", "PCA-Based", None))
+        self.checkBox_spatial_filter.setText(_translate("ChangeDetection", "Spatial Filter", None))
 

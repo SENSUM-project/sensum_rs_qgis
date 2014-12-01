@@ -46,17 +46,9 @@ def args():
     args = parser.parse_args()
     return args
 
-'''
-def main():
-    multiband_pre = "C:/Users/DanielAurelio/Desktop/Work/Test_HR_change_detection/Muzaffarabad_QB_pre_post_R1_RAW/052006380010_01-20040813/052006380010_01_P001_MUL/04AUG13055047-M2AS-052006380010_01_P001.TIF"
-    panchromatic_pre = "C:/Users/DanielAurelio/Desktop/Work/Test_HR_change_detection/Muzaffarabad_QB_pre_post_R1_RAW/052006380010_01-20040813/052006380010_01_P001_PAN/04AUG13055047-P2AS-052006380010_01_P001.TIF"
-    multiband_post = "C:/Users/DanielAurelio/Desktop/Work/Test_HR_change_detection/Muzaffarabad_QB_pre_post_R1_RAW/052006380030_01-20051022/052006380030_01_P001_MUL/05OCT22060051-M2AS-052006380030_01_P001.TIF"
-    panchromatic_post = "C:/Users/DanielAurelio/Desktop/Work/Test_HR_change_detection/Muzaffarabad_QB_pre_post_R1_RAW/052006380030_01-20051022/052006380030_01_P001_PAN/05OCT22060051-P2AS-052006380030_01_P001.TIF"
-    clip_shape = "C:/Users/DanielAurelio/Desktop/Work/Test_HR_change_detection/Building_set1.shp"
-    change_detection(multiband_pre,panchromatic_pre,multiband_post,panchromatic_post,clip_shape)
-'''
 
 def change_detection(multiband_pre,panchromatic_pre,multiband_post,panchromatic_post,clip_shape):
+    
     pansharp_pre = os.path.splitext(multiband_pre)[0]+'_pansharp_pre.tif'
     pansharp_post = os.path.splitext(multiband_post)[0]+'_pansharp_post.tif'
     panchromatic_pre_clipped = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_pre_clipped.tif'
@@ -64,14 +56,16 @@ def change_detection(multiband_pre,panchromatic_pre,multiband_post,panchromatic_
     panchromatic_ncdi = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_ncdi.tif'
     panchromatic_ncdi_clipped = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_ncdi_clipped.tif'
     panchromatic_ncdi_roughness = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_ncdi_roughness.tif'
-    pansharp_pre_clipped = os.path.splitext(pansharp_pre)[0]+'_pre_clipped.tif'
-    pansharp_post_clipped = os.path.splitext(pansharp_post)[0]+'_post_clipped.tif'
+    panchromatic_ncdi_roughness_clipped = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_ncdi_roughness_clipped.tif'
+    pansharp_pre_clipped = os.path.splitext(pansharp_pre)[0]+'_clipped.tif'
+    pansharp_post_clipped = os.path.splitext(pansharp_post)[0]+'_clipped.tif'
     panchromatic_pre_clipped_slope = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_pre_slope.tif'
     panchromatic_post_clipped_slope = os.path.splitext(panchromatic_post)[0]+'_panchromatic_post_slope.tif'
     multiband_pre_clipped_slope = os.path.splitext(multiband_pre)[0]+'_multiband_pre_slope.tif'
     multiband_post_clipped_slope = os.path.splitext(multiband_post)[0]+'_multiband_post_slope.tif'
     pansharp_ncdi = os.path.splitext(pansharp_pre)[0]+'pasharp_ncdi.tif'
     pansharp_ncdi_roughness = os.path.splitext(pansharp_pre)[0]+'pansharp_ncdi_roughness.tif'
+    pansharp_ncdi_roughness_clipped = os.path.splitext(pansharp_pre)[0]+'pansharp_ncdi_roughness_clipped.tif'
     multiband_pre_clipped = os.path.splitext(multiband_pre)[0]+'_multiband_pre_clipped.tif'
     multiband_post_clipped = os.path.splitext(multiband_post)[0]+'_multiband_post_clipped.tif'
     multiband_ncdi = os.path.splitext(multiband_pre)[0]+'_multiband_ncdi.tif'
@@ -80,16 +74,19 @@ def change_detection(multiband_pre,panchromatic_pre,multiband_post,panchromatic_
     panchromatic_pre_canny = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_pre_canny.tif'
     panchromatic_post_canny = os.path.splitext(panchromatic_post)[0]+'_panchromatic_post_canny.tif'
     panchromatic_canny_ncdi = os.path.splitext(panchromatic_pre)[0]+'_panchromatic_canny_ncdi.tif'
+    
     status = Bar(27)
     #0
+    
     select_bands(multiband_pre,'_multiband_pre.tif')
     multiband_pre = os.path.splitext(multiband_pre)[0]+'_multiband_pre.tif'
-    select_bands(multiband_pre,'_multiband_post.tif')
-    multiband_pre = os.path.splitext(multiband_pre)[0]+'_multiband_post.tif'
+    select_bands(multiband_post,'_multiband_post.tif')
+    multiband_post = os.path.splitext(multiband_post)[0]+'_multiband_post.tif'
     status(1)
+    
     #1-2
-    pansharp(multiband_pre, panchromatic_pre)
-    pansharp(multiband_post, panchromatic_post)
+    pansharp(multiband_pre, panchromatic_pre,pansharp_pre)
+    pansharp(multiband_post, panchromatic_post,pansharp_post)
     status(2)
     #3
     ####CO-REGISTRATION####
@@ -97,16 +94,19 @@ def change_detection(multiband_pre,panchromatic_pre,multiband_post,panchromatic_
     clip_rectangular(panchromatic_pre,0,clip_shape,panchromatic_pre_clipped,resize=RSZ)
     clip_rectangular(panchromatic_post,0,clip_shape,panchromatic_post_clipped,resize=RSZ)
     status(5)
+    
     #6
     NCDI(panchromatic_pre_clipped,panchromatic_post_clipped,panchromatic_ncdi)
     status(6)
     #7
     roughness(panchromatic_ncdi, panchromatic_ncdi_roughness)
     status(7)
+    
     #8
-    clip_rectangular(panchromatic_ncdi,0,clip_shape,panchromatic_ncdi_clipped,mask=True,resize=RSZ)
-    loop_zonal_stats(clip_shape,panchromatic_ncdi_clipped,"1")
+    clip_rectangular(panchromatic_ncdi_roughness,0,clip_shape,panchromatic_ncdi_roughness_clipped,mask=True,resize=RSZ)
+    loop_zonal_stats(clip_shape,panchromatic_ncdi_roughness_clipped,"1")
     status(8)
+    
     #9-10
     clip_rectangular(pansharp_pre,0,clip_shape,pansharp_pre_clipped,resize=RSZ)
     clip_rectangular(pansharp_post,0,clip_shape,pansharp_post_clipped,resize=RSZ)
@@ -118,7 +118,7 @@ def change_detection(multiband_pre,panchromatic_pre,multiband_post,panchromatic_
     roughness(pansharp_ncdi, pansharp_ncdi_roughness)
     status(12)
     #13
-    clip_rectangular(pansharp_ncdi_roughness,0,clip_shape,panchromatic_ncdi_clipped,mask=True,resize=RSZ)
+    clip_rectangular(pansharp_ncdi_roughness,0,clip_shape,pansharp_ncdi_roughness_clipped,mask=True,resize=RSZ)
     loop_zonal_stats(clip_shape,pansharp_ncdi_roughness_clipped,"2")
     status(13)
     #14
@@ -127,6 +127,7 @@ def change_detection(multiband_pre,panchromatic_pre,multiband_post,panchromatic_
     #15
     buffer_2meters(clip_shape, panchromatic_post, panchromatic_post_buffer)
     status(15)
+    
     #16    
     canny(panchromatic_pre_buffer, panchromatic_pre_canny)
     status(16)
@@ -161,7 +162,7 @@ def change_detection(multiband_pre,panchromatic_pre,multiband_post,panchromatic_
     loop_zonal_stats(clip_shape,multiband_ncdi,"4")
     loop_zonal_stats(clip_shape,panchromatic_ncdi,"5")
     status(27)
-
+    
 def executeCmd(command):
     os.system(command)
 
@@ -179,7 +180,7 @@ def select_bands(input_raster,ext):
     write_image(band_list,0,0,output_raster,rows,cols,geo_transform,projection)
 
 
-def pansharp(multiband_image, panchromatic_image):
+def pansharp(multiband_image, panchromatic_image,output_image):
     band_list = read_image(multiband_image,0,0)
     rows,cols,nbands,geo_transform,projection = read_image_parameters(multiband_image)
     write_image(band_list,0,0,multiband_image,rows,cols,geo_transform,projection)
@@ -189,7 +190,7 @@ def pansharp(multiband_image, panchromatic_image):
     scale_cols = round(float(colsp)/float(colsxs),0)
     executeCmd("otbcli_RigidTransformResample -progress 1 -in {} -out {} -transform.type id -transform.type.id.scalex {} -transform.type.id.scaley {}".format(multiband_image,multiband_image[:-4]+'_resampled.tif',scale_cols,scale_rows))
     fix_tiling_raster(panchromatic_image,multiband_image[:-4]+'_resampled.tif')
-    executeCmd("otbcli_Pansharpening -progress 1 -inp {} -inxs {} -out {} uint16".format(panchromatic_image,multiband_image[:-4]+'_resampled.tif',multiband_image[:-4]+'_pansharp.tif'))
+    executeCmd("otbcli_Pansharpening -progress 1 -inp {} -inxs {} -out {} uint16".format(panchromatic_image,multiband_image[:-4]+'_resampled.tif',output_image))
 
 def NCDI(raster_pre,raster_post,output):
     rows,cols,nbands,geo_transform,projection = read_image_parameters(raster_pre)
@@ -263,18 +264,31 @@ def zonal_stats(feat, input_zone_polygon, input_value_raster):
     bandmask = target_ds.GetRasterBand(1)
     datamask = bandmask.ReadAsArray(0, 0, xcount, ycount).astype(numpy.uint16)
     # Mask zone of raster
-    masked = numpy.ma.masked_array(dataraster,  numpy.logical_not(datamask))
+    #masked = numpy.ma.masked_array(dataraster,  numpy.logical_not(datamask))
+    masked = numpy.extract(numpy.logical_not(datamask),dataraster)
+    if masked.size !=0:
     # Calculate statistics of zonal raster
-    feature_stats = {
-        'min': masked.min(),
-        'max': masked.max(),
-        'sum': masked.sum(),
-        'count': masked.count(),
-        'mean': masked.mean(),
-        'std': masked.std(),
-        'unique': numpy.unique(masked.compressed()).size,
-        'range': masked.max() - masked.min(),
-        'cv': masked.var()}
+        feature_stats = {
+            'min': masked.min(),
+            'max': masked.max(),
+            'sum': masked.sum(),
+            'count': masked.size,
+            'mean': masked.mean(),
+            'std': masked.std(),
+            'unique': numpy.unique(masked.flatten()).size,
+            'range': masked.max() - masked.min(),
+            'cv': masked.var()}
+    else:
+        feature_stats = {
+            'min': 0,
+            'max': 0,
+            'sum': 0,
+            'count': 0,
+            'mean': 0,
+            'std': 0,
+            'unique': 0,
+            'range': 0 - 0,
+            'cv': 0}
     return feature_stats
 
 def loop_zonal_stats(input_zone_polygon, input_value_raster,category):
@@ -285,14 +299,17 @@ def loop_zonal_stats(input_zone_polygon, input_value_raster,category):
     lyr.CreateField(ogr.FieldDefn("max_"+category, ogr.OFTInteger))
     lyr.CreateField(ogr.FieldDefn("sum_"+category, ogr.OFTInteger))
     lyr.CreateField(ogr.FieldDefn("count_"+category, ogr.OFTInteger))
-    lyr.CreateField(ogr.FieldDefn("mean_"+category, ogr.OFTInteger))
-    lyr.CreateField(ogr.FieldDefn("std_"+category, ogr.OFTInteger))
+    lyr.CreateField(ogr.FieldDefn("mean_"+category, ogr.OFTReal))
+    lyr.CreateField(ogr.FieldDefn("std_"+category, ogr.OFTReal))
     lyr.CreateField(ogr.FieldDefn("unique_"+category, ogr.OFTInteger))
     lyr.CreateField(ogr.FieldDefn("range_"+category, ogr.OFTInteger))
-    lyr.CreateField(ogr.FieldDefn("cv_"+category, ogr.OFTInteger))
+    lyr.CreateField(ogr.FieldDefn("cv_"+category, ogr.OFTReal))
     for feature_id in featList:
+        print str(feature_id) + ' of ' + str(lyr.GetFeatureCount())
         feat = lyr.GetFeature(feature_id)
         stats = zonal_stats(feat, input_zone_polygon, input_value_raster)
+        a = (stats["min"], stats["max"], stats["sum"], stats["count"], stats["mean"], stats["std"], stats["unique"], stats["range"], stats["cv"])
+        '''
         feat.SetField("min_"+category,stats["min"])
         feat.SetField("max_"+category,stats["max"])
         feat.SetField("sum_"+category,stats["sum"])
@@ -302,6 +319,18 @@ def loop_zonal_stats(input_zone_polygon, input_value_raster,category):
         feat.SetField("unique_"+category,stats["unique"])
         feat.SetField("range_"+category,stats["range"])
         feat.SetField("cv_"+category,stats["cv"])
+        '''
+        feat.SetField("min_"+category,int(a[0]))
+        feat.SetField("max_"+category,int(a[1]))
+        feat.SetField("sum_"+category,int(a[2]))
+        feat.SetField("count_"+category,int(a[3]))
+        feat.SetField("mean_"+category,float(a[4]))
+        feat.SetField("std_"+category,float(a[5]))
+        feat.SetField("unique_"+category,int(a[6]))
+        feat.SetField("range_"+category,int(a[7]))
+        feat.SetField("cv_"+category,float(a[8]))
+
+        lyr.SetFeature(feat)
 
 
 class Donut(object):
@@ -366,9 +395,9 @@ import cv2
 from matplotlib import pyplot as plt
 def canny(input_raster,output_raster):
     rows,cols,nbands,geo_transform,projection = read_image_parameters(input_raster)
-    img = read_image(input_raster,np.uint16,0)
+    img = read_image(input_raster,np.uint8,0)
     edges = cv2.Canny(img[0],1,1)
-    write_image([edges],np.uint16,0,output_raster,rows,cols,geo_transform,projection)
+    write_image([edges],np.uint8,0,output_raster,rows,cols,geo_transform,projection)
 
 def slope(input_dem,output_slope_map):
     executeCmd("gdaldem slope {} {}".format(input_dem, output_slope_map))

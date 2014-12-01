@@ -1,0 +1,482 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The User’s Guide</title>
+    
+    <link rel="stylesheet" href="_static/epub.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" /> 
+  </head>
+  <body role="document">
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lib.html" title="The Developer’s Guide"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation Guide"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Sensum 1.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="the-user-s-guide">
+<h1>The User&#8217;s Guide</h1>
+<div class="section" id="introduction">
+<h2>Introduction</h2>
+<p><strong>Welcome to User&#8217;s Documentation</strong></p>
+<p>The Sensum Earth Observation algorithms are released as scripts. Input parameters can be specified and interpreted thanks to  <a class="reference external" href="https://docs.python.org/3/library/argparse.html">argparse python module</a><span class="link-target"> [https://docs.python.org/3/library/argparse.html]</span>.</p>
+<p>In order to call scripts under Microsoft Windows systems you have to start the command line (&#8220;cmd.exe&#8221; or &#8220;powershell.exe&#8221;) and type this line</p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe [SCRIPTPATH/NAMEOFSCRIPT].py [PARAMETERS]
+</pre></div>
+</div>
+<p>Under Unix systems you have to start your console and type this line</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python</span> <span class="p">[</span><span class="n">SCRIPTPATH</span><span class="o">/</span><span class="n">NAMEOFSCRIPT</span><span class="p">]</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="n">PARAMETERS</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Alternatively you can start your script directly giving the executable permissions</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">chmod</span> <span class="o">+</span><span class="n">x</span> <span class="p">[</span><span class="n">SCRIPTPATH</span><span class="o">/</span><span class="n">NAMEOFSCRIPT</span><span class="p">]</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>And recall it with</p>
+<div class="highlight-python"><div class="highlight"><pre>./[NAMEOFSCRIPT].py
+</pre></div>
+</div>
+</div>
+<div class="section" id="medium-resolution">
+<h2>Medium Resolution</h2>
+<div class="section" id="co-registration">
+<h3>Co-Registration</h3>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>coregistration.py <em>reference_path target_folder [&#8211;enable_clip SHAPEFILE] [&#8211;enable_grid ROW_FACTOR COL_FACTOR] [&#8211;enable_resampling] [&#8211;enable_SURF] [&#8211;enable_FFT]</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>Generate raster (<a href="#id1"><span class="problematic" id="id2">*</span></a>.tiff) results into target_folder named like ORIGINAL_NAME_adj_METHOD</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd><dl class="first last docutils">
+<dt>coregistration.py is an algorithm developed to co-register a reference and a target data set using 2 methods:</dt>
+<dd><ol class="first last arabic simple">
+<li>SURF (Feature-based method)</li>
+<li>FFT (Area-based method)</li>
+</ol>
+</dd>
+</dl>
+</dd>
+<dt><strong>PARAMETERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>reference_path</em></dt>
+<dd>Reference folder Path</dd>
+<dt><em>target_folder</em></dt>
+<dd>Target folder with images to change</dd>
+<dt><em>&#8211;enable_clip SHAPEFILE</em></dt>
+<dd>Enable definition of a region of interest using a shapefile</dd>
+<dt><em>&#8211;enable_grid ROW_FACTOR COL_FACTOR</em></dt>
+<dd>Enable an automatic tile extraction. Rows and columns of the desired tile are input parameters</dd>
+<dt><em>&#8211;enable_SURF</em></dt>
+<dd>Enable SURF method</dd>
+<dt><em>&#8211;enable_FFT</em></dt>
+<dd>Enable FFT method</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/coregistration.py &quot;~/Desktop/Work-Images/07-D-Case12/2007-07-24&quot; &quot;~/Desktop/Work-Images/07-D-Case12&quot; --enable_clip &quot;~/Desktop/Work-Images/07-D-Case12/Mask_reclass1_Identity.shp&quot;  --enable_SURF
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/coregistration.py&quot; &quot;HOMEPATH%/Desktop/Work-Images/07-D-Case12/2007-07-24&quot; &quot;HOMEPATH%/Desktop/Work-Images/07-D-Case12&quot; --enable_clip &quot;HOMEPATH%/Desktop/Work-Images/07-D-Case12/Mask_reclass1_Identity.shp&quot;  --enable_SURF
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="merge">
+<h3>Merge</h3>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>merge.py <em>output_path [-i INPUT1, INPUT2, ...]</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>A tiff image union of the input images is generated and named according to the specified output path</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd>merge.py is a merging tool. It is designed to take as input more than one image and merge them.</dd>
+<dt><strong>PARAMETERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>output_path</em></dt>
+<dd>Output raster</dd>
+<dt><em>-i INPUT1, INPUT2, ...</em></dt>
+<dd>Input rasters</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/merge.py &quot;~/Desktop/Work-Tests/merge.tiff&quot; -i &quot;~/Desktop/Work-Images/Merge_cas/merge_01.tiff&quot; &quot;~/Desktop/Work-Images/Merge_cas/merge_02.tiff&quot; &quot;~/Desktop/Work-Images/Merge_cas/merge_03.tiff&quot;
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/merge.py&quot; &quot;HOMEPATH%/Desktop/Work-Tests/merge.tiff&quot; -i &quot;HOMEPATH%/Desktop/Work-Images/Merge_cas/merge_01.tiff&quot; &quot;HOMEPATH%/Desktop/Work-Images/Merge_cas/merge_02.tiff&quot; &quot;HOMEPATH%/Desktop/Work-Images/Merge_cas/merge_03.tiff&quot;
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="stack-satellite">
+<h3>Stack Satellite</h3>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>stacksatellite.py <em>sat_folder segmentation_name n_classes [&#8211;coregistration] [&#8211;builtup_index_method] [&#8211;pca_index_method] [&#8211;pca_classification_method] [&#8211;dissimilarity_method] [&#8211;pca_ob_method] [&#8211;ref_dir REFERENCE_DIRECTORY] [&#8211;restrict_to_city SHAPEFILE] [&#8211;segmentation_parameters PARAMETER1 PARAMETER2 PARAMETER3 PARAMETER4]</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>According with methods and options selected, outputs are generated in the satellite folder or single dataset folder (year folder). Raster images (<a href="#id3"><span class="problematic" id="id4">*</span></a>.tiff) are the output for pixel-based methods (builtup_index, pca_index and pca_classification) while shapefiles are the output for object-based methods.</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd><dl class="first last docutils">
+<dt>stacksatellite.py is a script designed to process a medium resolution dataset. The algorithm, according to methods and options selected, generates different outputs. sat_folder is the main directory containing sub-directories related to each year (the following image shows an example of satellite folder).</dt>
+<dd><img alt="_images/sat_folder.png" class="first last" src="_images/sat_folder.png" />
+</dd>
+</dl>
+</dd>
+<dt><strong>PARAMETERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>sat_folder</em></dt>
+<dd>Main folder path</dd>
+<dt><em>segmentation_name</em></dt>
+<dd>&#8220;Edison&#8221; or &#8220;Meanshift&#8221;</dd>
+<dt><em>n_classes</em></dt>
+<dd>Number of classes in unsupervised classification</dd>
+<dt><em>&#8211;coregistration</em></dt>
+<dd>Co-Registration option</dd>
+<dt><em>&#8211;builtup_index_method</em></dt>
+<dd>Built-up Index method</dd>
+<dt><em>&#8211;pca_index_method</em></dt>
+<dd>PCA index method</dd>
+<dt><em>&#8211;pca_classification_method</em></dt>
+<dd>PCA classification method</dd>
+<dt><em>&#8211;dissimilarity_method</em></dt>
+<dd>Dissimilarity method</dd>
+<dt><em>&#8211;pca_ob_method</em></dt>
+<dd>PCA object method</dd>
+<dt><em>&#8211;restrict_to_city SHAPEFILE</em></dt>
+<dd>Tiling shapefile.</dd>
+<dt><em>&#8211;segmentation_paramaters PARAMETER1 PARAMETER2 PARAMETER3 PARAMETER4</em></dt>
+<dd><dl class="first last docutils">
+<dt>Edison:</dt>
+<dd><ul class="first last simple">
+<li>PARAMETER1: spatial_radius</li>
+<li>PARAMETER2: range_radius</li>
+<li>PARAMETER3: min_size</li>
+<li>PARAMETER4: scale</li>
+</ul>
+</dd>
+<dt>Meanshift:</dt>
+<dd><ul class="first last simple">
+<li>PARAMETER1: spatial_radius</li>
+<li>PARAMETER2: range_radius</li>
+<li>PARAMETER3: threshold</li>
+<li>PARAMETER4: max_iter</li>
+<li>PARAMETER5: min_size</li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/stacksatellite.py &quot;~/Desktop/Work-Images/07-D-Case12&quot; &quot;Edison&quot; &quot;5&quot;  --restrict_to_city &quot;~/Desktop/Work-Images/07-D-Case12/Mask_reclass1_Identity.shp&quot; --coregistration --dissimilarity_method --segmentation_paramaters 5 15 100 1
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/stacksatellite.py&quot; &quot;HOMEPATH%/Desktop/Work-Images/07-D-Case12&quot; &quot;Edison&quot; &quot;5&quot;  --restrict_to_city &quot;HOMEPATH%/Desktop/Work-Images/07-D-Case12/Mask_reclass1_Identity.shp&quot; --coregistration --dissimilarity_method --segmentation_paramaters 5 15 100 1
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="change-detection">
+<h3>Change Detection</h3>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>change_detection.py <em>main_folder extraction field [&#8211;spatial_filter]</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>Generate a &#8220;change_detection_pca.shp&#8221; or &#8220;change_detection_dissimilarity.shp&#8221; file as output into the &#8220;main_folder&#8221; according to the extraction option.</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd><p class="first">change_detection.py is a script designed to detect changes without user supervision. The algorithm works on the results generate by the stack satellite script.
+&#8220;Change Detection&#8221; algorithm compares built-up extractions (object-based methods) from different dates and filters results in 3 steps:</p>
+<blockquote class="last">
+<div><ol class="arabic simple">
+<li>count changes through years in order to analyze the results and assign C_Factor 0 to no changes, C_Factor 1 to one correct change and from 0.5 to 1 to no possible change or more than 1 change.</li>
+<li>time- and continuity-wise change analysis by taking 4-years-span windows to correct sequence with 1 or more possible changes.</li>
+<li>applied to undetermined changes coming from step 2, it is designed to process features around the undetermined ones in order to find a spatial similarity with the neighbors.</li>
+</ol>
+</div></blockquote>
+</dd>
+<dt><strong>PARAMATERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>main_folder</em></dt>
+<dd>&#8220;Stack Satellite style&#8221; folder processed by the stacksatellite.py script.</dd>
+<dt><em>extraction</em></dt>
+<dd>Select &#8220;PCA&#8221; or &#8220;Dissimilarity&#8221; built-up extraction.</dd>
+<dt><em>field</em></dt>
+<dd>Attribute in the pca_class or dissimilarity_class shapefiles related to built-up areas. You have to manually edit just the first feature of the shape by writing the classes related to built-up separated by comma (include screen shot as example).</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/change_detection.py &quot;~/Work-Images/Change_detection_Izmir&quot; &quot;PCA&quot; &quot;UrbanClass&quot;
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/change_detection.py&quot; &quot;HOMEPATH%/Desktop/Work-Images/Change_detection_Izmir&quot; &quot;PCA&quot; &quot;UrbanClass&quot;
+</pre></div>
+</div>
+</div></blockquote>
+<img alt="_images/change_detection.png" src="_images/change_detection.png" />
+</div>
+</div>
+<div class="section" id="high-resolution">
+<h2>High Resolution</h2>
+<div class="section" id="footprints">
+<h3>Footprints</h3>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>footprints.py <em>pansharp_file training_set training_attribute output_shape [&#8211;classes CLASS1, CLASS2, ...] [&#8211;optimizer}</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>Generate a shapefile (<a href="#id5"><span class="problematic" id="id6">*</span></a>.shp) named as the output_shape parameter.</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd><dl class="first last docutils">
+<dt>footprints.py is an algorithm developed in order to extract building footprints from supervised classification. Inputs are a pan-sharpened image and a training set shapefile (for the supervised classification). The list of classes related to buildings is also requested. The process is made of 5 steps:</dt>
+<dd><ol class="first last arabic simple">
+<li>Optional OTB Smooth Filter.</li>
+<li>OTB supervised classification (Support Vector Machine, SVM).</li>
+<li>Conversion of classification output to shapefile.</li>
+<li>Masking and filtering of the classes related to buildings.</li>
+<li>Morphological filtering.</li>
+</ol>
+</dd>
+</dl>
+</dd>
+<dt><strong>PARAMETERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>pansharp_file</em></dt>
+<dd>Pan-sharpened input raster</dd>
+<dt><em>training_set</em></dt>
+<dd>Training set as shapefile</dd>
+<dt><em>training_attribute</em></dt>
+<dd>Training Field identifier</dd>
+<dt><em>output_shape</em></dt>
+<dd>Output shapefile</dd>
+<dt><em>&#8211;classes CLASS1, CLASS2, ...</em></dt>
+<dd>Buildings class selection</dd>
+<dt><em>&#8211;optimizer</em></dt>
+<dd>Enable smooth filter</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/footprints.py &quot;~/Desktop/Work-Images/Exercises/7/pansharp.tif&quot; &quot;~/Desktop/Work-Images/Exercises/6/Izmir_low_residential_small_patches_footprints_rpj.shp&quot; &quot;Class&quot; &quot;~/Desktop/Work-Tests/building_extraction.shp&quot;  -c &quot;3&quot; &quot;1&quot;
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/footprints.py&quot; &quot;HOMEPATH%/Desktop/Work-Images/Exercises/7/pansharp.tif&quot; &quot;HOMEPATH%/Desktop/Work-Images/Exercises/6/Izmir_low_residential_small_patches_footprints_rpj.shp&quot; &quot;Class&quot; &quot;HOMEPATH%/Desktop/Work-Tests/building_extraction.shp&quot;  -c &quot;3&quot; &quot;1&quot;
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="density">
+<h3>Density</h3>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>density.py <em>buildingShape radius outputShape</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>Generate a shapefile (<a href="#id7"><span class="problematic" id="id8">*</span></a>.shp) into outputShape path.</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd>density.py is a script to compute the building density. It considers a circular window around each feature and calculates how many other features intersect it adding value into &#8220;N_Building&#8221; row into shapefile. &#8220;Density&#8221; attribute is also computed using <em>Features Sum Area/Window Area</em>.</dd>
+<dt><strong>PARAMATERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>buildingShape</em></dt>
+<dd>Building shapefile path</dd>
+<dt><em>radius</em></dt>
+<dd>Radius of windows</dd>
+<dt><em>outputShape</em></dt>
+<dd>Output shapefile</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/density.py &quot;~/Desktop/Work-Tests/building_extraction.shp&quot; &quot;10.0&quot; &quot;~/Desktop/Work-Tests/density.shp&quot;
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/density.py&quot; &quot;HOMEPATH%/Desktop/Work-Tests/building_extraction.shp&quot; &quot;10.0&quot; &quot;HOMEPATH%/Desktop/Work-Tests/density.shp&quot;
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="height">
+<h3>Height</h3>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>height.py <em>input_shadow input_buildings date output_shape idfield window_resize</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>Generate a shapefile (<a href="#id9"><span class="problematic" id="id10">*</span></a>.shp) into outputShape path.</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd>height.py is an algorithm designed to estimate the height of buildings from shadows and acquisition date. The result is automatically assigned to related footprints.</dd>
+<dt><strong>PARAMATERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>input_shadow</em></dt>
+<dd>Shadows shapefile path</dd>
+<dt><em>input_buildings</em></dt>
+<dd>Building shapefile path</dd>
+<dt><em>date</em></dt>
+<dd>Acquisition date (hour in EDT)</dd>
+<dt><em>output_shape</em></dt>
+<dd>Output shapefile</dd>
+<dt><em>idfield</em></dt>
+<dd>Shadow ID field</dd>
+<dt><em>window_resize</em></dt>
+<dd>Searching window radius</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/height.py &quot;~/Desktop/Work-Tests/building_extraction.shp&quot; &quot;~/Desktop/Work-Tests/building_shadows.shp&quot; &quot;2007/1/17 15:34:00&quot; &quot;height.shp&quot; &quot;ID&quot; &quot;1.0&quot;
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/height.py&quot; &quot;HOMEPATH%/Desktop/Work-Tests/building_extraction.shp&quot; &quot;HOMEPATH%/Desktop/Work-Tests/building_shadows.shp&quot; &quot;2007/1/17 15:34:00&quot; &quot;height.shp&quot; &quot;ID&quot; &quot;1.0&quot;
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="regularity">
+<h3>Regularity</h3>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>regularity.py <em>input_buildings output_shape</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>Generate a shapefile (<a href="#id11"><span class="problematic" id="id12">*</span></a>.shp) into outputShape path.</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd>regularity.py can be used to determine the regularity and alignment of buildings. A polygon is considered regular when the ratio between the two main directions is less than 4.</dd>
+<dt><strong>PARAMATERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>input_buildings</em></dt>
+<dd>Input buildings shapefile path</dd>
+<dt><em>output_shape</em></dt>
+<dd>Output shapefile</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/regularity.py &quot;~/Desktop/Work-Tests/building_extraction.shp&quot; &quot;~/Desktop/Work-Tests/regularity.shp&quot;
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/regularity.py&quot; &quot;HOMEPATH%/Desktop/Work-Tests/building_extraction.shp&quot; &quot;HOMEPATH%/Desktop/Work-Tests/regularity.shp&quot;
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="test-features">
+<h2>Test Features</h2>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>test_features.py <em>input_file segmentation_shape output_shape field [&#8211;max_br] [&#8211;mean] [&#8211;min_br] [&#8211;mode] [&#8211;ndvi_std] [&#8211;ndvi_mean] [&#8211;std] [&#8211;weigh_br] [&#8211;ASM] [&#8211;contrast] [&#8211;correlation] [&#8211;dissimilarity] [&#8211;energy] [&#8211;homogeneity] [&#8211;multi]</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>A shapefile is generated in output_shape path</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd>test_features.py is a script made to compute a set of features related to segments. Statistics are calculated based on the input raster file using a segmentation shapefile as mask. Computed features are appended as attribute to the shapefile.</dd>
+<dt><strong>PARAMATERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>input_file</em></dt>
+<dd>Input raster file</dd>
+<dt><em>segmentation_shape</em></dt>
+<dd>Segmentation shape mask</dd>
+<dt><em>output_shape</em></dt>
+<dd>Output shapefile</dd>
+<dt><em>field</em></dt>
+<dd>Identifier shapefile ID</dd>
+<dt><em>&#8211;max_br</em></dt>
+<dd>Maximum BR</dd>
+<dt><em>&#8211;mean</em></dt>
+<dd>Mean</dd>
+<dt><em>&#8211;min_br</em></dt>
+<dd>Minimun BR</dd>
+<dt><em>&#8211;mode</em></dt>
+<dd>Mode</dd>
+<dt><em>&#8211;ndvi_std</em></dt>
+<dd>NDVI Standard Deviation</dd>
+<dt><em>&#8211;ndvi_mean</em></dt>
+<dd>NDVI Mean</dd>
+<dt><em>&#8211;std</em></dt>
+<dd>Standard Deviation</dd>
+<dt><em>&#8211;weigh_br</em></dt>
+<dd>Weight BR</dd>
+<dt><em>&#8211;ASM</em></dt>
+<dd>ASM</dd>
+<dt><em>&#8211;contrast</em></dt>
+<dd>Contrast</dd>
+<dt><em>&#8211;correlation</em></dt>
+<dd>Correlation</dd>
+<dt><em>&#8211;energy</em></dt>
+<dd>Energy</dd>
+<dt><em>&#8211;homogeneity</em></dt>
+<dd>Homogeneity</dd>
+<dt><em>&#8211;multi</em></dt>
+<dd>Active multiprocess option (hight CPU usage)</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/test_features.py &quot;~/Desktop/Work-Tests/input.tiff&quot; &quot;~/Desktop/Work-Tests/building_extraction.shp&quot; &quot;~/Desktop/Work-Tests/features_calculation.shp&quot; &quot;DN&quot; --max_br --mode --contrast --energy
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/test_features.py&quot; &quot;HOMEPATH%/Desktop/Work-Tests/input.tiff&quot; &quot;HOMEPATH%/Desktop/Work-Tests/building_extraction.shp&quot; &quot;HOMEPATH%/Desktop/Work-Tests/features_calculation.shp&quot; &quot;DN&quot; --max_br --mode --contrast --energy
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2014, Eucentre.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3b1.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,212 @@
+<?xml version="1.0"?>
+<ncx version="2005-1" xmlns="http://www.daisy.org/z3986/2005/ncx/">
+  <head>
+    <meta name="dtb:uid" content="unknown"/>
+    <meta name="dtb:depth" content="3"/>
+    <meta name="dtb:totalPageCount" content="0"/>
+    <meta name="dtb:maxPageNumber" content="0"/>
+  </head>
+  <docTitle>
+    <text>Sensum 1.2 documentation</text>
+  </docTitle>
+  <navMap>
+    <navPoint id="navPoint1" playOrder="1">
+      <navLabel>
+        <text>Sensum Earth Observation</text>
+      </navLabel>
+      <content src="index.html" />
+    </navPoint>
+    <navPoint id="navPoint2" playOrder="2">
+      <navLabel>
+        <text>Installation Guide</text>
+      </navLabel>
+      <content src="install.html" />
+      <navPoint id="navPoint3" playOrder="2">
+        <navLabel>
+          <text>Installation Guide</text>
+        </navLabel>
+        <content src="install.html" />
+      </navPoint>
+      <navPoint id="navPoint4" playOrder="3">
+        <navLabel>
+          <text>Library Installation</text>
+        </navLabel>
+        <content src="install.html#library-installation" />
+        <navPoint id="navPoint5" playOrder="3">
+          <navLabel>
+            <text>Library Installation</text>
+          </navLabel>
+          <content src="install.html#library-installation" />
+        </navPoint>
+        <navPoint id="navPoint6" playOrder="4">
+          <navLabel>
+            <text>Microsoft Windows</text>
+          </navLabel>
+          <content src="install.html#microsoft-windows" />
+        </navPoint>
+        <navPoint id="navPoint7" playOrder="5">
+          <navLabel>
+            <text>Ubuntu/Debian</text>
+          </navLabel>
+          <content src="install.html#ubuntu-debian" />
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint8" playOrder="6">
+        <navLabel>
+          <text>Sensum Plugin Code</text>
+        </navLabel>
+        <content src="install.html#sensum-plugin-code" />
+      </navPoint>
+    </navPoint>
+    <navPoint id="navPoint9" playOrder="7">
+      <navLabel>
+        <text>The User&#39;s Guide</text>
+      </navLabel>
+      <content src="user.html" />
+      <navPoint id="navPoint10" playOrder="7">
+        <navLabel>
+          <text>The User&#39;s Guide</text>
+        </navLabel>
+        <content src="user.html" />
+      </navPoint>
+      <navPoint id="navPoint11" playOrder="8">
+        <navLabel>
+          <text>Introduction</text>
+        </navLabel>
+        <content src="user.html#introduction" />
+      </navPoint>
+      <navPoint id="navPoint12" playOrder="9">
+        <navLabel>
+          <text>Medium Resolution</text>
+        </navLabel>
+        <content src="user.html#medium-resolution" />
+        <navPoint id="navPoint13" playOrder="9">
+          <navLabel>
+            <text>Medium Resolution</text>
+          </navLabel>
+          <content src="user.html#medium-resolution" />
+        </navPoint>
+        <navPoint id="navPoint14" playOrder="10">
+          <navLabel>
+            <text>Co-Registration</text>
+          </navLabel>
+          <content src="user.html#co-registration" />
+        </navPoint>
+        <navPoint id="navPoint15" playOrder="11">
+          <navLabel>
+            <text>Merge</text>
+          </navLabel>
+          <content src="user.html#merge" />
+        </navPoint>
+        <navPoint id="navPoint16" playOrder="12">
+          <navLabel>
+            <text>Stack Satellite</text>
+          </navLabel>
+          <content src="user.html#stack-satellite" />
+        </navPoint>
+        <navPoint id="navPoint17" playOrder="13">
+          <navLabel>
+            <text>Change Detection</text>
+          </navLabel>
+          <content src="user.html#change-detection" />
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint18" playOrder="14">
+        <navLabel>
+          <text>High Resolution</text>
+        </navLabel>
+        <content src="user.html#high-resolution" />
+        <navPoint id="navPoint19" playOrder="14">
+          <navLabel>
+            <text>High Resolution</text>
+          </navLabel>
+          <content src="user.html#high-resolution" />
+        </navPoint>
+        <navPoint id="navPoint20" playOrder="15">
+          <navLabel>
+            <text>Footprints</text>
+          </navLabel>
+          <content src="user.html#footprints" />
+        </navPoint>
+        <navPoint id="navPoint21" playOrder="16">
+          <navLabel>
+            <text>Density</text>
+          </navLabel>
+          <content src="user.html#density" />
+        </navPoint>
+        <navPoint id="navPoint22" playOrder="17">
+          <navLabel>
+            <text>Height</text>
+          </navLabel>
+          <content src="user.html#height" />
+        </navPoint>
+        <navPoint id="navPoint23" playOrder="18">
+          <navLabel>
+            <text>Regularity</text>
+          </navLabel>
+          <content src="user.html#regularity" />
+        </navPoint>
+      </navPoint>
+      <navPoint id="navPoint24" playOrder="19">
+        <navLabel>
+          <text>Test Features</text>
+        </navLabel>
+        <content src="user.html#test-features" />
+      </navPoint>
+    </navPoint>
+    <navPoint id="navPoint25" playOrder="20">
+      <navLabel>
+        <text>The Developer&#39;s Guide</text>
+      </navLabel>
+      <content src="lib.html" />
+      <navPoint id="navPoint26" playOrder="20">
+        <navLabel>
+          <text>The Developer&#39;s Guide</text>
+        </navLabel>
+        <content src="lib.html" />
+      </navPoint>
+      <navPoint id="navPoint27" playOrder="21">
+        <navLabel>
+          <text>Introduction</text>
+        </navLabel>
+        <content src="lib.html#introduction" />
+      </navPoint>
+      <navPoint id="navPoint28" playOrder="22">
+        <navLabel>
+          <text>Conversion, Features</text>
+        </navLabel>
+        <content src="lib.html#conversion-features" />
+      </navPoint>
+      <navPoint id="navPoint29" playOrder="23">
+        <navLabel>
+          <text>Classification, Segmentation</text>
+        </navLabel>
+        <content src="lib.html#classification-segmentation" />
+      </navPoint>
+      <navPoint id="navPoint30" playOrder="24">
+        <navLabel>
+          <text>Preprocess, Secondary Indicators</text>
+        </navLabel>
+        <content src="lib.html#preprocess-secondary-indicators" />
+      </navPoint>
+      <navPoint id="navPoint31" playOrder="25">
+        <navLabel>
+          <text>Multi</text>
+        </navLabel>
+        <content src="lib.html#multi" />
+      </navPoint>
+      <navPoint id="navPoint32" playOrder="26">
+        <navLabel>
+          <text>Scripts</text>
+        </navLabel>
+        <content src="lib.html#scripts" />
+      </navPoint>
+      <navPoint id="navPoint33" playOrder="27">
+        <navLabel>
+          <text>Plugin</text>
+        </navLabel>
+        <content src="lib.html#plugin" />
+      </navPoint>
+    </navPoint>
+  </navMap>
+</ncx>

@@ -1,0 +1,439 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>The Developer’s Guide &mdash; Sensum 1.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Sensum 1.2 documentation" href="index.html" />
+    <link rel="prev" title="The User’s Guide" href="user.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="user.html" title="The User’s Guide"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Sensum 1.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="the-developer-s-guide">
+<h1>The Developer&#8217;s Guide<a class="headerlink" href="#the-developer-s-guide" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>General Knowledge</strong></dt>
+<dd>Sensum Earth Observation Tools are written in Python. They make use of Gdal library to read and write rasters files as arrays, handled by Scipy, Numpy, Python math and OpenCV libraries.
+OGR is used to read, write and handle vector files. OTB and skimage are used for classification and segmentation algorithms. The Plugin UI is written in PyQT using the qgis.core library to interact with QGIS interface.</dd>
+<dt><strong>Structure</strong></dt>
+<dd><p class="first">Sensum Library is composed by modules divided according to their scope. To import a Sensum module you have to import the config.py script first in order to automatically set all the necessary variables and configuration settings:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">config</span>
+</pre></div>
+</div>
+<p>You can import a sensum library module with the following line:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">sensum_library.MODULE_NAME</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="conversion-features">
+<h2>Conversion, Features<a class="headerlink" href="#conversion-features" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>Conventions</strong></dt>
+<dd><dl class="first last docutils">
+<dt>This is the main module to read/write and handle rasters. It is composed by a set of functions with a set of convenction:</dt>
+<dd><ul class="first last simple">
+<li>0 value is used to set defaults value in a lot of functions parameters.</li>
+<li><em>band_list</em>: is a N-D list of matrices containing pixel values read with gdal ReadAsArray method, where N = number of bands</li>
+<li><em>input/output_raster</em>: path of raster file</li>
+<li><em>input/output_shape</em>: path of vector file</li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt><strong>Main Functions</strong></dt>
+<dd>Main functions are <a class="reference external" href="modules.html#sensum_library.conversion.read_image">read_image</a> , <a class="reference external" href="modules.html#sensum_library.conversion.write_image">write_image</a> used to read and write rasters files.</dd>
+</dl>
+</div>
+<div class="section" id="classification-segmentation">
+<h2>Classification, Segmentation<a class="headerlink" href="#classification-segmentation" title="Permalink to this headline">¶</a></h2>
+<p>Classification and segmentation modules include functions to define hubs between python and OTB and skimage in order to take advantage of classification and segmentation algorithms. In some scripts or plugin parts a system call for external compiled OTB executable is included in order to get the process progress bar. This is achieved using the executeOtb function:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">executeOtb</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">label</span> <span class="o">=</span> <span class="s">&quot;OTB library recalled&quot;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s">&quot;posix&quot;</span><span class="p">:</span>
+        <span class="n">bit</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;64&quot;</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s">&quot;C:/OSGeo4W64&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">osgeopath</span> <span class="o">=</span> <span class="s">&quot;C:/OSGeo4W{}/bin/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bit</span><span class="p">)</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="n">osgeopath</span> <span class="o">+</span> <span class="n">command</span>
+    <span class="c">#QMessageBox.information(None, &quot;Info&quot;, command)    </span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+        <span class="n">command</span><span class="p">,</span>
+        <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+        <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+        <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span>
+        <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">stdout</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">readline</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s">&#39;[*&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;[*&#39;</span><span class="p">)</span>
+            <span class="n">perc</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">4</span><span class="p">:</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">perc</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">progress</span><span class="p">:</span>
+                <span class="n">progress</span><span class="o">.</span><span class="n">progressBar</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">perc</span><span class="p">)</span>
+                <span class="n">progress</span><span class="o">.</span><span class="n">label_title</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="preprocess-secondary-indicators">
+<h2>Preprocess, Secondary Indicators<a class="headerlink" href="#preprocess-secondary-indicators" title="Permalink to this headline">¶</a></h2>
+<p>Contains a series of scripts and tools functions.</p>
+</div>
+<div class="section" id="multi">
+<h2>Multi<a class="headerlink" href="#multi" title="Permalink to this headline">¶</a></h2>
+<p><strong>Intro</strong>
+Multiprocess module is dedicated to multiprocess application. Python provides a powerful built-in multiprocess library; the Sensum multiprocess module uses this library to implement multiprocess applications through a container Class. This solution was specifically designed to provide clean and easy implementation also for non-expert developers.</p>
+<p><strong>Description</strong></p>
+<blockquote>
+<div>Multi() class defines N concurrent processes with N = number of CPU core * 2.</div></blockquote>
+<dl class="docutils">
+<dt><strong>Example</strong></dt>
+<dd><p class="first">We want to implement with multiprocess a simple function for get the sum between a number and his double within a range from 0 to 100:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="n">a</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">101</span><span class="p">):</span>
+    <span class="k">print</span> <span class="n">task</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To implement task() as multiprocess we need to reclass it as a callable Class:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">a</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span>
+</pre></div>
+</div>
+<p>Unlike function declaration, we need to return also the index since results will not be sorted because multiprocess execution is asynchronous. Now we can implement Task() into the for statement:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">sensum_library.multiprocess</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">MyMulti</span> <span class="o">=</span> <span class="n">Multi</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">101</span><span class="p">):</span>
+    <span class="n">MyMulti</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">Task</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+<span class="n">MyMulti</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Use the following lines to get the results, sort and print them:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="n">results</span> <span class="o">=</span> <span class="p">[</span> <span class="n">MyMulti</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">101</span><span class="p">)</span> <span class="p">]</span>
+<span class="n">results</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[</span> <span class="n">data</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">data</span> <span class="ow">in</span> <span class="n">results</span> <span class="p">]</span>
+
+<span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">data</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>Following the complete code example:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">a</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span>
+        
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="n">MyMulti</span> <span class="o">=</span> <span class="n">Multi</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">101</span><span class="p">):</span>
+        <span class="n">MyMulti</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">Task</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+    <span class="n">MyMulti</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+    
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[</span> <span class="n">MyMulti</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">101</span><span class="p">)</span> <span class="p">]</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">[</span> <span class="n">data</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">data</span> <span class="ow">in</span> <span class="n">results</span> <span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="k">print</span> <span class="n">data</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="scripts">
+<h2>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h2>
+<p>For more info about the script system <a class="reference external" href="user.html#introduction">click here</a></p>
+<p><strong>Progress Bar</strong></p>
+<p>This is a class used to draw a textual process bar compatible with <a class="reference external" href="lib.html#plugin">plugin parser</a>:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Bar</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">status</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="nb">max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_current</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">status</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">status</span>
+        <span class="k">if</span> <span class="n">_current</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current</span><span class="p">:</span>
+            <span class="n">wildcards</span> <span class="o">=</span> <span class="n">spaces</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">_current</span><span class="p">):</span> <span class="n">wildcards</span> <span class="o">=</span> <span class="n">wildcards</span> <span class="o">+</span> <span class="s">&quot;*&quot;</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="o">-</span><span class="n">_current</span><span class="p">):</span> <span class="n">wildcards</span> <span class="o">=</span> <span class="n">wildcards</span> <span class="o">+</span> <span class="s">&quot; &quot;</span>
+            <span class="n">bar</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">\r</span><span class="s">STATUS: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">+</span> <span class="s">&quot; [&quot;</span> <span class="o">+</span> <span class="n">wildcards</span> <span class="o">+</span> <span class="n">spaces</span> <span class="o">+</span> <span class="s">&quot;]&quot;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Use is simple:</p>
+<div class="highlight-python"><div class="highlight"><pre>n_list = range(100,200)
+status = Bar(len(n_list),&quot;Power N&quot;)
+for i,value in n_list
+    status(i)
+    print value*value
+</pre></div>
+</div>
+</div>
+<div class="section" id="plugin">
+<h2>Plugin<a class="headerlink" href="#plugin" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt><strong>PyQGIS Developer Cookbook</strong></dt>
+<dd>For more details go to <a class="reference external" href="http://docs.qgis.org/2.0/en/docs/pyqgis_developer_cookbook/">http://docs.qgis.org/2.0/en/docs/pyqgis_developer_cookbook/</a></dd>
+</dl>
+<p><strong>Call Scripts</strong>
+To call scripts, the Sensum Plugin uses a function also able to parse the textual progress bar generated by the script:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">executeScript</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">noerror</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s">&quot;posix&quot;</span> <span class="ow">and</span> <span class="n">noerror</span><span class="p">:</span>
+        <span class="c"># Found at http://stackoverflow.com/questions/5069224/handling-subprocess-crash-in-windows</span>
+        <span class="c"># Don&#39;t display the Windows GPF dialog if the invoked program dies.</span>
+        <span class="c"># See comp.os.ms-windows.programmer.win32</span>
+        <span class="c"># How to suppress crash notification dialog?, Jan 14,2004 -</span>
+        <span class="c"># Raymond Chen&#39;s response [1]</span>
+
+        <span class="kn">import</span> <span class="nn">ctypes</span>
+        <span class="n">SEM_NOGPFAULTERRORBOX</span> <span class="o">=</span> <span class="mh">0x0002</span> <span class="c"># From MSDN</span>
+        <span class="n">ctypes</span><span class="o">.</span><span class="n">windll</span><span class="o">.</span><span class="n">kernel32</span><span class="o">.</span><span class="n">SetErrorMode</span><span class="p">(</span><span class="n">SEM_NOGPFAULTERRORBOX</span><span class="p">);</span>
+        <span class="n">subprocess_flags</span> <span class="o">=</span> <span class="mh">0x8000000</span> <span class="c">#win32con.CREATE_NO_WINDOW?</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">subprocess_flags</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">command</span> <span class="o">=</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span><span class="o">+</span><span class="n">command</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s">&quot;posix&quot;</span> <span class="k">else</span> <span class="s">&#39;C:/Python27/python.exe &quot;&#39;</span><span class="o">+</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span><span class="o">+</span><span class="n">command</span><span class="p">)</span>
+    <span class="n">QMessageBox</span><span class="o">.</span><span class="n">information</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="s">&quot;Info&quot;</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+        <span class="n">command</span><span class="p">,</span>
+        <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+        <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+        <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span>
+        <span class="n">creationflags</span><span class="o">=</span><span class="n">subprocess_flags</span><span class="p">,</span>
+        <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">stdout</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">readline</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s">&#39;[*&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;[*&#39;</span><span class="p">)</span>
+            <span class="n">perc</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">idx</span><span class="p">:(</span><span class="n">idx</span><span class="o">+</span><span class="mi">102</span><span class="p">)]</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&quot;*&quot;</span><span class="p">)</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;STATUS: &#39;</span><span class="p">)</span><span class="o">+</span><span class="mi">8</span><span class="p">:</span><span class="n">idx</span><span class="p">]</span>
+            <span class="k">print</span> <span class="n">status</span>
+            <span class="k">if</span> <span class="n">perc</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">progress</span><span class="p">:</span>
+                <span class="n">progress</span><span class="o">.</span><span class="n">progressBar</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">perc</span><span class="p">)</span>
+                <span class="n">progress</span><span class="o">.</span><span class="n">label_title</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+        <span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The Developer&#8217;s Guide</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#conversion-features">Conversion, Features</a></li>
+<li><a class="reference internal" href="#classification-segmentation">Classification, Segmentation</a></li>
+<li><a class="reference internal" href="#preprocess-secondary-indicators">Preprocess, Secondary Indicators</a></li>
+<li><a class="reference internal" href="#multi">Multi</a></li>
+<li><a class="reference internal" href="#scripts">Scripts</a></li>
+<li><a class="reference internal" href="#plugin">Plugin</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="user.html"
+                        title="previous chapter">The User&#8217;s Guide</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/lib.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="user.html" title="The User’s Guide"
+             >previous</a> |</li>
+        <li><a href="index.html">Sensum 1.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2014, Eucentre.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3b1.
+    </div>
+  </body>
+</html>

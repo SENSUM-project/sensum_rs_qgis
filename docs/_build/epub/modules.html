@@ -1,0 +1,1845 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Modules</title>
+    
+    <link rel="stylesheet" href="_static/epub.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" /> 
+  </head>
+  <body role="document">
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">Sensum 1.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="modules">
+<h1>Modules</h1>
+<ul class="simple">
+<li><a class="reference internal" href="py-modindex.html"><em>Module Index</em></a></li>
+</ul>
+<span class="target" id="module-sensum_library.classification"></span><span class="target" id="module-classification"></span><dl class="function">
+<dt id="sensum_library.classification.class_to_segments">
+<code class="descclassname">sensum_library.classification.</code><code class="descname">class_to_segments</code><span class="sig-paren">(</span><em>input_raster</em>, <em>input_shape</em>, <em>output_shape</em><span class="sig-paren">)</span></dt>
+<dd><p>Assign the most frequent value inside a segment to the segment itself</p>
+<p>Function used to merge results of classification and segmentation. In details, the most frequent class value (mode) inside a segment is assigned to the segment itself.</p>
+<p>Example: class_to_segments(input_raster=&#8217;C:UsersGuestworkpansharp_sup_class.tif&#8217;,input_shape=&#8217;C:UsersGuestworksegments.shp&#8217;,output_shape=&#8217;C:UsersGuestworksegments_class.shp&#8217;)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_raster</strong> &#8211; path and name of the input raster file (<em>.TIF,</em>.tiff) (string)</li>
+<li><strong>input_shape</strong> &#8211; path and name of shapefile with the segmentation results (<a href="#id1"><span class="problematic" id="id2">*</span></a>.shp) (string)</li>
+<li><strong>output_shape</strong> &#8211; path and name of the output shapefile (<a href="#id3"><span class="problematic" id="id4">*</span></a>.shp) (string)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an output shapefile is created with a new attribute field related to the most frequent value inside the segment</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 23/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.classification.confusion_matrix">
+<code class="descclassname">sensum_library.classification.</code><code class="descname">confusion_matrix</code><span class="sig-paren">(</span><em>input_raster</em>, <em>input_shape</em>, <em>reference_field</em>, <em>output_file</em><span class="sig-paren">)</span></dt>
+<dd><p>Compute a confusion matrix for accuracy estimation of the classification</p>
+<p>Function to compute the confusion matrix according to the Orfeo Toolbox implementation. It can be used for example to compute the accuracy of a supervised classification. The output is saved
+to a csv file.</p>
+<p>Example: confusion_matrix(input_raster=&#8217;C:UsersGuestworkpansharp_sup_class.tif&#8217;,input_shape=&#8217;C:UsersGuestworkreference.shp&#8217;,reference_field=&#8217;Class&#8217;,output_file=&#8217;C:UsersGuestworkconfusion_matrix.csv&#8217;)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_raster</strong> &#8211; path and name of the input raster file (<em>.TIF,</em>.tiff) (string)</li>
+<li><strong>input_shape</strong> &#8211; path and name of shapefile with the reference polygons (<a href="#id5"><span class="problematic" id="id6">*</span></a>.shp) (string)</li>
+<li><strong>reference_field</strong> &#8211; name of the discriminant attribute in the reference shapefile (string)</li>
+<li><strong>output_file</strong> &#8211; path and name of the output csv file (<a href="#id7"><span class="problematic" id="id8">*</span></a>.csv) (string)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an output csv file is created containing the confusion matrix with rows as reference labels and columns as produced labels</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 23/03/2014</p>
+<p>Reference: <a class="reference external" href="http://orfeo-toolbox.org/CookBook/CookBooksu112.html#x146-8070005.8.2">http://orfeo-toolbox.org/CookBook/CookBooksu112.html#x146-8070005.8.2</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.classification.create_training_file">
+<code class="descclassname">sensum_library.classification.</code><code class="descname">create_training_file</code><span class="sig-paren">(</span><em>sample_matrix</em>, <em>train_matrix</em>, <em>output_file</em><span class="sig-paren">)</span></dt>
+<dd><p>Export training set to text file</p>
+<p>Function to create a text file with the generated training samples. Template for text file is &#8220;class,dn_value&#8221;.</p>
+<p>Example: create_training_file(sample_matrix=samples_mat,train_matrix=training_mat,output_file=&#8217;C:UsersGuestworktraining_file.txt&#8217;)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sample_matrix</strong> &#8211; 2darray with number of rows equal to number of sample pixels and columns equal to number of bands</li>
+<li><strong>train_matrix</strong> &#8211; 1darray with class value corresponding to each pixel sample</li>
+<li><strong>output_file</strong> &#8211; path and name of the output text file (<a href="#id9"><span class="problematic" id="id10">*</span></a>.txt) (string)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an output file is created with structure sample,sample,sample,sample,class</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniel Aurelio Galeazzo - Daniele De Vecchi - Mostapha Harb
+Last modified: 01/04/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.classification.extract_from_shape">
+<code class="descclassname">sensum_library.classification.</code><code class="descname">extract_from_shape</code><span class="sig-paren">(</span><em>input_shape</em>, <em>output_shape=''</em>, <em>field_name='Class'</em>, <em>*classes</em><span class="sig-paren">)</span></dt>
+<dd><p>Extract a subset of the input shapefile according to the specified attribute field and list of values</p>
+<p>Function used to filter on the attributes of a shapefile by applying a query. The query is automatically generated by the function using the provided parameters.</p>
+<p>Example: extract_from_shape(input_shape=&#8217;C:UsersGuestworkclassification.shp&#8217;,output_shape=&#8217;C:UsersGuestworkclassification_filt.shp&#8217;,field_name=&#8217;Class&#8217;,6,7,8)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_shape</strong> &#8211; path and name of the input shapefile (<a href="#id11"><span class="problematic" id="id12">*</span></a>.shp) (string)</li>
+<li><strong>classes</strong> &#8211; value of class which you want to extract (string)</li>
+<li><strong>output_shape</strong> &#8211; path and name of the output shapefile (<a href="#id13"><span class="problematic" id="id14">*</span></a>.shp) (string)</li>
+<li><strong>field_name</strong> &#8211; name of field to extract (string)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an output layer is created as a subset of the original shapefile</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniel Aurelio Galeazzo - Daniele De Vecchi - Mostapha Harb
+Last modified: 23/05/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.classification.generate_training">
+<code class="descclassname">sensum_library.classification.</code><code class="descname">generate_training</code><span class="sig-paren">(</span><em>input_band_list</em>, <em>input_shape</em>, <em>training_field</em>, <em>pixel_width</em>, <em>pixel_height</em><span class="sig-paren">)</span></dt>
+<dd><p>Extract the training set from the input shapefile</p>
+<p>Tool to extract a set of training samples from a shapefile used to feed the supervised classification from OpenCV. The shapefile provided by the user should include polygons and associated class.</p>
+<p>Example: generate_training(input_band_list=(band1,band2,band3,band4),input_shape=&#8217;C:UsersGuestworktraining_set.shp&#8217;,training_field=&#8217;Class&#8217;,pixel_width=geotransform[1],pixel_height=abs(geotransform[5])</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_band_list</strong> &#8211; list of 2darrays corresponding to bands (band 1: blue) (list of numpy arrays)</li>
+<li><strong>input_shape</strong> &#8211; path and name of shapefile with the polygons for training definition (<a href="#id15"><span class="problematic" id="id16">*</span></a>.shp) (string)</li>
+<li><strong>training_field</strong> &#8211; name of the discriminant attribute in the training shapefile (string)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list with 2 2darrays is returned (sample_matrix, train_matrix)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 01/04/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.classification.read_training_file">
+<code class="descclassname">sensum_library.classification.</code><code class="descname">read_training_file</code><span class="sig-paren">(</span><em>input_file</em><span class="sig-paren">)</span></dt>
+<dd><p>Read training set from text file</p>
+<p>Function to read the training file generated with the create_training_file function. Output of this function can be provided as input for the classifier.</p>
+<p>Example: read_training_file(input_file=&#8217;C:UsersGuestworktraining_file.txt&#8217;)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_file</strong> &#8211; path and name of the text file with the training set</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list with 2 2darrays is returned (sample_matrix, train_matrix)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">AttributeError, KeyError</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniel Aurelio Galeazzo - Daniele De Vecchi - Mostapha Harb
+Last modified: 01/04/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.classification.reclassify_raster">
+<code class="descclassname">sensum_library.classification.</code><code class="descname">reclassify_raster</code><span class="sig-paren">(</span><em>input_band</em>, <em>*operations</em><span class="sig-paren">)</span></dt>
+<dd><p>Reclassify results of a classification according to the operation list</p>
+<p>Tool to modify a raster acccording to the conditions provided. For example, this function can be used to create a mask for certain values.</p>
+<p>Example: reclassify_raster(input_band=classification_mat,&#8216;0 where &lt;3&#8217;,&#8216;255 where &gt;3&#8217;)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_band</strong> &#8211; 2darray corresponding to single classification band (numpy array)</li>
+<li><strong>operations</strong> &#8211; list of operations to apply (e.g. &#8216;0 where 3&#8217;, &#8216;255 where &gt;3&#8217;) (strings)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">output 2darray is created with the results of the reclassification process</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniel Aurelio Galeazzo - Daniele De Vecchi - Mostapha Harb
+Last modified: 23/05/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.classification.supervised_classification_opencv">
+<code class="descclassname">sensum_library.classification.</code><code class="descname">supervised_classification_opencv</code><span class="sig-paren">(</span><em>input_band_list</em>, <em>sample_matrix</em>, <em>train_matrix</em>, <em>classification_type</em><span class="sig-paren">)</span></dt>
+<dd><p>Supervised classification using OpenCV library</p>
+<p>Function used to recall the supervised classification from the OpenCV library. Train and samples matrix can be extracted directly from a shapefile with the generate_training function
+or from a text file.
+Available algorithms: Support Vector Machine, Decision Tree, Gradient Boosted Tree, Normal Bayes, Random Forest, K-Nearest-Neighbors.</p>
+<p>Example: supervised_classification_opencv(input_band_list=(band1,band2,band3,band4),sample_matrix=samples_mat,train_matrix=training_mat,classification_type=&#8217;svm&#8217;)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_band_list</strong> &#8211; list of 2darrays corresponding to bands (band 1: blue) (list of numpy arrays)</li>
+<li><strong>sample_matrix</strong> &#8211; 2darray with the samples to add</li>
+<li><strong>train_matrix</strong> &#8211; 1darray with the corresponding classes</li>
+<li><strong>type</strong> (<a class="reference internal" href="#module-classification" title="classification: This module includes functions related to the high-level classification of multi-spectral satellite images. (Unix, Windows)"><em>classification</em></a>) &#8211; definition of the desired classification algorithm (&#8216;svm&#8217;,&#8217;dt&#8217;,&#8217;gbt&#8217;,&#8217;bayes&#8217;,&#8217;rf&#8217;,&#8217;knn&#8217;) (string)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">2darray with predicted classes</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Daniel Aurelio Galeazzo - Mostapha Harb
+Last modified: 01/04/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.classification.supervised_classification_otb">
+<code class="descclassname">sensum_library.classification.</code><code class="descname">supervised_classification_otb</code><span class="sig-paren">(</span><em>input_raster</em>, <em>input_txt</em>, <em>output_raster</em><span class="sig-paren">)</span></dt>
+<dd><p>Supervised classification using OTB library</p>
+<p>Function made to recall the supervised classification implemented by the Orfeo Toolbox library. The algorithm used for the classification is pre-defined by the training classifier function.</p>
+<p>Example: supervised_classification_otb(input_raster=&#8217;C:UsersGuestworkpansharp.tif&#8217;,input_txt=&#8217;C:UsersGuestworkclassification.txt&#8217;,output_raster=&#8217;C:UsersGuestworkpansharp_sup_class.tif&#8217;)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_raster</strong> &#8211; path and name of the input raster file (<em>.TIF,</em>.tiff) (string)</li>
+<li><strong>input_txt</strong> &#8211; path and name of text file with the training parameters (<a href="#id17"><span class="problematic" id="id18">*</span></a>.txt) (string)</li>
+<li><strong>output_raster</strong> &#8211; path and name of the output raster file (<em>.TIF,</em>.tiff) (string)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an output raster file is created with the results of the classification</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 22/03/2014</p>
+<p>Reference: <a class="reference external" href="http://orfeo-toolbox.org/CookBook/CookBooksu115.html#x149-8410005.8.5">http://orfeo-toolbox.org/CookBook/CookBooksu115.html#x149-8410005.8.5</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.classification.train_classifier_otb">
+<code class="descclassname">sensum_library.classification.</code><code class="descname">train_classifier_otb</code><span class="sig-paren">(</span><em>input_raster_list</em>, <em>input_shape_list</em>, <em>output_txt</em>, <em>classification_type</em>, <em>training_field</em><span class="sig-paren">)</span></dt>
+<dd><p>Training of the desired classifier using OTB library</p>
+<p>Function made to recall the train classifier implemented by the Orfeo Toolbox libray. User has to provide a shapefile with samples used to train the classifier.
+Algorithms available are: Support Vector Machine, Decision Tree, Gradient Boosted Tree, Normal Bayes, Random Forest and K-Nearest-Neighbors. 
+Please note that the generation of the training set is limited to the same area of the input image and the shapefile.</p>
+<p>Example: train_classifier_otb(input_raster_list=[input_raster=&#8217;C:UsersGuestworkpansharp.tif&#8217;],input_shape_list=[input_raster=&#8217;C:UsersGuestworktraining_set.shp&#8217;],output_txt=&#8217;C:UsersGuestworkclassification.txt&#8217;,classification_type=&#8217;libsvm&#8217;,training_field=&#8217;Class&#8217;)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_raster_list</strong> &#8211; list of paths and names of the input raster files (<em>.TIF,</em>.tiff) (list of strings)</li>
+<li><strong>input_shape_list</strong> &#8211; list of paths and names of the input shapefiles containing the training sets (<em>.TIF,</em>.tiff) (list of strings)</li>
+<li><strong>output_txt</strong> &#8211; path and name of text file with the training parameters (<a href="#id19"><span class="problematic" id="id20">*</span></a>.txt) (string)</li>
+<li><strong>type</strong> (<a class="reference internal" href="#module-classification" title="classification: This module includes functions related to the high-level classification of multi-spectral satellite images. (Unix, Windows)"><em>classification</em></a>) &#8211; definition of the desired classification algorithm (&#8216;libsvm&#8217;,&#8217;svm&#8217;,&#8217;dt&#8217;,&#8217;gbt&#8217;,&#8217;bayes&#8217;,&#8217;rf&#8217;,&#8217;knn&#8217;) (string)</li>
+<li><strong>training_field</strong> &#8211; name of the discriminant attribute in the training shapefile (string)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an output text file is created along with a csv file containing a confusion matrix</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 22/03/2014</p>
+<p>Reference: <a class="reference external" href="http://orfeo-toolbox.org/CookBook/CookBooksu118.html#x152-8600005.8.8">http://orfeo-toolbox.org/CookBook/CookBooksu118.html#x152-8600005.8.8</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.classification.unsupervised_classification_opencv">
+<code class="descclassname">sensum_library.classification.</code><code class="descname">unsupervised_classification_opencv</code><span class="sig-paren">(</span><em>input_band_list</em>, <em>n_classes</em>, <em>n_iterations</em><span class="sig-paren">)</span></dt>
+<dd><p>Unsupervised K-Means classification using OpenCV library.</p>
+<p>Tool used to recall the K-Means unsupervised classification algorithm implemented by the OpenCV library. Main difference in respect of the Orfeo Toolbox implementation is in the input type
+(matrices instead of a tiff file)</p>
+<p>Example: unsupervised_classification_opencv(input_band_list=(band1,band2,band3,band4),n_classes=5,n_iterations=10)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_band_list</strong> &#8211; list of 2darrays corresponding to bands (band 1: blue) (list of numpy arrays)</li>
+<li><strong>n_classes</strong> &#8211; number of classes to extract (integer)</li>
+<li><strong>n_iterations</strong> &#8211; number of iterations of the classifier (integer)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an output 2darray is created with the results of the classifier</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 20/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.classification.unsupervised_classification_otb">
+<code class="descclassname">sensum_library.classification.</code><code class="descname">unsupervised_classification_otb</code><span class="sig-paren">(</span><em>input_raster</em>, <em>output_raster</em>, <em>n_classes</em>, <em>n_iterations</em><span class="sig-paren">)</span></dt>
+<dd><p>Unsupervised K-Means classification using OTB library.
+Tool used to recall the K-Means unsupervised classification algorithm implemented by the Orfeo Toolbox library. User input is limited to the number of classes to extract and the number
+of iterations of the classifier.</p>
+<p>Example: unsupervised_classification_otb(input_raster=&#8217;C:UsersGuestworkpansharp.tif&#8217;,output_raster=&#8217;C:UsersGuestworkpansharp_unsup.tif&#8217;,n_classes=5,n_iterations=10)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_raster</strong> &#8211; path and name of the input raster file (<em>.TIF,</em>.tiff) (string)</li>
+<li><strong>output_raster</strong> &#8211; path and name of the output raster file (<em>.TIF,</em>.tiff) (string)</li>
+<li><strong>n_classes</strong> &#8211; number of classes to extract (integer)</li>
+<li><strong>n_iterations</strong> &#8211; number of iterations of the classifier (integer)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an output raster is created</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 20/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.classification.update_training_file">
+<code class="descclassname">sensum_library.classification.</code><code class="descname">update_training_file</code><span class="sig-paren">(</span><em>input_file</em>, <em>sample_matrix</em>, <em>train_matrix</em><span class="sig-paren">)</span></dt>
+<dd><p>Update a text file with new training samples</p>
+<p>Tool that can be used to update a previously generated training file. New samples are appended to the original file.</p>
+<p>Example: update_training_file(input_file=&#8217;C:UsersGuestworktraining_file.txt&#8217;,sample_matrix=samples_mat,train_matrix=training_mat)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_file</strong> &#8211; path and name of the text file with the training set</li>
+<li><strong>sample_matrix</strong> &#8211; 2darray with the samples to add</li>
+<li><strong>train_matrix</strong> &#8211; 1darray with the corresponding classes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">input file is updated with new data</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniel Aurelio Galeazzo - Daniele De Vecchi - Mostapha Harb
+Last modified: 01/04/2014</p>
+</dd></dl>
+
+<span class="target" id="module-sensum_library.conversion"></span><span class="target" id="module-conversion"></span><dl class="class">
+<dt id="sensum_library.conversion.Polygon">
+<em class="property">class </em><code class="descclassname">sensum_library.conversion.</code><code class="descname">Polygon</code></dt>
+<dd><p>Container for geometry builders draw the minimun and maximum x and y values generated with WindowsMaker.make_coordinates method.</p>
+<p>Author: Daniel Aurelio Galeazzo - Daniele De Vecchi - Mostapha Harb
+Last modified: 23/05/2014</p>
+<dl class="class">
+<dt id="sensum_library.conversion.Polygon.Circle">
+<em class="property">class </em><code class="descname">Circle</code><span class="sig-paren">(</span><em>x_min</em>, <em>x_max</em>, <em>y_min</em>, <em>y_max</em>, <em>resize=0</em><span class="sig-paren">)</span></dt>
+<dd><p>Circle Builder</p>
+<dl class="method">
+<dt id="sensum_library.conversion.Polygon.Circle.add">
+<code class="descname">add</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Creation of polygon</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">poly: circle polygon (ogr.Geometry)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sensum_library.conversion.Polygon.Square">
+<em class="property">class </em><code class="descclassname">Polygon.</code><code class="descname">Square</code><span class="sig-paren">(</span><em>x_min</em>, <em>x_max</em>, <em>y_min</em>, <em>y_max</em>, <em>resize=0</em><span class="sig-paren">)</span></dt>
+<dd><p>Square Builder</p>
+<dl class="method">
+<dt id="sensum_library.conversion.Polygon.Square.add">
+<code class="descname">add</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Creation of polygon</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">poly: square polygon (ogr.Geometry)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sensum_library.conversion.WindowsMaker">
+<em class="property">class </em><code class="descclassname">sensum_library.conversion.</code><code class="descname">WindowsMaker</code><span class="sig-paren">(</span><em>inFeature</em>, <em>resize=0</em><span class="sig-paren">)</span></dt>
+<dd><p>With this class it&#8217;s possible to make a window around a ogr feature</p>
+<p>Author: Daniel Aurelio Galeazzo - Daniele De Vecchi - Mostapha Harb
+Last modified: 23/05/2014</p>
+<dl class="method">
+<dt id="sensum_library.conversion.WindowsMaker.get_rasterArray">
+<code class="descname">get_rasterArray</code><span class="sig-paren">(</span><em>inRaster</em><span class="sig-paren">)</span></dt>
+<dd><p>Tile a raster with dimensions of window maked</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inRaster</strong> &#8211; Raster which will be tiled</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">list of array represent the raster</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sensum_library.conversion.WindowsMaker.get_shapeDS">
+<code class="descname">get_shapeDS</code><span class="sig-paren">(</span><em>inLayer</em><span class="sig-paren">)</span></dt>
+<dd><p>Build a layer with only intersected features of input layer</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>inLayer</strong> &#8211; Layer which will be checked. (ogr.Layer)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Dataset of new layer with only feature intersected. (ogr.Dataset)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sensum_library.conversion.WindowsMaker.make_coordinates">
+<code class="descname">make_coordinates</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Build coordinate of minimum and maximum x and y searching the minimum and maximum value of x and y into all point of feature</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">self.x_min,self.x_max,self.y_min,self.y_max: coordinate of minimum and maximum x and y. (float)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sensum_library.conversion.WindowsMaker.make_feature">
+<code class="descname">make_feature</code><span class="sig-paren">(</span><em>geom=None</em>, <em>polygon=&lt;class 'sensum_library.conversion.Square'&gt;</em><span class="sig-paren">)</span></dt>
+<dd><p>Build the window feauture</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>geom</strong> &#8211; Geometry polygon of window (ogr.Geometry)</li>
+<li><strong>polygon</strong> &#8211; Polygon builder (sensum.Polygon)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">feauture built (ogr.Feature)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sensum_library.conversion.WindowsMaker.make_shape">
+<code class="descname">make_shape</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span></dt>
+<dd><p>Shape file builder with only the window feature into the layer (useful for debugging)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path</strong> &#8211; Path of shape file (str)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.conversion.data_type2gdal_data_type">
+<code class="descclassname">sensum_library.conversion.</code><code class="descname">data_type2gdal_data_type</code><span class="sig-paren">(</span><em>data_type</em><span class="sig-paren">)</span></dt>
+<dd><p>Conversion from numpy data type to GDAL data type</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>data_type</strong> &#8211; numpy type (e.g. np.uint8, np.int32; 0 for default: np.uint16) (numpy type).</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">corresponding GDAL data type</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">AttributeError, KeyError</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 18/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.conversion.extract_tiles">
+<code class="descclassname">sensum_library.conversion.</code><code class="descname">extract_tiles</code><span class="sig-paren">(</span><em>input_raster</em>, <em>start_col_coord</em>, <em>start_row_coord</em>, <em>end_col_coord</em>, <em>end_row_coord</em><span class="sig-paren">)</span></dt>
+<dd><p>Extract a subset of a raster according to the desired coordinates</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_raster</strong> &#8211; path and name of the input raster file (<em>.TIF,</em>.tiff) (string)</li>
+<li><strong>output_raster</strong> &#8211; path and name of the output raster file (<em>.TIF,</em>.tiff) (string)</li>
+<li><strong>start_col_coord</strong> &#8211; starting longitude coordinate</li>
+<li><strong>start_row_coord</strong> &#8211; starting latitude coordinate</li>
+<li><strong>end_col_coord</strong> &#8211; ending longitude coordinate</li>
+<li><strong>end_row_coord</strong> &#8211; ending latitude coordinate</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">an output file is created and also a level of confidence on the tile is returned</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi
+Last modified: 20/08/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.conversion.linear_quantization">
+<code class="descclassname">sensum_library.conversion.</code><code class="descname">linear_quantization</code><span class="sig-paren">(</span><em>input_band_list</em>, <em>quantization_factor</em><span class="sig-paren">)</span></dt>
+<dd><p>Quantization of all the input bands cutting the tails of the distribution</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_band_list</strong> &#8211; list of 2darrays (list of 2darrays)</li>
+<li><strong>quantization_factor</strong> &#8211; number of levels as output (integer)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of values corresponding to the quantized bands (list of 2darray)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 12/05/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.conversion.normalize_to_L8">
+<code class="descclassname">sensum_library.conversion.</code><code class="descname">normalize_to_L8</code><span class="sig-paren">(</span><em>input_band_list</em><span class="sig-paren">)</span></dt>
+<dd><p>Normalize the range of values of Landsat 5 and 7 to match Landsat 8</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_band_list</strong> &#8211; list of 2darrays (list of 2darrays)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a list containing the normalized bands as ndarrays (list of arrays).</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">AttributeError, KeyError</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Mostapha Harb - Daniele De Vecchi - Daniel Aurelio Galeazzo
+Last modified: 24/06/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.conversion.pixel2world">
+<code class="descclassname">sensum_library.conversion.</code><code class="descname">pixel2world</code><span class="sig-paren">(</span><em>geo_transform</em>, <em>cols</em>, <em>rows</em><span class="sig-paren">)</span></dt>
+<dd><p>Calculation of the geo-spatial coordinates of top-left and down-right pixel</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>geo_transform</strong> &#8211; geo-transformation matrix containing coordinates and resolution of the output (array of 6 elements, float)</li>
+<li><strong>rows</strong> &#8211; number of rows (integer)</li>
+<li><strong>cols</strong> &#8211; number of columns (integer)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A list with top-left and down-right coordinates</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 18/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.conversion.polygon2array">
+<code class="descclassname">sensum_library.conversion.</code><code class="descname">polygon2array</code><span class="sig-paren">(</span><em>input_layer</em>, <em>pixel_width</em>, <em>pixel_height</em><span class="sig-paren">)</span></dt>
+<dd><p>Conversion from polygon to array</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_layer</strong> &#8211; layer taken from the shapefile (shapefile layer)</li>
+<li><strong>pixel_width</strong> &#8211; pixel resolution x axis (float, positive)</li>
+<li><strong>pixel_height</strong> &#8211; pixel resolution y axis (float, positive)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A matrix with the output band and the related geomatrix</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 25/03/2014</p>
+<p>Reference: <a class="reference external" href="http://pcjericks.github.io/py-gdalogr-cookbook/vector_layers.html">http://pcjericks.github.io/py-gdalogr-cookbook/vector_layers.html</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.conversion.rast2shp">
+<code class="descclassname">sensum_library.conversion.</code><code class="descname">rast2shp</code><span class="sig-paren">(</span><em>input_raster</em>, <em>output_shape</em><span class="sig-paren">)</span></dt>
+<dd><p>Conversion from raster to shapefile using GDAL</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_raster</strong> &#8211; path and name of the input raster (<a href="#id21"><span class="problematic" id="id22">*</span></a>.TIF, <a href="#id23"><span class="problematic" id="id24">*</span></a>.tiff) (string)</li>
+<li><strong>output_shape</strong> &#8211; path and name of the output shapefile to create (<a href="#id25"><span class="problematic" id="id26">*</span></a>.shp) (string)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An output shapefile is created</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 18/03/2014</p>
+<p>Reference: <a class="reference external" href="http://pcjericks.github.io/py-gdalogr-cookbook/raster_layers.html">http://pcjericks.github.io/py-gdalogr-cookbook/raster_layers.html</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.conversion.read_image">
+<code class="descclassname">sensum_library.conversion.</code><code class="descname">read_image</code><span class="sig-paren">(</span><em>input_raster</em>, <em>data_type</em>, <em>band_selection</em><span class="sig-paren">)</span></dt>
+<dd><p>Read raster using GDAL</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_raster</strong> &#8211; path and name of the input raster file (<em>.TIF,</em>.tiff) (string).</li>
+<li><strong>data_type</strong> &#8211; numpy type used to read the image (e.g. np.uint8, np.int32; 0 for default: np.uint16) (numpy type).</li>
+<li><strong>band_selection</strong> &#8211; number associated with the band to extract (0: all bands, 1: blue, 2: green, 3:red, 4:infrared) (integer).</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a list containing the desired bands as ndarrays (list of arrays).</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 18/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.conversion.read_image_parameters">
+<code class="descclassname">sensum_library.conversion.</code><code class="descname">read_image_parameters</code><span class="sig-paren">(</span><em>input_raster</em><span class="sig-paren">)</span></dt>
+<dd><p>Read raster parameters using GDAL</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_raster</strong> &#8211; path and name of the input raster file (<em>.TIF,</em>.tiff) (string).</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a list containing rows, columns, number of bands, geo-transformation matrix and projection.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">AttributeError, KeyError</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 18/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.conversion.reproject_shapefile">
+<code class="descclassname">sensum_library.conversion.</code><code class="descname">reproject_shapefile</code><span class="sig-paren">(</span><em>input_shape</em>, <em>output_shape</em>, <em>output_projection</em><span class="sig-paren">)</span></dt>
+<dd><p>Reproject a shapefile using the provided EPSG code</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_shape</strong> &#8211; path and name of the input shapefile (<a href="#id27"><span class="problematic" id="id28">*</span></a>.shp) (string)</li>
+<li><strong>output_shape</strong> &#8211; path and name of the output shapefile (<a href="#id29"><span class="problematic" id="id30">*</span></a>.shp) (string)</li>
+<li><strong>output_projection</strong> &#8211; epsg code (integer)</li>
+<li><strong>geometry_type</strong> &#8211; geometry type of the output (&#8216;line&#8217;,&#8217;polygon&#8217;,&#8217;point&#8217;) (string)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an output shapefile is created</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 24/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.conversion.shp2rast">
+<code class="descclassname">sensum_library.conversion.</code><code class="descname">shp2rast</code><span class="sig-paren">(</span><em>input_shape</em>, <em>output_raster</em>, <em>rows</em>, <em>cols</em>, <em>field_name</em>, <em>pixel_width=0</em>, <em>pixel_height=0</em>, <em>x_min=0</em>, <em>x_max=0</em>, <em>y_min=0</em>, <em>y_max=0</em><span class="sig-paren">)</span></dt>
+<dd><p>Conversion from shapefile to raster using GDAL</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_shape</strong> &#8211; path and name of the input shapefile (<a href="#id31"><span class="problematic" id="id32">*</span></a>.shp) (string)</li>
+<li><strong>output_raster</strong> &#8211; path and name of the output raster to create (<a href="#id33"><span class="problematic" id="id34">*</span></a>.TIF, <a href="#id35"><span class="problematic" id="id36">*</span></a>.tiff) (string)</li>
+<li><strong>rows</strong> &#8211; rows of the output raster (integer)</li>
+<li><strong>cols</strong> &#8211; columns of the output raster (integer)</li>
+<li><strong>field_name</strong> &#8211; name of the attribute field of the shapefile used to differentiate pixels (string)</li>
+<li><strong>pixel_width</strong> &#8211; pixel resolution x axis</li>
+<li><strong>pixel_height</strong> &#8211; pixel resolution y axis</li>
+<li><strong>x_min</strong> &#8211; minimum longitude (used for the geomatrix)</li>
+<li><strong>x_max</strong> &#8211; maximum longitude</li>
+<li><strong>y_min</strong> &#8211; minimum latitude</li>
+<li><strong>y_max</strong> &#8211; maximum latitude (used for the geomatrix)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An output file is created and a list with the shapefile extent is returned (x_min,x_max,y_min,y_max)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 18/03/2014</p>
+<p>Reference: <a class="reference external" href="http://pcjericks.github.io/py-gdalogr-cookbook/vector_layers.html">http://pcjericks.github.io/py-gdalogr-cookbook/vector_layers.html</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.conversion.smooth_filter_otb">
+<code class="descclassname">sensum_library.conversion.</code><code class="descname">smooth_filter_otb</code><span class="sig-paren">(</span><em>input_raster</em>, <em>output_raster</em>, <em>radius</em><span class="sig-paren">)</span></dt>
+<dd><p>Apply the Meanshift smoothing to the input image</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_raster</strong> &#8211; path and name of the input raster file (<em>.TIF,</em>.tiff) (string)</li>
+<li><strong>output_raster</strong> &#8211; path and name of the output raster (<em>.TIF,</em>.tiff) (string)</li>
+<li><strong>radius</strong> &#8211; radius parameter (integer, 0 for default)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an output file is created according to the specified output mode</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Daniel Aurelio Galeazzo - Mostapha Harb
+Last modified: 20/05/2014</p>
+<p>Reference: <a class="reference external" href="http://www.orfeo-toolbox.org/CookBook/CookBooksu91.html#x122-5460005.5.2">http://www.orfeo-toolbox.org/CookBook/CookBooksu91.html#x122-5460005.5.2</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.conversion.split_shape">
+<code class="descclassname">sensum_library.conversion.</code><code class="descname">split_shape</code><span class="sig-paren">(</span><em>input_layer</em>, <em>index</em>, <em>option='memory'</em>, <em>output_shape='out'</em><span class="sig-paren">)</span></dt>
+<dd><p>Extract a single feature from a shapefile</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_layer</strong> &#8211; layer of a shapefile (shapefile layer)</li>
+<li><strong>index</strong> &#8211; index of the feature to extract (integer)</li>
+<li><strong>option</strong> &#8211; &#8216;memory&#8217; or &#8216;file&#8217; depending on the desired output (default is memory) (string)</li>
+<li><strong>output_shape</strong> &#8211; path and name of the output shapefile (temporary file) (<a href="#id37"><span class="problematic" id="id38">*</span></a>.shp) (string)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an output shapefile is created</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 25/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.conversion.utm2wgs84">
+<code class="descclassname">sensum_library.conversion.</code><code class="descname">utm2wgs84</code><span class="sig-paren">(</span><em>easting</em>, <em>northing</em>, <em>zone</em><span class="sig-paren">)</span></dt>
+<dd><p>Conversion from UTM projection to WGS84</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>easting</strong> &#8211; east coordinate (float)</li>
+<li><strong>northing</strong> &#8211; north coordinate (float)</li>
+<li><strong>zone</strong> &#8211; number of the utm zone (integer)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A list with coordinates in the WGS84 system (longitude,latitude,altitude)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 18/03/2014</p>
+<p>Reference: <a class="reference external" href="http://monkut.webfactional.com/blog/archive/2012/5/2/understanding-raster-basic-gis-concepts-and-the-python-gdal-library/">http://monkut.webfactional.com/blog/archive/2012/5/2/understanding-raster-basic-gis-concepts-and-the-python-gdal-library/</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.conversion.world2pixel">
+<code class="descclassname">sensum_library.conversion.</code><code class="descname">world2pixel</code><span class="sig-paren">(</span><em>geo_transform</em>, <em>long</em>, <em>lat</em><span class="sig-paren">)</span></dt>
+<dd><p>Conversion from geographic coordinates to matrix-related indexes</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>geo_transform</strong> &#8211; geo-transformation matrix containing coordinates and resolution of the output (array of 6 elements, float)</li>
+<li><strong>long</strong> &#8211; longitude of the desired point (float)</li>
+<li><strong>lat</strong> &#8211; latitude of the desired point (float)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">A list with matrix-related x and y indexes (x,y)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 18/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.conversion.write_image">
+<code class="descclassname">sensum_library.conversion.</code><code class="descname">write_image</code><span class="sig-paren">(</span><em>band_list</em>, <em>data_type</em>, <em>band_selection</em>, <em>output_raster</em>, <em>rows</em>, <em>cols</em>, <em>geo_transform</em>, <em>projection</em><span class="sig-paren">)</span></dt>
+<dd><p>Write array to file as raster using GDAL</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>band_list</strong> &#8211; list of arrays containing the different bands to write (list of arrays).</li>
+<li><strong>data_type</strong> &#8211; numpy data type of the output image (e.g. np.uint8, np.int32; 0 for default: np.uint16) (numpy type)</li>
+<li><strong>band_selection</strong> &#8211; number associated with the band to write (0: all, 1: blue, 2: green, 3: red, 4: infrared) (integer)</li>
+<li><strong>output_raster</strong> &#8211; path and name of the output raster to create (<a href="#id39"><span class="problematic" id="id40">*</span></a>.TIF, <a href="#id41"><span class="problematic" id="id42">*</span></a>.tiff) (string)</li>
+<li><strong>rows</strong> &#8211; rows of the output raster (integer)</li>
+<li><strong>cols</strong> &#8211; columns of the output raster (integer)</li>
+<li><strong>geo_transform</strong> &#8211; geo-transformation matrix containing coordinates and resolution of the output (array of 6 elements, float)</li>
+<li><strong>projection</strong> &#8211; projection of the output image (string)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">An output file is created</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 18/03/2014</p>
+</dd></dl>
+
+<span class="target" id="module-sensum_library.features"></span><span class="target" id="module-features"></span><dl class="function">
+<dt id="sensum_library.features.band_calculation">
+<code class="descclassname">sensum_library.features.</code><code class="descname">band_calculation</code><span class="sig-paren">(</span><em>input_band_list</em>, <em>indexes_list</em><span class="sig-paren">)</span></dt>
+<dd><p>Calculation of different indexes based on user selection</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_band_list</strong> &#8211; list of 2darrays corresponding to bands (band 1: blue) (list of numpy arrays)</li>
+<li><strong>indexes_list</strong> &#8211; list of strings with codes related to indexes (SAVI, NDVI, MNDWI, NDBI, NBI, NDISI, BUILT_UP) (list of strings)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>:returns list of 2darray corresponding to computed indexes following the indexes_list order (list of numpy arrays)
+:raises: AttributeError, KeyError</p>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 19/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.features.pca">
+<code class="descclassname">sensum_library.features.</code><code class="descname">pca</code><span class="sig-paren">(</span><em>input_band_list</em><span class="sig-paren">)</span></dt>
+<dd><p>Principal Component Analysis</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_band_list</strong> &#8211; list of 2darrays (list of numpy arrays)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a list containing mean, mode, second order component, third order component</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">AttributeError, KeyError</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 19/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.features.pca_index">
+<code class="descclassname">sensum_library.features.</code><code class="descname">pca_index</code><span class="sig-paren">(</span><em>pca_mean</em>, <em>pca_mode</em>, <em>pca_sec_order</em>, <em>pca_third_order</em><span class="sig-paren">)</span></dt>
+<dd><p>PCA-based index for built-up area extraction</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pca_mean</strong> &#8211; matrix with mean computed by pca (numpy array)</li>
+<li><strong>pca_mode</strong> &#8211; matrix with mode computed by pca (numpy array)</li>
+<li><strong>pca_second_order</strong> &#8211; matrix with second order component computed by pca (numpy array)</li>
+<li><strong>pca_third_order</strong> &#8211; matrix with third order component computed by pca (numpy array)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">a matrix with the pca built-up indicator</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 19/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.features.spectral_segments">
+<code class="descclassname">sensum_library.features.</code><code class="descname">spectral_segments</code><span class="sig-paren">(</span><em>input_band</em>, <em>dn_value</em>, <em>input_band_segmentation</em>, <em>indexes_list</em>, <em>bands_number</em><span class="sig-paren">)</span></dt>
+<dd><p>Compute the desired spectral features from each segment</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_band</strong> &#8211; 2darray containing a single band of the original image (numpy array)</li>
+<li><strong>dn_value</strong> &#8211; unique value associated to each segment (integer)</li>
+<li><strong>input_band_segmentation</strong> &#8211; 2darray containing the results of the segmentation (numpy array)</li>
+<li><strong>indexes_list</strong> &#8211; list of strings with codes related to indexes (mean, mode, std, max_br, min_br, ndvi_mean, ndvi_std, weigh_br) (list of strings)</li>
+<li><strong>bands_number</strong> &#8211; parameter used by the weighted brightness (set to 0 if not needed) (integer)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of values corresponding to computed indexes following the indexes_list order (list of floats)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 19/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.features.texture_moving_window">
+<code class="descclassname">sensum_library.features.</code><code class="descname">texture_moving_window</code><span class="sig-paren">(</span><em>input_band_list</em>, <em>window_dimension</em>, <em>index</em>, <em>quantization_factor</em><span class="sig-paren">)</span></dt>
+<dd><p>Compute the desired spectral feature from each window</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_band_list</strong> &#8211; list of 2darrays (list of numpy arrays)</li>
+<li><strong>window_dimension</strong> &#8211; dimension of the processing window (integer)</li>
+<li><strong>index</strong> &#8211; string with index to compute (contrast, energy, homogeneity, correlation, dissimilarity, ASM) (string)</li>
+<li><strong>quantization_factor</strong> &#8211; number of levels to consider (suggested 64) (integer)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of 2darrays corresponding to computed index per-band (list of numpy arrays)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 19/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.features.texture_segments">
+<code class="descclassname">sensum_library.features.</code><code class="descname">texture_segments</code><span class="sig-paren">(</span><em>input_band</em>, <em>dn_value</em>, <em>input_band_segmentation</em>, <em>indexes_list</em><span class="sig-paren">)</span></dt>
+<dd><p>Compute the desired spectral features from each segment</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_band</strong> &#8211; 2darray containing a single band of the original image (numpy array, unsigned integer 8bit)</li>
+<li><strong>dn_value</strong> &#8211; unique value associated to each segment (integer)</li>
+<li><strong>input_band_segmentation</strong> &#8211; 2darray containing the results of the segmentation (numpy array)</li>
+<li><strong>indexes_list</strong> &#8211; list of strings with codes related to indexes (contrast, energy, homogeneity, correlation, dissimilarity, ASM) (list of strings)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of values corresponding to computed indexes following the indexes_list order (list of floats)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 19/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.features.tile_statistics">
+<code class="descclassname">sensum_library.features.</code><code class="descname">tile_statistics</code><span class="sig-paren">(</span><em>band_mat</em>, <em>start_col_coord</em>, <em>start_row_coord</em>, <em>end_col_coord</em>, <em>end_row_coord</em><span class="sig-paren">)</span></dt>
+<dd><p>Compute statistics related to the input tile</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>band_mat</strong> &#8211; numpy 8 bit array containing the extracted tile</li>
+<li><strong>start_col_coord</strong> &#8211; starting longitude coordinate</li>
+<li><strong>start_row_coord</strong> &#8211; starting latitude coordinate</li>
+<li><strong>end_col_coord</strong> &#8211; ending longitude coordinate</li>
+<li><strong>end_row_coord</strong> &#8211; ending latitude coordinate</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a list of statistics (start_col_coord,start_row_coord,end_col_coord,end_row_coord,confidence, min frequency value, max frequency value, standard deviation value, distance among frequent values)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi
+Last modified: 22/08/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.features.value_to_segments">
+<code class="descclassname">sensum_library.features.</code><code class="descname">value_to_segments</code><span class="sig-paren">(</span><em>input_raster</em>, <em>input_shape</em>, <em>output_shape</em>, <em>operation='Mode'</em><span class="sig-paren">)</span></dt>
+<dd><p>Assign the most frequent value inside a segment to the segment itself</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_raster</strong> &#8211; path and name of the input raster file (<em>.TIF,</em>.tiff) (string)</li>
+<li><strong>input_shape</strong> &#8211; path and name of shapefile with the segmentation results (<a href="#id43"><span class="problematic" id="id44">*</span></a>.shp) (string)</li>
+<li><strong>output_shape</strong> &#8211; path and name of the output shapefile (<a href="#id45"><span class="problematic" id="id46">*</span></a>.shp) (string)</li>
+<li><strong>operation</strong> &#8211; string with the function to apply to fill the segments (mean or mode) (string)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an output shapefile is created with a new attribute field related to the most frequent value inside the segment</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 23/03/2014</p>
+</dd></dl>
+
+<span class="target" id="module-sensum_library.secondary_indicators"></span><span class="target" id="module-secondary_indicators"></span><dl class="class">
+<dt id="sensum_library.secondary_indicators.CircleDensity">
+<em class="property">class </em><code class="descclassname">sensum_library.secondary_indicators.</code><code class="descname">CircleDensity</code><span class="sig-paren">(</span><em>centroid</em>, <em>radius</em><span class="sig-paren">)</span></dt>
+<dd><p>Circle Builder, circle maked with cendroid point</p>
+<dl class="method">
+<dt id="sensum_library.secondary_indicators.CircleDensity.add">
+<code class="descname">add</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">geometry of polygon (ogr.Geometry)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="sensum_library.secondary_indicators.ShadowPosition">
+<em class="property">class </em><code class="descclassname">sensum_library.secondary_indicators.</code><code class="descname">ShadowPosition</code><span class="sig-paren">(</span><em>date</em>, <em>latitude=None</em>, <em>longitude=None</em>, <em>rasterpath=None</em><span class="sig-paren">)</span></dt>
+<dd><p>Class for determinate the position of shadow than building calculated with date of raster acquisition     and coordinates.</p>
+<dl class="method">
+<dt id="sensum_library.secondary_indicators.ShadowPosition.azirange">
+<code class="descname">azirange</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Get position of shadow than feature</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">position of shadow than building (tuple of 2 str)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sensum_library.secondary_indicators.ShadowPosition.get_azimuth">
+<code class="descname">get_azimuth</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Calculate the azimuth with coordinates</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="sensum_library.secondary_indicators.ShadowPosition.main">
+<code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Commander method</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">operator functions (tuple of 2 function)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sensum_library.secondary_indicators.ShadowPosition.operator">
+<code class="descname">operator</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Get operator for if statemant of WindowsMaker class</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">operator functions (tuple of 2 functions)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="sensum_library.secondary_indicators.ShadowPosition.set_raster">
+<code class="descname">set_raster</code><span class="sig-paren">(</span><em>rasterpath</em><span class="sig-paren">)</span></dt>
+<dd><p>Get coordinate from a raster</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>rasterpath</strong> &#8211; path of raster (str)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.secondary_indicators.building_alignment">
+<code class="descclassname">sensum_library.secondary_indicators.</code><code class="descname">building_alignment</code><span class="sig-paren">(</span><em>input_band</em><span class="sig-paren">)</span></dt>
+<dd><p>Compute the building alignment</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>input_band</strong> &#8211; 2darray with the extracted building</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">alignment of the building in degrees (resolution of 15 degrees) and length along the 2 axis (alignment,length_a,length_b) (list of integers)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">AttributeError, KeyError</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 25/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.secondary_indicators.building_height">
+<code class="descclassname">sensum_library.secondary_indicators.</code><code class="descname">building_height</code><span class="sig-paren">(</span><em>latitude</em>, <em>longitude</em>, <em>date</em>, <em>shadow_len</em><span class="sig-paren">)</span></dt>
+<dd><p>Compute the building height using the angle from the sun position and the shadow length</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>latitude</strong> &#8211; decimal latitude (float)</li>
+<li><strong>longitude</strong> &#8211; decimal longitude (float)</li>
+<li><strong>date</strong> &#8211; acquisition date of the image (yyyy/mm/dd) (string)</li>
+<li><strong>shadow_len</strong> &#8211; length of the shadow computed with the function</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">height of the building in pixels (float)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 25/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.secondary_indicators.building_regularity">
+<code class="descclassname">sensum_library.secondary_indicators.</code><code class="descname">building_regularity</code><span class="sig-paren">(</span><em>length_a</em>, <em>length_b</em><span class="sig-paren">)</span></dt>
+<dd><p>Compute the building regularity (still missing the L-shape factor)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>length_a</strong> &#8211; length along one axis (integer)</li>
+<li><strong>length_b</strong> &#8211; length along the other axis (integer)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">&#8216;regular&#8217; or &#8216;irregular&#8217; according to the regularity index (string)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 25/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.secondary_indicators.density">
+<code class="descclassname">sensum_library.secondary_indicators.</code><code class="descname">density</code><span class="sig-paren">(</span><em>buildingShape</em>, <em>radius</em>, <em>outputShape=''</em><span class="sig-paren">)</span></dt>
+<dd><p>Function for assign density value into each building.                                                                 Build new dataset (or shapefile if outputShape argument declared) with field N_Building and Density which contains       respectively the number of building into the expressed radius and density parameter expressed in number of building      for meter.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>buildingShape</strong> &#8211; path of buildings shapefile (str)</li>
+<li><strong>radius</strong> &#8211; radius of circle maked around each building, expressed in coordinates as unit of measure (float)</li>
+<li><strong>outputShape</strong> &#8211; path of output shapefile (char)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Dataset of new features assigned (ogr.Dataset)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.secondary_indicators.height">
+<code class="descclassname">sensum_library.secondary_indicators.</code><code class="descname">height</code><span class="sig-paren">(</span><em>shadowShape</em>, <em>pixelWidth</em>, <em>pixelHeight</em>, <em>outShape=''</em><span class="sig-paren">)</span></dt>
+<dd><p>Function for calculate and assign to shadows shapefile the height of building and length of shadow.                Build new dataset (or shapefile if outputShape argument declared) with field Shadow_Len and Height which contains     respectively the height of relative building and the length of the shadow                                             
+:param shadowShape: path of shadows shapefile (str)
+:param pixelWidth: value in meters of length of 1 pixel (float)
+:param pixelHeight: value in meters of length of 1 pixel (float)
+:param outputShape: path of output shapefile (char)
+:returns: Dataset of new features assigned (ogr.Dataset)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.secondary_indicators.shadow_checker">
+<code class="descclassname">sensum_library.secondary_indicators.</code><code class="descname">shadow_checker</code><span class="sig-paren">(</span><em>buildingShape</em>, <em>shadowShape</em>, <em>date</em>, <em>idfield='ID'</em>, <em>outputShape=''</em>, <em>resize=0</em><span class="sig-paren">)</span></dt>
+<dd><p>Function to assign right shadows to buildings using the azimuth calculated from the raster acquisition date and time.    Build new dataset (or shapefile if outputShape argument declared) with field ShadowID and Height related to       the id of relative shadow fileshape and the height of building calculated with sensum.ShadowPosition     class. Polygons are taken from the building-related layer. Shadow shapefile has to be just processed with height() function.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>buildingShape</strong> &#8211; path of buildings shapefile (str)</li>
+<li><strong>shadowShape</strong> &#8211; path of shadows shapefile (str)</li>
+<li><strong>date</strong> &#8211; date of acquisition in EDT (example: &#8216;1984/5/30 17:40:56&#8217;) (char)</li>
+<li><strong>idfield</strong> &#8211; id field of shadows (char)</li>
+<li><strong>outputShape</strong> &#8211; path of output shapefile (char)</li>
+<li><strong>resize</strong> &#8211; resize value for increase dimension of the form expressed in coordinates as unit of measure (float)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Dataset of new features assigned (ogr.Dataset)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.secondary_indicators.shadow_length">
+<code class="descclassname">sensum_library.secondary_indicators.</code><code class="descname">shadow_length</code><span class="sig-paren">(</span><em>input_band</em>, <em>latitude</em>, <em>longitude</em>, <em>date</em><span class="sig-paren">)</span></dt>
+<dd><p>Compute the shadow length using the angle from the sun position</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_band</strong> &#8211; 2darray with the extracted shadow</li>
+<li><strong>latitude</strong> &#8211; decimal latitude (float)</li>
+<li><strong>longitude</strong> &#8211; decimal longitude (float)</li>
+<li><strong>date</strong> &#8211; acquisition date of the image (yyyy/mm/dd) (string)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">length of the shadow in pixels (float)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 25/03/2014</p>
+<p>Reference: <a class="reference external" href="http://rhodesmill.org/pyephem/quick.html">http://rhodesmill.org/pyephem/quick.html</a></p>
+</dd></dl>
+
+<span class="target" id="module-sensum_library.segmentation_opt"></span><span class="target" id="module-segmentation_opt"></span><dl class="function">
+<dt id="sensum_library.segmentation_opt.bound_generator">
+<code class="descclassname">sensum_library.segmentation_opt.</code><code class="descname">bound_generator</code><span class="sig-paren">(</span><em>segmentation_name</em><span class="sig-paren">)</span></dt>
+<dd><p>Definition of boundaries, initial random parameters and epsilon value according to the selected segmentation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>segmentation_name</strong> &#8211; name of the desired segmentation (&#8216;Felzenszwalb&#8217;,&#8217;Edison&#8217;,&#8217;Watershed&#8217;,&#8217;Baatz&#8217;,&#8217;Baatz_integers&#8217;,&#8217;Region_growing&#8217;,&#8217;Region_growing_integers&#8217;) (string)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a list with bound_parameters (list), random parameters (list) and epsilon (float) (in this order) (list of lists)</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body">AttributeError, KeyError</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 25/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.segmentation_opt.call_optimizer">
+<code class="descclassname">sensum_library.segmentation_opt.</code><code class="descname">call_optimizer</code><span class="sig-paren">(</span><em>segmentation_name</em>, <em>patches_list</em>, <em>reference_band_list</em>, <em>patches_geo_transform_list</em>, <em>ref_geo_transform_list</em>, <em>projection</em>, <em>select_criteria</em>, <em>nloops</em><span class="sig-paren">)</span></dt>
+<dd><p>Call the optimizer function</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>segmentation_name</strong> &#8211; name of the desired segmentation (&#8216;Felzenszwalb&#8217;,&#8217;Edison&#8217;,&#8217;Watershed&#8217;,&#8217;Baatz&#8217;,&#8217;Baatz_integers&#8217;,&#8217;Region_growing&#8217;,&#8217;Region_growing_integers&#8217;) (string)</li>
+<li><strong>patches_list</strong> &#8211; list of created patches (list of lists)</li>
+<li><strong>reference_band</strong> &#8211; 2darray related to the reference polygon (numpy array)</li>
+<li><strong>input_band_geo_transform</strong> &#8211; geomatrix related to the input band (geomatrix)</li>
+<li><strong>select_criteria</strong> &#8211; combination used to evaluate the segmentation (integer)</li>
+<li><strong>nloops</strong> &#8211; number of times the optimizer is executed using different starting points (integer)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">list of optimum parameters</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 25/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.segmentation_opt.create_extended_patch">
+<code class="descclassname">sensum_library.segmentation_opt.</code><code class="descname">create_extended_patch</code><span class="sig-paren">(</span><em>input_band_list</em>, <em>reference_band</em>, <em>input_band_geo_transform</em>, <em>ref_geo_transform</em>, <em>ext_factor</em>, <em>enable_filtering</em><span class="sig-paren">)</span></dt>
+<dd><p>Creation of an extended patch around the reference polygon to reduce the processing time</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_band_list</strong> &#8211; list of 2darrays corresponding to bands (band 1: blue) (list of numpy arrays)</li>
+<li><strong>reference_band</strong> &#8211; 2darray related to the reference polygon (numpy array)</li>
+<li><strong>input_band_geo_transform</strong> &#8211; geomatrix related to the original image (geomatrix)</li>
+<li><strong>ref_geo_transform</strong> &#8211; geomatrix related to the reference band (geomatrix)</li>
+<li><strong>ext_factor</strong> &#8211; extension factor (e.g. 0.3 for 30%) (float)</li>
+<li><strong>enable_filtering</strong> &#8211; dimension filter, useful for building extraction (boolean)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an output matrix is created with the extended patch</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 25/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.segmentation_opt.evaluation">
+<code class="descclassname">sensum_library.segmentation_opt.</code><code class="descname">evaluation</code><span class="sig-paren">(</span><em>input_band</em>, <em>reference_band</em>, <em>input_band_geo_transform</em>, <em>ref_geo_transform</em>, <em>select_criteria</em><span class="sig-paren">)</span></dt>
+<dd><p>Creation of an extended patch around the reference polygon to reduce the processing time</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_band</strong> &#8211; 2darray corresponding to the segmented file (numpy array)</li>
+<li><strong>reference_band</strong> &#8211; 2darray related to the reference polygon (numpy array)</li>
+<li><strong>input_band_geo_transform</strong> &#8211; geomatrix related to the input band (geomatrix)</li>
+<li><strong>select_criteria</strong> &#8211; combination used to evaluate the segmentation (integer)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">number related to the segmentation evaluation is returned (float)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 25/03/2014</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.segmentation_opt.optimizer">
+<code class="descclassname">sensum_library.segmentation_opt.</code><code class="descname">optimizer</code><span class="sig-paren">(</span><em>parameters</em>, <em>segmentation_name</em>, <em>patches_list</em>, <em>reference_band_list</em>, <em>patches_geo_transform_list</em>, <em>ref_geo_transform_list</em>, <em>projection</em>, <em>select_criteria</em><span class="sig-paren">)</span></dt>
+<dd><p>Process to optimize the selected segmentation for multiple reference data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>parameters</strong> &#8211; list of parameters related to the segmentation to be optimized (list of floats or integers)</li>
+<li><strong>segmentation_name</strong> &#8211; name of the desired segmentation (&#8216;Felzenszwalb&#8217;,&#8217;Edison&#8217;,&#8217;Watershed&#8217;,&#8217;Baatz&#8217;,&#8217;Baatz_integers&#8217;,&#8217;Region_growing&#8217;,&#8217;Region_growing_integers&#8217;) (string)</li>
+<li><strong>patches_list</strong> &#8211; list of created patches (list of lists)</li>
+<li><strong>reference_band</strong> &#8211; 2darray related to the reference polygon (numpy array)</li>
+<li><strong>input_band_geo_transform</strong> &#8211; geomatrix related to the input band (geomatrix)</li>
+<li><strong>select_criteria</strong> &#8211; combination used to evaluate the segmentation (integer)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">number related to the segmentation evaluation is returned (float)</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 25/03/2014</p>
+</dd></dl>
+
+<span class="target" id="module-sensum_library.segmentation"></span><span class="target" id="module-segmentation"></span><dl class="function">
+<dt id="sensum_library.segmentation.baatz_interimage">
+<code class="descclassname">sensum_library.segmentation.</code><code class="descname">baatz_interimage</code><span class="sig-paren">(</span><em>input_raster</em>, <em>euc_threshold</em>, <em>compactness</em>, <em>baatz_color</em>, <em>scale</em>, <em>index</em><span class="sig-paren">)</span></dt>
+<dd><p>Baatz segmentation from InterImage/TerraAIDA library</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_raster</strong> &#8211; path and name of the input raster file (<em>.TIF,</em>.tiff) (string)</li>
+<li><strong>euc_threshold</strong> &#8211; euclidean distance threshold. The minimum Euclidean Distance between each segment feature. (float, positive)</li>
+<li><strong>compactness</strong> &#8211; Baatz Compactness Weight attribute (float, between 0 and 1)</li>
+<li><strong>baatz_color</strong> &#8211; Baatz Color Weight attribute (float, between 0 and 1)</li>
+<li><strong>scale</strong> &#8211; Baatz scale attribute (float, positive)</li>
+<li><strong>index</strong> &#8211; progressive index in case of multiple segmentations to differentiate temp files (integer)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">2darray with the result of the segmentation (numpy array)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 22/03/2014</p>
+<dl class="docutils">
+<dt>Reference: <a class="reference external" href="http://interimage.sourceforge.net/">http://interimage.sourceforge.net/</a></dt>
+<dd><a class="reference external" href="http://www.dpi.inpe.br/terraaida/">http://www.dpi.inpe.br/terraaida/</a>
+<a class="reference external" href="http://www.ecognition.cc/download/baatz_schaepe.pdf">http://www.ecognition.cc/download/baatz_schaepe.pdf</a></dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.segmentation.edison_otb">
+<code class="descclassname">sensum_library.segmentation.</code><code class="descname">edison_otb</code><span class="sig-paren">(</span><em>input_raster</em>, <em>output_mode</em>, <em>output_file</em>, <em>spatial_radius</em>, <em>range_radius</em>, <em>min_size</em>, <em>scale</em><span class="sig-paren">)</span></dt>
+<dd><p>Edison-Meanshift segmentation using OTB library</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_raster</strong> &#8211; path and name of the input raster file (<em>.TIF,</em>.tiff) (string)</li>
+<li><strong>output_mode</strong> &#8211; &#8216;raster&#8217; or &#8216;vector&#8217; (string)</li>
+<li><strong>output_file</strong> &#8211; path and name of the output raster or shape depending on the output mode (<em>.TIF,</em>.tiff,*.shp) (string)</li>
+<li><strong>spatial_radius</strong> &#8211; spatial radius parameter (integer, 0 for default)</li>
+<li><strong>range_radius</strong> &#8211; range radius parameter (float, 0 for default)</li>
+<li><strong>min_size</strong> &#8211; minimum size parameter (integer, 0 for default)</li>
+<li><strong>scale</strong> &#8211; scale factor (float, 0 for default)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an output file is created according to the specified output mode</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 22/03/2014</p>
+<p>Reference: <a class="reference external" href="http://orfeo-toolbox.org/CookBook/CookBooksu113.html#x144-9030004.9.6">http://orfeo-toolbox.org/CookBook/CookBooksu113.html#x144-9030004.9.6</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.segmentation.felzenszwalb_skimage">
+<code class="descclassname">sensum_library.segmentation.</code><code class="descname">felzenszwalb_skimage</code><span class="sig-paren">(</span><em>input_band_list</em>, <em>scale</em>, <em>sigma</em>, <em>min_size</em><span class="sig-paren">)</span></dt>
+<dd><p>Felzenszwalb segmentation from Skimage library</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_band_list</strong> &#8211; list of 2darrays (list of numpy arrays)</li>
+<li><strong>scale</strong> &#8211; defines the observation level, higher scale means less and larger segments (float)</li>
+<li><strong>sigma</strong> &#8211; idth of Gaussian smoothing kernel for preprocessing, zero means no smoothing (float)</li>
+<li><strong>min_size</strong> &#8211; minimum size, minimum component size. Enforced using postprocessing. (integer)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">2darray with the result of the segmentation (numpy array)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 22/03/2014</p>
+<p>Reference: <a class="reference external" href="http://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.felzenszwalb">http://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.felzenszwalb</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.segmentation.meanshift_otb">
+<code class="descclassname">sensum_library.segmentation.</code><code class="descname">meanshift_otb</code><span class="sig-paren">(</span><em>input_raster</em>, <em>output_mode</em>, <em>output_file</em>, <em>spatial_radius</em>, <em>range_radius</em>, <em>threshold</em>, <em>max_iter</em>, <em>min_size</em><span class="sig-paren">)</span></dt>
+<dd><p>Meanshift segmentation using OTB library</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_raster</strong> &#8211; path and name of the input raster file (<em>.TIF,</em>.tiff) (string)</li>
+<li><strong>output_mode</strong> &#8211; &#8216;raster&#8217; or &#8216;vector&#8217; (string)</li>
+<li><strong>output_file</strong> &#8211; path and name of the output raster or shape depending on the output mode (<em>.TIF,</em>.tiff,*.shp) (string)</li>
+<li><strong>spatial_radius</strong> &#8211; spatial radius parameter (integer, 0 for default)</li>
+<li><strong>range_radius</strong> &#8211; range radius parameter (float, 0 for default)</li>
+<li><strong>threshold</strong> &#8211; threshold parameter (float, 0 for default)</li>
+<li><strong>max_iter</strong> &#8211; limit on number of iterations (integer, 0 for default)</li>
+<li><strong>min_size</strong> &#8211; minimum size parameter (integer, 0 for default)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an output file is created according to the specified output mode</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 22/03/2014</p>
+<p>Reference: <a class="reference external" href="http://orfeo-toolbox.org/CookBook/CookBooksu113.html#x144-9030004.9.6">http://orfeo-toolbox.org/CookBook/CookBooksu113.html#x144-9030004.9.6</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.segmentation.mprofiles_otb">
+<code class="descclassname">sensum_library.segmentation.</code><code class="descname">mprofiles_otb</code><span class="sig-paren">(</span><em>input_raster</em>, <em>output_mode</em>, <em>output_file</em>, <em>size</em>, <em>start</em>, <em>step</em>, <em>sigma</em><span class="sig-paren">)</span></dt>
+<dd><p>Morphological profiles segmentation using OTB library</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_raster</strong> &#8211; path and name of the input raster file (<em>.TIF,</em>.tiff) (string)</li>
+<li><strong>output_mode</strong> &#8211; &#8216;raster&#8217; or &#8216;vector&#8217; (string)</li>
+<li><strong>output_file</strong> &#8211; path and name of the output raster or shape depending on the output mode (<em>.TIF,</em>.tiff,*.shp) (string)</li>
+<li><strong>size</strong> &#8211; profile size (integer, 0 for default)</li>
+<li><strong>start</strong> &#8211; initial radius (integer, 0 for default)</li>
+<li><strong>step</strong> &#8211; radius step (integer, 0 for default)</li>
+<li><strong>sigma</strong> &#8211; threshold of the final decision rule (float, 0 for default)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an output file is created according to the specified output mode</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 22/03/2014</p>
+<p>Reference: <a class="reference external" href="http://orfeo-toolbox.org/CookBook/CookBooksu113.html#x144-9030004.9.6">http://orfeo-toolbox.org/CookBook/CookBooksu113.html#x144-9030004.9.6</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.segmentation.quickshift_skimage">
+<code class="descclassname">sensum_library.segmentation.</code><code class="descname">quickshift_skimage</code><span class="sig-paren">(</span><em>input_band_list</em>, <em>kernel_size</em>, <em>max_distance</em>, <em>ratio</em><span class="sig-paren">)</span></dt>
+<dd><p>Quickshift segmentation from Skimage library, works with RGB</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>input_band_list</strong> &#8211; list of 2darrays (list of numpy arrays)</li>
+<li><strong>kernel_size</strong> &#8211; width of Gaussian kernel used in smoothing the sample density. Higher means fewer clusters. (float)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>:param max_distance:cut-off point for data distances. Higher means fewer clusters. (float)
+:param ratio: balances color-space proximity and image-space proximity. Higher values give more weight to color-space. (float between 0 and 1)
+:returns:  2darray with the result of the segmentation (numpy array)</p>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 22/03/2014</p>
+<p>Reference: <a class="reference external" href="http://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.quickshift">http://scikit-image.org/docs/dev/api/skimage.segmentation.html#skimage.segmentation.quickshift</a></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.segmentation.region_growing_interimage">
+<code class="descclassname">sensum_library.segmentation.</code><code class="descname">region_growing_interimage</code><span class="sig-paren">(</span><em>input_raster</em>, <em>euc_threshold</em>, <em>compactness</em>, <em>baatz_color</em>, <em>scale</em>, <em>index</em><span class="sig-paren">)</span></dt>
+<dd><p>Region growing segmentation from InterImage/TerraAIDA library</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_raster</strong> &#8211; path and name of the input raster file (<em>.TIF,</em>.tiff) (string)</li>
+<li><strong>temp_folder</strong> &#8211; path of the folder that will contain temporary files (string)</li>
+<li><strong>exe_folder</strong> &#8211; path of the folder containing the exe files (string)</li>
+<li><strong>euc_threshold</strong> &#8211; Euclidean distance threshold. The minimum Euclidean Distance between each segment feature. (float, positive)</li>
+<li><strong>compactness</strong> &#8211; Baatz Compactness Weight attribute (float, between 0 and 1)</li>
+<li><strong>baatz_color</strong> &#8211; Baatz Color Weight attribute (float, between 0 and 1)</li>
+<li><strong>scale</strong> &#8211; Baatz scale attribute (float, positive)</li>
+<li><strong>index</strong> &#8211; progressive index in case of multiple segmentations to differentiate temp files (integer)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">2darray with the result of the segmentation (numpy array)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 22/03/2014</p>
+<dl class="docutils">
+<dt>Reference: <a class="reference external" href="http://interimage.sourceforge.net/">http://interimage.sourceforge.net/</a></dt>
+<dd><a class="reference external" href="http://www.dpi.inpe.br/terraaida/">http://www.dpi.inpe.br/terraaida/</a>
+<a class="reference external" href="http://marte.sid.inpe.br/col/sid.inpe.br/deise/1999/02.05.09.30/doc/T205.pdf">http://marte.sid.inpe.br/col/sid.inpe.br/deise/1999/02.05.09.30/doc/T205.pdf</a></dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="sensum_library.segmentation.watershed_otb">
+<code class="descclassname">sensum_library.segmentation.</code><code class="descname">watershed_otb</code><span class="sig-paren">(</span><em>input_raster</em>, <em>output_mode</em>, <em>output_file</em>, <em>threshold</em>, <em>level</em><span class="sig-paren">)</span></dt>
+<dd><p>Watershed segmentation using OTB library</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>input_raster</strong> &#8211; path and name of the input raster file (<em>.TIF,</em>.tiff) (string)</li>
+<li><strong>output_mode</strong> &#8211; &#8216;raster&#8217; or &#8216;vector&#8217; (string)</li>
+<li><strong>output_file</strong> &#8211; path and name of the output raster or shape depending on the output mode (<em>.TIF,</em>.tiff,*.shp) (string)</li>
+<li><strong>threshold</strong> &#8211; threshold parameter (float, 0 for default)</li>
+<li><strong>level</strong> &#8211; level parameter (float, 0 for default)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">an output file is created according to the specified output mode</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><p class="first last">AttributeError, KeyError</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Author: Daniele De Vecchi - Mostapha Harb
+Last modified: 22/03/2014</p>
+<p>Reference: <a class="reference external" href="http://orfeo-toolbox.org/CookBook/CookBooksu113.html#x144-9030004.9.6">http://orfeo-toolbox.org/CookBook/CookBooksu113.html#x144-9030004.9.6</a></p>
+</dd></dl>
+
+<span class="target" id="module-sensum_library.multi"></span><span class="target" id="module-multi"></span><dl class="class">
+<dt id="sensum_library.multi.Multi">
+<em class="property">class </em><code class="descclassname">sensum_library.multi.</code><code class="descname">Multi</code><span class="sig-paren">(</span><em>num_consumers=0</em><span class="sig-paren">)</span></dt>
+<dd></dd></dl>
+
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2014, Eucentre.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3b1.
+    </div>
+  </body>
+</html>

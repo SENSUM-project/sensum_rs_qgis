@@ -50,6 +50,8 @@ import numpy as np
 import osgeo.ogr
 import otbApplication
 import shutil
+import collections
+from operator import itemgetter, attrgetter
 from conversion import *
 from utils import Bar
 from numpy.fft import fft2, ifft2, fftshift
@@ -60,7 +62,7 @@ else:
     separator = '\\'
 
 
-def clip_rectangular(input_raster,data_type,input_shape,output_raster,mask=False,resize=0):
+def clip_rectangular(input_raster,data_type,input_shape,output_raster,mask=False,resize=0,option='standard_roi'):
     
     '''Clip a raster with a rectangular shape based on the provided polygon
     
@@ -170,6 +172,10 @@ def clip_rectangular(input_raster,data_type,input_shape,output_raster,mask=False
     #print y_max,y_min
     cols_out = x_max-x_min + resize
     rows_out = y_min-y_max + resize
+
+    if option == 'from_class':
+        if cols_out > 1000: cols_out = 1000
+        if rows_out > 1000: rows_out = 1000
     
     gdal_data_type = data_type2gdal_data_type(data_type)
     if mask == True:
@@ -558,7 +564,7 @@ def Extraction(image1,image2):
     #print compar_stack#[0:30]
     #print len(compar_stack)
 
-    best = best_row_2(compar_stack[0:90])#The number of sorted points to be passed
+    best = select_best_matching(compar_stack[0:90])#The number of sorted points to be passed
     #print 'BEST!!!!!', best
         
     #report = os.path.join(os.path.dirname(image1),'report.txt')
@@ -571,17 +577,18 @@ def Extraction(image1,image2):
     return migliore
 
 
-def best_row_2(compstack):
-    '''
-    ###################################################################################################################
+def select_best_matching(compstack):
     
-    Input:
-     - compstack: ..........................
-    
-    Output:
-    ..............................
-    ###################################################################################################################
     '''
+    Determine the best matching points among the extracted ones
+
+    :param compstack: array with points and distances extracted by the points extraction
+    :returns: array with best matching points
+
+    Author: Daniele De Vecchi
+    Last modified: 14/11/2014
+    '''
+
     # Sort
     compstack = compstack[compstack[:,2].argsort()]
     spl_slope = np.append(np.where(np.diff(compstack[:,2])>0.1)[0]+1,len(compstack[:,0]))
@@ -679,6 +686,8 @@ def FFT_coregistration(ref_band_mat,target_band_mat):
     :param target_band_mat: numpy 8 bit array containing target image
     :returns: the shift among the two input images 
 
+    Author: Mostapha Harb - Daniele De Vecchi - Daniel Aurelio Galeazzo
+    Last modified: 14/11/2014
     '''
     status = Bar(3, "FFT")
     #Normalization - http://en.wikipedia.org/wiki/Cross-correlation#Normalized_cross-correlation 
@@ -738,6 +747,8 @@ def points_extraction(ref_band_mat,target_band_mat,output_as_array):
     :param output_as_array: if True the output is converted to matrix for visualization purposes
     :returns: points from reference, points from target, result of matching function or array of points (depending on the output_as_array flag)
     
+    Author: Mostapha Harb - Daniele De Vecchi - Daniel Aurelio Galeazzo
+    Last modified: 14/11/2014
     '''
     detector = cv2.FeatureDetector_create("SURF") #Detector definition
     descriptor = cv2.DescriptorExtractor_create("BRIEF") #Descriptor definition
@@ -820,7 +831,7 @@ def points_extraction(ref_band_mat,target_band_mat,output_as_array):
     #print compar_stack#[0:30]
     #print len(compar_stack)
 
-    best = best_row_2(compar_stack[0:90])#The number of sorted points to be passed
+    best = select_best_matching(compar_stack[0:90])#The number of sorted points to be passed
     best_point = [best[3:7]]
     return best_point
 
@@ -866,3 +877,130 @@ def slope_filter(ext_points):
             else:
                 dp = dp+1
     return new_points
+
+
+def classification_statistics(input_raster_classification,input_raster):
+
+    '''
+    Compute statistics related to the input unsupervised classification
+
+    :param input_raster_classification: path and name of the input raster file with classification(*.TIF,*.tiff) (string)
+    :param input_raster: path and name of the input raster file (*.TIF,*.tiff) (string)
+
+    :returns: a list of statistics (value/class,min_value,max_value,diff_value,std_value,min_value_freq,max_value_freq,tot_count)
+
+    Author: Daniele De Vecchi
+    Last modified: 25/08/2014
+    '''
+
+    band_list_classification = read_image(input_raster_classification,np.uint8,0)
+    rows_class,cols_class,nbands_class,geotransform_class,projection_class = read_image_parameters(input_raster_classification)
+
+    band_list = read_image(input_raster,np.uint8,0)
+    rows,cols,nbands,geotransform,projection = read_image_parameters(input_raster)
+
+    max_class = np.max(band_list_classification[0])
+    stat_list = []
+    for value in range(0,max_class+1):
+        #print '----------------------------'
+        #print 'Class ' + str(value)
+        mask = np.equal(band_list_classification[0],value)
+        data = np.extract(mask,band_list[0])
+
+        #Statistics
+        #Histogram definition
+        data_flat = data.flatten()
+        data_counter = collections.Counter(data_flat)
+        data_common = (data_counter.most_common(20)) #20 most common values
+        data_common_sorted = sorted(data_common,key=itemgetter(0)) #reverse=True for inverse order
+        hist_value = [elt for elt,count in data_common_sorted]
+        hist_count = [count for elt,count in data_common_sorted]
+
+        #Define the level of confidence according to the computed statistics 
+        min_value = hist_value[0]
+        max_value = hist_value[-1]
+        std_value = np.std(hist_count)
+        diff_value = max_value - min_value
+        min_value_count = hist_count[0]
+        max_value_count = hist_count[-1] 
+        tot_count = np.sum(hist_count)
+        min_value_freq = (float(min_value_count) / float(tot_count)) * 100
+        max_value_freq = (float(max_value_count) / float(tot_count)) * 100
+
+        #print 'Min value: ' + str(min_value)
+        #print 'Max value: ' + str(max_value)
+        #print 'Diff value: ' + str(diff_value)
+        #print 'Standard Deviation: ' + str(std_value)
+        #print 'Min value frequency: ' + str(min_value_freq)
+        #print 'Max value frequency: ' + str(max_value_freq)
+        #print 'Total values: ' + str(tot_count)
+        #print '----------------------------'
+        stat_list.append((value,min_value,max_value,diff_value,std_value,min_value_freq,max_value_freq,tot_count))
+    return stat_list
+
+
+def split_shape_area(input_shape,option="memory",output_shape="out"):
+   
+    '''Extract a single feature from a shapefile
+    
+    :param input_layer: layer of a shapefile (shapefile layer)
+    :param index: index of the feature to extract (integer)
+    :param option: 'memory' or 'file' depending on the desired output (default is memory) (string)
+    :param output_shape: path and name of the output shapefile (temporary file) (*.shp) (string)
+    :returns:  an output shapefile is created
+    :raises: AttributeError, KeyError
+    Author: Daniele De Vecchi - Mostapha Harb
+    Last modified: 25/03/2014
+    ''' 
+
+    #TODO: Why do we need this function? Does not seems like a good idea to do this. Why not simply loop through the features?
+    driver = osgeo.ogr.GetDriverByName('ESRI Shapefile')
+    infile=driver.Open(input_shape,0)
+    input_layer=infile.GetLayer()
+    '''
+    if option == 'file':
+        driver = osgeo.ogr.GetDriverByName('ESRI Shapefile')
+    elif option == 'memory':
+        driver = osgeo.ogr.GetDriverByName('Memory')
+    '''
+    layer_defn = input_layer.GetLayerDefn()
+    outDS = driver.CreateDataSource(output_shape)
+    outlayer = outDS.CreateLayer('polygon', geom_type=osgeo.ogr.wkbPolygon)
+    dn_def = osgeo.ogr.FieldDefn('DN', osgeo.ogr.OFTInteger)
+    area_def = osgeo.ogr.FieldDefn('Area', osgeo.ogr.OFTReal)
+    outlayer.CreateField(dn_def)
+    outlayer.CreateField(area_def)
+    featureDefn = outlayer.GetLayerDefn()
+
+    # loop through the input features
+    infeature = input_layer.GetNextFeature()
+    max_area = 0
+    feature_count = 0
+    
+    while infeature:
+        geom = infeature.GetGeometryRef()
+        area = geom.Area()
+        #print area
+        dn = infeature.GetField('DN')
+        if dn!=0:
+            if area > max_area: 
+                max_area = area
+                selected_feature = feature_count
+        infeature = input_layer.GetNextFeature()
+        feature_count = feature_count + 1 
+
+    input_layer.ResetReading()
+    inFeature = input_layer.GetFeature(selected_feature) 
+    outfeature = osgeo.ogr.Feature(featureDefn)
+    geom = inFeature.GetGeometryRef()
+    area = geom.Area()
+    dn = inFeature.GetField('DN')
+    outfeature.SetGeometry(geom)
+    outfeature.SetField('DN',dn)
+    outfeature.SetField('Area',area)
+    outlayer.CreateFeature(outfeature)
+    outfeature.Destroy()
+    infile.Destroy()
+    inFeature.Destroy()
+    outDS.Destroy()
+    shutil.copyfile(input_shape[:-4]+'.prj',output_shape[:-4]+'.prj')

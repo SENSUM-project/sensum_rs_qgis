@@ -193,15 +193,43 @@ def temporal(input_shapefile, sat_folder, n_classes,indexes_list):
         dirs = os.listdir(sat_folder)
         dirs.sort()
         dirs = [dir for dir in dirs if os.path.isdir(sat_folder+dir)]
-        output = ["Class"+str(c)+"\t" for c in range(n_classes+1)]
-        output.insert(0,"\t")
-        output = [output]
+        output_differencedays = ["Class"+str(c)+"\t" for c in range(n_classes+1)]
+        output_differencedays.insert(0,"\t")
+        output_differencedays = [output_differencedays]
+        output_mean = ["Class"+str(c)+"\t" for c in range(n_classes+1)]
+        output_mean.insert(0,"\t")
+        output_mean = [output_mean]
+        output_std = ["Class"+str(c)+"\t" for c in range(n_classes+1)]
+        output_std.insert(0,"\t")
+        output_std = [output_std]
+        output_npixel = ["Class"+str(c)+"\t" for c in range(n_classes+1)]
+        output_npixel.insert(0,"\t")
+        output_npixel = [output_npixel]
         target_directories = list(sat_folder+directory+separator for directory in dirs if not os.path.isfile(sat_folder+directory))
+        stats = ("mean","std","npixel")
         for target_index,target_dir in enumerate(target_directories):
             out = classification_statistics(sat_folder+"change_detection_all_plot_reclass_clip.TIF",target_dir+'change_detection_plot.TIF',indexes_list)
-            out.insert(0,os.path.basename(os.path.normpath(target_dir)))
-            output.append(out)
-        np.savetxt('{}/{}.txt'.format(sat_folder,"Index"+str(i)),np.array(output, dtype=np.str_),fmt="%s",delimiter='\t',)
+            out_mean = [str(o["mean"]) for o in out]
+            out_std = [str(o["std"]) for o in out]
+            out_npixel = [str(o["npixel"]) for o in out]
+            out_mean.insert(0,os.path.basename(os.path.normpath(target_dir)))
+            out_std.insert(0,os.path.basename(os.path.normpath(target_dir)))
+            out_npixel.insert(0,os.path.basename(os.path.normpath(target_dir)))
+            output_std.append(out_std)
+            output_mean.append(out_mean)
+            output_npixel.append(out_npixel)
+            current_mean = list(out_mean)
+            if target_index:
+                map(lambda x: x.pop(0) if len(x) != n_classes+1 else False ,[current_mean,prev_mean])
+                out_differencedays = day_difference(target_dir,target_directories[target_index-1],current_mean,prev_mean)
+                out_differencedays = list(out_differencedays)
+                out_differencedays.insert(0,os.path.basename(os.path.normpath(target_dir)))
+                output_differencedays.append(out_differencedays)
+            prev_mean = current_mean
+        np.savetxt('{}/{}.txt'.format(sat_folder,"Index_"+"mean"+str(i)),np.array(output_mean, dtype=np.str_),fmt="%s",delimiter='\t',)
+        np.savetxt('{}/{}.txt'.format(sat_folder,"Index_"+"std"+str(i)),np.array(output_std, dtype=np.str_),fmt="%s",delimiter='\t',)
+        np.savetxt('{}/{}.txt'.format(sat_folder,"Index_"+"npixel"+str(i)),np.array(output_npixel, dtype=np.str_),fmt="%s",delimiter='\t',)
+        np.savetxt('{}/{}.txt'.format(sat_folder,"Index_"+"diffence"+str(i)),np.array(output_differencedays, dtype=np.str_),fmt="%s",delimiter='\t',)
 
 import matplotlib.pyplot as plt
 
@@ -225,6 +253,13 @@ def graph(sat_folder, indexes_list, graph_file):
     #plt.savefig(graph_file)
     plt.show()
 
+import datetime
+
+def day_difference(current_data,prev_data,current_mean,prev_mean):
+    day_diffence = (datetime.datetime(*map(int,os.path.basename(os.path.normpath(current_data)).split("-")))-datetime.datetime(*map(int,os.path.basename(os.path.normpath(prev_data)).split("-")))).days
+    current_mean = np.array(current_mean,dtype=np.float32)
+    prev_mean = np.array(prev_mean,dtype=np.float32)
+    return (current_mean-prev_mean)/day_diffence
 
 def classification_statistics(input_raster_classification,input_raster,input_index):
 
@@ -275,7 +310,14 @@ def classification_statistics(input_raster_classification,input_raster,input_ind
         data = np.extract(mask,band_list[index-1])
         data_flat = data.flatten()
         mean_value = np.mean(data_flat)
-        output.append(mean_value)
+        std_value = np.std(data_flat)
+        npixel_value = np.size(data_flat)
+        diction = {
+            "mean": mean_value,
+            "std": std_value,
+            "npixel": npixel_value
+            }
+        output.append(diction)
     return output
         
 if __name__ == "__main__":

@@ -9,6 +9,7 @@ import osgeo.ogr, ogr
 from osgeo.gdalconst import *
 import numpy as np
 from numpy.fft import fft2, ifft2, fftshift
+import scipy as sp
 import math
 import argparse
 import warnings
@@ -40,10 +41,15 @@ def main():
         print tiling_row_factor,tiling_col_factor
     else:
         tiling_row_factor = tiling_col_factor = 0
+    enable_unsupervised = (True if arg.enable_unsupervised else False)
+    if enable_unsupervised:
+        n_classes = int(arg.enable_unsupervised[0])
+    else:
+        n_classes = 5
     enable_resampling = bool(arg.enable_resampling)
     enable_SURF = bool(arg.enable_SURF)
     enable_FFT = bool(arg.enable_FFT)
-    coregistration(reference_folder,target_folder,enable_clip,input_shape,enable_grid,tiling_row_factor,tiling_col_factor,enable_resampling,enable_SURF,enable_FFT)
+    coregistration(reference_folder,target_folder,enable_clip,input_shape,enable_grid,tiling_row_factor,tiling_col_factor,enable_resampling,enable_SURF,enable_FFT,enable_unsupervised,n_classes)
 
 
 def args():
@@ -52,6 +58,7 @@ def args():
     parser.add_argument("target_folder", help="????")
     parser.add_argument("--enable_clip", nargs=1, help="????")
     parser.add_argument("--enable_grid", nargs=2, help="????")
+    parser.add_argument("--enable_unsupervised", nargs = 1, help="????")
     parser.add_argument("--enable_resampling", default=False, const=True, nargs='?', help="????")
     parser.add_argument("--enable_SURF", default=False, const=True, nargs='?', help="????")
     parser.add_argument("--enable_FFT", default=False, const=True, nargs='?', help="????")
@@ -59,7 +66,7 @@ def args():
     return args
 
 
-def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable_grid,tiling_row_factor,tiling_col_factor,enable_resampling,enable_SURF,enable_FFT):
+def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable_grid,tiling_row_factor,tiling_col_factor,enable_resampling,enable_SURF,enable_FFT,enable_unsupervised,n_classes):
 
     '''
     Function for the script
@@ -70,15 +77,17 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
         separator = '/'
     else:
         separator = '\\'
-
+    start_time = time.time()
     ref_images = os.listdir(reference_folder)
     reference_file = [s for s in ref_images if "B1.TIF" in s or "B1.tif" in s and "aux.xml" not in s]
+    #all_band_ref = [str(reference_folder) + str(s) for s in ref_images if ("B1" in s or "B2" in s or "B3" in s or "B4" in s or "B5" in s) and ".TIF" in s or ".tif" in s and "aux.xml" not in s]
     image_ref = reference_folder + separator + reference_file[0]
     rows_ref_orig,cols_ref_orig,nbands_ref_orig,geotransform_ref_orig,projection_ref_orig = read_image_parameters(image_ref)
     ref_new_resolution = geotransform_ref_orig[1] / float(2) 
 
     target_images = os.listdir(target_folder)
     target_file = [s for s in target_images if "B1.TIF" in s or "B1.tif" in s and "aux.xml" not in s]
+    all_band_target = [str(target_folder) + str(s) for s in target_images if ("B1" in s or "B2" in s or "B3" in s or "B4" in s or "B5" in s) and (".TIF" in s or ".tif" in s) and "aux.xml" not in s]
     print "\n\n\n\n\n"
     image_target = target_folder + separator + target_file[0]
     rows_target_orig,cols_target_orig,nbands_target_orig,geotransform_target_orig,projection_target_orig = read_image_parameters(image_target)
@@ -126,7 +135,9 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
         band_mat = None
         target_tiles_prop_list = sorted(target_tiles_prop_list,key=itemgetter(4),reverse=True)
         target_tiles_prop_list_sorted = sorted(target_tiles_prop_list,key=itemgetter(7))
-        target_tiles_prop_list_sorted = [element for element in target_tiles_prop_list_sorted if element[4] != 0 and element[4] != 0.5]      
+        print target_tiles_prop_list_sorted
+        target_tiles_prop_list_sorted = [element for element in target_tiles_prop_list_sorted if element[4] != 0 and element[4] != 0.5] 
+        print target_tiles_prop_list_sorted
 
         status = Bar(2, "Tile extraction")
         target_tiles_list = []
@@ -157,6 +168,79 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
             else:
                 ref_tiles_list.append(image_ref[:-4]+'_temp_tile_'+str(et)+'.tif')
 
+    elif enable_unsupervised == True:
+        layer_stack(all_band_target,target_folder+'multi.tif',np.uint8)
+        unsupervised_classification_otb(target_folder+'\\multi.tif',target_folder+'\\multi_class.tif',n_classes,10)
+
+        stat_list = classification_statistics(target_folder+'\\multi_class.tif',image_target)
+        stat_list = [element for element in stat_list if element[2]!=255 and element[5] < 20.0 and element[6] < 20.0 and element[7] > 1500000]
+        stat_list_sorted = sorted(stat_list,key=itemgetter(7))
+        stat_list_sorted = sorted(stat_list_sorted,key=itemgetter(4,5,6))
+
+        minx_ref,miny_ref,maxx_ref,maxy_ref = get_coordinate_limit(image_ref)
+        minx_target,miny_target,maxx_target,maxy_target = get_coordinate_limit(image_target)
+        
+        minx = np.max([minx_target,minx_ref])
+        miny = np.max([miny_target,miny_ref])
+        maxx = np.min([maxx_target,maxx_ref])
+        maxy = np.min([maxy_target,maxy_ref])
+
+        class_iteration = False
+        class_def = 0
+
+        while class_iteration == False:
+            try:
+                selected_class = stat_list_sorted[class_def][0]
+                force_class = False
+            except:
+                #class_def = class_def - 1
+                selected_class = stat_list_sorted[class_def-1][0]
+                force_class = True
+
+            class_list,start_col_coord,start_row_coord,end_col_coord,end_row_coord = extract_tiles(target_folder+'\\multi_class.tif',minx,maxy,maxx,miny)
+            target_mask = np.equal(class_list,selected_class)
+            new_mask = sp.ndimage.binary_fill_holes(target_mask, structure=None, output=None, origin=0)
+            new_mask = sp.ndimage.binary_opening(new_mask, structure=np.ones((15,15))).astype(np.int)
+                    
+            #New mask statistics
+            new_mask_flat = new_mask.flatten()
+            new_mask_counter = collections.Counter(new_mask_flat).most_common()
+            #print new_mask_counter
+            count_list = [count for elt,count in new_mask_counter]
+            #print count_list
+            if force_class == False:
+                if count_list:
+                    try:
+                        zeros_perc = (float(count_list[0]) / float(count_list[0]+count_list[1]))*100
+                    except:
+                        zeros_perc = 0
+                    try:
+                        ones_perc = (float(count_list[1]) / float(count_list[0]+count_list[1]))*100
+                    except:
+                        ones_perc = 0
+                else:
+                    class_iteration = False
+                    class_def = class_def + 1
+                #print 'Zeros %: ' + str(zeros_perc)
+                #print 'Ones %: ' + str(ones_perc)
+                if ones_perc > 15.0: 
+                    class_iteration = True
+                else:
+                    class_iteration = False
+                    class_def = class_def +1
+            else:
+                class_iteration = True
+        band_mat_target,start_col_coord_target,start_row_coord_target,end_col_coord_target,end_row_coord_target = extract_tiles(image_target,minx,maxy,maxx,miny)
+        band_mat_ref,start_col_coord_ref,start_row_coord_ref,end_col_coord_ref,end_row_coord_ref = extract_tiles(image_ref,minx,maxy,maxx,miny)
+
+        geotransform_cut = [minx,geotransform_target_orig[1],0.0,maxy,0.0,geotransform_target_orig[5]]
+        rows_cut,cols_cut = band_mat_target.shape
+        write_image([new_mask],np.uint8,0,image_target[:-4]+'_mask.tif',rows_cut,cols_cut,geotransform_cut,projection_target_orig)
+        rast2shp(image_target[:-4]+'_mask.tif',image_target[:-4]+'_mask.shp')
+        split_shape_area(image_target[:-4]+'_mask.shp',option="file",output_shape=image_target[:-4]+'_mask_final.shp')
+        clip_rectangular(image_target,np.uint8,image_target[:-4]+'_mask_final.shp',image_target[:-4]+'_cut.tif',option="from_class")
+        clip_rectangular(image_ref,np.uint8,image_target[:-4]+'_mask_final.shp',image_ref[:-4]+'_cut.tif',option="from_class")
+        
     if enable_SURF == True:
 
         if enable_clip == True:
@@ -175,8 +259,8 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
 
             band_list_ref = []
             band_list_target = []
-            os.remove(image_ref)
-            os.remove(image_target)
+            #os.remove(image_ref)
+            #os.remove(image_target)
 
         elif enable_grid == True:
             x_shift_surf_tot = 0
@@ -190,16 +274,31 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
                 #kp_ref,kp_target,ext_points = points_extraction(band_list_ref[0],band_list_target[0],output_as_array=True)
                 #ext_points = slope_filter(ext_points)
                 ext_point = points_extraction(band_list_ref[0],band_list_target[0],output_as_array=True)
-                
+                x_shift_surf = ext_point[0][0] - ext_point[0][2]
+                y_shift_surf = ext_point[0][1] - ext_point[0][3]
                 band_list_target = []
                 band_list_ref = []   
-                os.remove(target_tiles_list[f]) 
-                os.remove(ref_tiles_list[f])
+                #os.remove(target_tiles_list[f]) 
+                #os.remove(ref_tiles_list[f])
                 x_shift_surf_tot = x_shift_surf_tot + x_shift_surf
                 y_shift_surf_tot = y_shift_surf_tot + y_shift_surf
 
             x_shift_surf = float(x_shift_surf_tot) / float(len(target_tiles_list))
             y_shift_surf = float(y_shift_surf_tot) / float(len(target_tiles_list))
+
+        elif enable_unsupervised == True:
+            band_list_ref = read_image(image_ref[:-4]+'_cut.tif',np.uint8,0)
+            rows_ref,cols_ref,nbands_ref,geotransform_ref,projection_ref = read_image_parameters(image_ref[:-4]+'_cut.tif')
+            band_list_target = read_image(image_target[:-4]+'_cut.tif',np.uint8,0)
+            rows_target,cols_target,nbands_target,geotransform_target,projection_target = read_image_parameters(image_target[:-4]+'_cut.tif')
+            ext_point = points_extraction(band_list_ref[0],band_list_target[0],output_as_array=True)
+
+            x_shift_surf = ext_point[0][0] - ext_point[0][2]
+            y_shift_surf = ext_point[0][1] - ext_point[0][3]
+
+            band_list_ref = []
+            band_list_target = []
+
 
         if (x_shift_surf == 1 and y_shift_surf == 0) or (x_shift_surf == 0 and y_shift_surf == 1):
                 x_shift_surf,y_shift_surf = [0, 0]
@@ -234,6 +333,13 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
             x_shift_fft = float(x_shift_fft_tot) / float(len(target_tiles_list))
             y_shift_fft = float(y_shift_fft_tot) / float(len(target_tiles_list))
 
+
+        elif enable_unsupervised == True:
+            band_list_ref = read_image(image_ref[:-4]+'_cut.tif',np.uint8,0)
+            band_list_target = read_image(image_target[:-4]+'_cut.tif',np.uint8,0)
+            x_shift_fft,y_shift_fft = FFT_coregistration(band_list_ref[0],band_list_target[0])
+            print 'FFT Shift -> X:' + str(x_shift_fft) +' Y: ' + str(y_shift_fft)
+
         M_fft = np.float32([[1,0,x_shift_fft],[0,1,y_shift_fft]])
     
     target_rs = [s for s in target_images if ".TIF" in s or ".tif" in s and "aux.xml" not in s]
@@ -249,13 +355,13 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
             rows_target,cols_target,nbands_target,geotransform_target,projection_target = read_image_parameters(tg_file)
             
         if enable_FFT == True:
-            shutil.copyfile(tg_file,tg_file[:-4]+'_adj_surf.tif')
+            shutil.copyfile(tg_file,tg_file[:-4]+'_adj_fft.tif')
             rows_target,cols_target,nbands_target,geotransform_target,projection = read_image_parameters(tg_file)
             new_lon = float(x_shift_fft*geotransform_target[1]+geotransform_target[0]) 
             new_lat = float(geotransform_target[3]+y_shift_fft*geotransform_target[5])
             fixed_geotransform = [new_lon,geotransform_target[1],0.0,new_lat,0.0,geotransform_target[5]]
     
-            up_image = osgeo.gdal.Open(tg_file[:-4]+'_adj_surf.tif', GA_Update)
+            up_image = osgeo.gdal.Open(tg_file[:-4]+'_adj_fft.tif', GA_Update)
             up_image.SetGeoTransform(fixed_geotransform)
             up_image = None
 
@@ -277,7 +383,8 @@ def coregistration(reference_folder,target_folder,enable_clip,input_shape,enable
             if enable_resampling == True:
                 target_original_resolution = geotransform_target_orig[1]
                 resampling(tg_file[:-4]+'_adj_surf.tif',tg_file[:-4]+'_adj_surf_rs_'+str(target_original_resolution)+'.tif',target_original_resolution,'bicubic')
-        
+    end_time = time.time()
+    print 'Total time: ' + str(end_time-start_time)   
 if __name__ == "__main__":
     main()
     

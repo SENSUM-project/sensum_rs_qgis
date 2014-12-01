@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Installation Guide</title>
+    
+    <link rel="stylesheet" href="_static/epub.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" /> 
+  </head>
+  <body role="document">
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="user.html" title="The User’s Guide"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Sensum Earth Observation"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Sensum 1.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="installation-guide">
+<h1>Installation Guide</h1>
+<div class="section" id="library-installation">
+<h2>Library Installation</h2>
+<div class="section" id="microsoft-windows">
+<h3>Microsoft Windows</h3>
+<p>You can choose between 32bit or 64bit installation depending on your machine.</p>
+<dl class="docutils">
+<dt><strong>All required downloads</strong></dt>
+<dd><dl class="first last docutils">
+<dt>from <a class="reference external" href="https://www.python.org/downloads/windows/">https://www.python.org/downloads/windows/</a></dt>
+<dd><ol class="first last arabic simple">
+<li>python 2.7.x Windows x86 MSI installer (32bit) or Windows x86-64 MSI installer (64bit)</li>
+</ol>
+</dd>
+<dt>from <a class="reference external" href="http://www.lfd.uci.edu/~gohlke/pythonlibs/">http://www.lfd.uci.edu/~gohlke/pythonlibs/</a> you need to choose between py2.7.exe (32bit) or amd64-py2.7.exe extensions.</dt>
+<dd><ol class="first last arabic simple" start="2">
+<li>Scipy-stack-14.x</li>
+<li>scikit-image-0.x</li>
+<li>scikit-learn-0.x</li>
+<li>ephem-3.x</li>
+</ol>
+</dd>
+<dt>from <a class="reference external" href="http://trac.osgeo.org/osgeo4w/">http://trac.osgeo.org/osgeo4w/</a>:</dt>
+<dd><ol class="first last arabic simple" start="6">
+<li>OSGeo4W network installer (32bit or 64bit)</li>
+</ol>
+</dd>
+</dl>
+</dd>
+<dt><strong>Installation</strong></dt>
+<dd><ol class="first last arabic">
+<li><p class="first">Install all the executables in sequence.</p>
+</li>
+<li><dl class="first docutils">
+<dt>In OSGeo4w network installer select advanced installation</dt>
+<dd><blockquote class="first">
+<div><img alt="_images/advanced.png" src="_images/advanced.png" />
+</div></blockquote>
+<dl class="last docutils">
+<dt>and add the following packages:</dt>
+<dd><ul class="first simple">
+<li>otb-bin</li>
+<li>otb-python</li>
+<li>qgis: QGIS Desktop</li>
+</ul>
+<img alt="_images/select_packages.png" class="last" src="_images/select_packages.png" />
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Go to Control Panel, System, Windows Advanced System Settings and set the following Environment Variable:</dt>
+<dd><ul class="first simple">
+<li>Variable name: PYTHONPATH</li>
+<li>Variable value: C:/Python27/Lib/site-packages;C:/OSGeo4W64/apps/Python27/Lib/site-packages (for 64bit) or C:/Python27/Lib/site-packages;C:/OSGeo4W/apps/Python27/Lib/site-packages (for 32bit)</li>
+</ul>
+<img alt="_images/set_variable.png" class="last" src="_images/set_variable.png" />
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+</div>
+<div class="section" id="ubuntu-debian">
+<h3>Ubuntu/Debian</h3>
+<dl class="docutils">
+<dt><strong>Gdal, OpenCV, Sklearn, Skimage, QGIS, PyEphem Installation</strong></dt>
+<dd><p class="first">Procedure to install all the required software in a few steps; open your terminal and type the following code:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo apt-get install git python-gdal python-opencv python-sklearn python-skimage qgis
+$ wget http://pypi.python.org/packages/source/p/pyephem/pyephem-3.7.5.1.tar.gz
+$ tar zxvf pyephem-3.7.5.1.tar.gz
+$ sudo python pyephem-3.7.5.1/setup.py install
+</pre></div>
+</div>
+<p class="last">(old but still supported Ubuntu or Debian versions like Ubuntu 12.04 LTS or Debian 6.x do not include python-skimage into the official repository. It is recommended to install it through an external repository following this guide: <a class="reference external" href="http://neuro.debian.net/install_pkg.html?p=python-sklearn">http://neuro.debian.net/install_pkg.html?p=python-sklearn</a>)</p>
+</dd>
+<dt><strong>OTB Installation</strong></dt>
+<dd><p class="first">If your Distro is compatible, you can use ubuntugis repository check it out at <a class="reference external" href="https://launchpad.net/~ubuntugis/+archive/ubuntugis">https://launchpad.net/~ubuntugis/+archive/ubuntugis</a></p>
+<div class="last highlight-python"><div class="highlight"><pre>$ sudo apt-get install software-properties-common
+$ sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+$ sudo apt-get update
+$ sudo apt-get install python-otb
+</pre></div>
+</div>
+</dd>
+<dt><strong>OTB Compiling</strong></dt>
+<dd><p class="first">If ubuntugis repository is not compatible with your version you have to compile OTB</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo apt-get install build-essential cmake mercurial libinsighttoolkit4-dev libkml-dev swig libopenjpeg-dev libgdal-dev libtiff5-dev libgeotiff-dev cmake-curses-gui
+$ hg clone http://hg.orfeo-toolbox.org/OTB
+$ mv OTB OTB-src &amp;&amp; mkdir OTB &amp;&amp; mv OTB-src OTB &amp;&amp; mkdir OTB/OTB-bin &amp;&amp; cd OTB/OTB-bin
+$ ccmake ../OTB-src
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Using the ccmake interface just opened, you&#8217;re just a few steps away to complete the makefile configuration:</dt>
+<dd><ol class="first last arabic simple">
+<li>Go to “OTB_WRAP_PYTHON” value and press [Enter] to change value to “ON”.</li>
+<li>Press [t] to toggle advanced mode and go to “OTB_USE_EXTERNAL_LIBKML” value and press [Enter] to change value to “ON” (this step is necessary to avoid a well-known compilation bug, it might be fixed in the future versions of OTB).</li>
+<li>Press [c] to start configure.</li>
+<li>Wait configuration and press [g] to save the configuration and quit.</li>
+</ol>
+</dd>
+</dl>
+<p>Now the challenging things are done. Run make and then the installation command:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ make
+$ sudo make install
+</pre></div>
+</div>
+<p>After the installation you have to include the C OTB libraries and python OTB modules paths into the system path:</p>
+<div class="last highlight-python"><div class="highlight"><pre>$ sudo sh -c &#39;echo &quot;/usr/local/lib/otb&quot; &gt; /etc/ld.so.conf.d/otb.conf&#39;
+$ sudo ln -s /usr/local/lib/otb/python/* /usr/lib/pymodules/python2.7/
+$ sudo ldconfig
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="sensum-plugin-code">
+<h2>Sensum Plugin Code</h2>
+<p>Get current version from git:</p>
+<div class="highlight-python"><div class="highlight"><pre>git clone https://github.com/dgaleazzo/sensum_plugin
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Copy sensum_plugin folder into:</dt>
+<dd><ul class="first last simple">
+<li>MS Windows: HOMEPATH%/.qgis2/python/plugins</li>
+<li>Linux: ~/.qgis2/python/plugings</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2014, Eucentre.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3b1.
+    </div>
+  </body>
+</html>

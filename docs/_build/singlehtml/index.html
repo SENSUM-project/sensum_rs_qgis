@@ -1,0 +1,1014 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Sensum 1.2 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="None" href="index.html#document-index" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="index.html#document-index">Sensum 1.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="sensum-earth-observation">
+<h1>Sensum Earth Observation<a class="headerlink" href="#sensum-earth-observation" title="Permalink to this headline">¶</a></h1>
+<p>Welcome to the Sensum Earth Observation Tools documentation.</p>
+<div class="section" id="structure">
+<h2>Structure<a class="headerlink" href="#structure" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>The Sensum Earth Observations Tools are made of two main sections, library and scripts:</dt>
+<dd><ol class="first last arabic simple">
+<li>The Sensum Library is composed by 11 python <a class="reference external" href="py-modindex.html">modules</a>  contain <a class="reference external" href="genindex.html">all functions, classes and structures</a> and other developing stuffs.</li>
+<li>The Sensum Script is the core of the project including all the algorithms developed to extract the vulnerability indicators; the &#8220;script/&#8221; folder contains all the python scripts with the main algoritms.</li>
+</ol>
+</dd>
+</dl>
+</div>
+<div class="section" id="installation-guide">
+<h2>Installation Guide<a class="headerlink" href="#installation-guide" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<span id="document-install"></span><div class="section" id="installation-guide">
+<h3>Installation Guide<a class="headerlink" href="#installation-guide" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="library-installation">
+<h4>Library Installation<a class="headerlink" href="#library-installation" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="microsoft-windows">
+<h5>Microsoft Windows<a class="headerlink" href="#microsoft-windows" title="Permalink to this headline">¶</a></h5>
+<p>You can choose between 32bit or 64bit installation depending on your machine.</p>
+<dl class="docutils">
+<dt><strong>All required downloads</strong></dt>
+<dd><dl class="first last docutils">
+<dt>from <a class="reference external" href="https://www.python.org/downloads/windows/">https://www.python.org/downloads/windows/</a></dt>
+<dd><ol class="first last arabic simple">
+<li>python 2.7.x Windows x86 MSI installer (32bit) or Windows x86-64 MSI installer (64bit)</li>
+</ol>
+</dd>
+<dt>from <a class="reference external" href="http://www.lfd.uci.edu/~gohlke/pythonlibs/">http://www.lfd.uci.edu/~gohlke/pythonlibs/</a> you need to choose between py2.7.exe (32bit) or amd64-py2.7.exe extensions.</dt>
+<dd><ol class="first last arabic simple" start="2">
+<li>Scipy-stack-14.x</li>
+<li>scikit-image-0.x</li>
+<li>scikit-learn-0.x</li>
+<li>ephem-3.x</li>
+</ol>
+</dd>
+<dt>from <a class="reference external" href="http://trac.osgeo.org/osgeo4w/">http://trac.osgeo.org/osgeo4w/</a>:</dt>
+<dd><ol class="first last arabic simple" start="6">
+<li>OSGeo4W network installer (32bit or 64bit)</li>
+</ol>
+</dd>
+</dl>
+</dd>
+<dt><strong>Installation</strong></dt>
+<dd><ol class="first last arabic">
+<li><p class="first">Install all the executables in sequence.</p>
+</li>
+<li><dl class="first docutils">
+<dt>In OSGeo4w network installer select advanced installation</dt>
+<dd><blockquote class="first">
+<div><img alt="_images/advanced.png" src="_images/advanced.png" />
+</div></blockquote>
+<dl class="last docutils">
+<dt>and add the following packages:</dt>
+<dd><ul class="first simple">
+<li>otb-bin</li>
+<li>otb-python</li>
+<li>qgis: QGIS Desktop</li>
+</ul>
+<img alt="_images/select_packages.png" class="last" src="_images/select_packages.png" />
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Go to Control Panel, System, Windows Advanced System Settings and set the following Environment Variable:</dt>
+<dd><ul class="first simple">
+<li>Variable name: PYTHONPATH</li>
+<li>Variable value: C:/Python27/Lib/site-packages;C:/OSGeo4W64/apps/Python27/Lib/site-packages (for 64bit) or C:/Python27/Lib/site-packages;C:/OSGeo4W/apps/Python27/Lib/site-packages (for 32bit)</li>
+</ul>
+<img alt="_images/set_variable.png" class="last" src="_images/set_variable.png" />
+</dd>
+</dl>
+</li>
+</ol>
+</dd>
+</dl>
+</div>
+<div class="section" id="ubuntu-debian">
+<h5>Ubuntu/Debian<a class="headerlink" href="#ubuntu-debian" title="Permalink to this headline">¶</a></h5>
+<dl class="docutils">
+<dt><strong>Gdal, OpenCV, Sklearn, Skimage, QGIS, PyEphem Installation</strong></dt>
+<dd><p class="first">Procedure to install all the required software in a few steps; open your terminal and type the following code:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo apt-get install git python-gdal python-opencv python-sklearn python-skimage qgis
+$ wget http://pypi.python.org/packages/source/p/pyephem/pyephem-3.7.5.1.tar.gz
+$ tar zxvf pyephem-3.7.5.1.tar.gz
+$ sudo python pyephem-3.7.5.1/setup.py install
+</pre></div>
+</div>
+<p class="last">(old but still supported Ubuntu or Debian versions like Ubuntu 12.04 LTS or Debian 6.x do not include python-skimage into the official repository. It is recommended to install it through an external repository following this guide: <a class="reference external" href="http://neuro.debian.net/install_pkg.html?p=python-sklearn">http://neuro.debian.net/install_pkg.html?p=python-sklearn</a>)</p>
+</dd>
+<dt><strong>OTB Installation</strong></dt>
+<dd><p class="first">If your Distro is compatible, you can use ubuntugis repository check it out at <a class="reference external" href="https://launchpad.net/~ubuntugis/+archive/ubuntugis">https://launchpad.net/~ubuntugis/+archive/ubuntugis</a></p>
+<div class="last highlight-python"><div class="highlight"><pre>$ sudo apt-get install software-properties-common
+$ sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+$ sudo apt-get update
+$ sudo apt-get install python-otb
+</pre></div>
+</div>
+</dd>
+<dt><strong>OTB Compiling</strong></dt>
+<dd><p class="first">If ubuntugis repository is not compatible with your version you have to compile OTB</p>
+<div class="highlight-python"><div class="highlight"><pre>$ sudo apt-get install build-essential cmake mercurial libinsighttoolkit4-dev libkml-dev swig libopenjpeg-dev libgdal-dev libtiff5-dev libgeotiff-dev cmake-curses-gui
+$ hg clone http://hg.orfeo-toolbox.org/OTB
+$ mv OTB OTB-src &amp;&amp; mkdir OTB &amp;&amp; mv OTB-src OTB &amp;&amp; mkdir OTB/OTB-bin &amp;&amp; cd OTB/OTB-bin
+$ ccmake ../OTB-src
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Using the ccmake interface just opened, you&#8217;re just a few steps away to complete the makefile configuration:</dt>
+<dd><ol class="first last arabic simple">
+<li>Go to “OTB_WRAP_PYTHON” value and press [Enter] to change value to “ON”.</li>
+<li>Press [t] to toggle advanced mode and go to “OTB_USE_EXTERNAL_LIBKML” value and press [Enter] to change value to “ON” (this step is necessary to avoid a well-known compilation bug, it might be fixed in the future versions of OTB).</li>
+<li>Press [c] to start configure.</li>
+<li>Wait configuration and press [g] to save the configuration and quit.</li>
+</ol>
+</dd>
+</dl>
+<p>Now the challenging things are done. Run make and then the installation command:</p>
+<div class="highlight-python"><div class="highlight"><pre>$ make
+$ sudo make install
+</pre></div>
+</div>
+<p>After the installation you have to include the C OTB libraries and python OTB modules paths into the system path:</p>
+<div class="last highlight-python"><div class="highlight"><pre>$ sudo sh -c &#39;echo &quot;/usr/local/lib/otb&quot; &gt; /etc/ld.so.conf.d/otb.conf&#39;
+$ sudo ln -s /usr/local/lib/otb/python/* /usr/lib/pymodules/python2.7/
+$ sudo ldconfig
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+<div class="section" id="sensum-plugin-code">
+<h4>Sensum Plugin Code<a class="headerlink" href="#sensum-plugin-code" title="Permalink to this headline">¶</a></h4>
+<p>Get current version from git:</p>
+<div class="highlight-python"><div class="highlight"><pre>git clone https://github.com/dgaleazzo/sensum_plugin
+</pre></div>
+</div>
+<dl class="docutils">
+<dt>Copy sensum_plugin folder into:</dt>
+<dd><ul class="first last simple">
+<li>MS Windows: HOMEPATH%/.qgis2/python/plugins</li>
+<li>Linux: ~/.qgis2/python/plugings</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="the-user-s-guide">
+<h2>The User&#8217;s Guide<a class="headerlink" href="#the-user-s-guide" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<span id="document-user"></span><div class="section" id="the-user-s-guide">
+<h3>The User&#8217;s Guide<a class="headerlink" href="#the-user-s-guide" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="introduction">
+<h4>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h4>
+<p><strong>Welcome to User&#8217;s Documentation</strong></p>
+<p>The Sensum Earth Observation algorithms are released as scripts. Input parameters can be specified and interpreted thanks to  <a class="reference external" href="https://docs.python.org/3/library/argparse.html">argparse python module</a>.</p>
+<p>In order to call scripts under Microsoft Windows systems you have to start the command line (&#8220;cmd.exe&#8221; or &#8220;powershell.exe&#8221;) and type this line</p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe [SCRIPTPATH/NAMEOFSCRIPT].py [PARAMETERS]
+</pre></div>
+</div>
+<p>Under Unix systems you have to start your console and type this line</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">python</span> <span class="p">[</span><span class="n">SCRIPTPATH</span><span class="o">/</span><span class="n">NAMEOFSCRIPT</span><span class="p">]</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="n">PARAMETERS</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Alternatively you can start your script directly giving the executable permissions</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">chmod</span> <span class="o">+</span><span class="n">x</span> <span class="p">[</span><span class="n">SCRIPTPATH</span><span class="o">/</span><span class="n">NAMEOFSCRIPT</span><span class="p">]</span><span class="o">.</span><span class="n">py</span>
+</pre></div>
+</div>
+<p>And recall it with</p>
+<div class="highlight-python"><div class="highlight"><pre>./[NAMEOFSCRIPT].py
+</pre></div>
+</div>
+</div>
+<div class="section" id="medium-resolution">
+<h4>Medium Resolution<a class="headerlink" href="#medium-resolution" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="co-registration">
+<h5>Co-Registration<a class="headerlink" href="#co-registration" title="Permalink to this headline">¶</a></h5>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>coregistration.py <em>reference_path target_folder [&#8211;enable_clip SHAPEFILE] [&#8211;enable_grid ROW_FACTOR COL_FACTOR] [&#8211;enable_resampling] [&#8211;enable_SURF] [&#8211;enable_FFT]</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>Generate raster (<a href="#id1"><span class="problematic" id="id2">*</span></a>.tiff) results into target_folder named like ORIGINAL_NAME_adj_METHOD</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd><dl class="first last docutils">
+<dt>coregistration.py is an algorithm developed to co-register a reference and a target data set using 2 methods:</dt>
+<dd><ol class="first last arabic simple">
+<li>SURF (Feature-based method)</li>
+<li>FFT (Area-based method)</li>
+</ol>
+</dd>
+</dl>
+</dd>
+<dt><strong>PARAMETERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>reference_path</em></dt>
+<dd>Reference folder Path</dd>
+<dt><em>target_folder</em></dt>
+<dd>Target folder with images to change</dd>
+<dt><em>&#8211;enable_clip SHAPEFILE</em></dt>
+<dd>Enable definition of a region of interest using a shapefile</dd>
+<dt><em>&#8211;enable_grid ROW_FACTOR COL_FACTOR</em></dt>
+<dd>Enable an automatic tile extraction. Rows and columns of the desired tile are input parameters</dd>
+<dt><em>&#8211;enable_SURF</em></dt>
+<dd>Enable SURF method</dd>
+<dt><em>&#8211;enable_FFT</em></dt>
+<dd>Enable FFT method</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/coregistration.py &quot;~/Desktop/Work-Images/07-D-Case12/2007-07-24&quot; &quot;~/Desktop/Work-Images/07-D-Case12&quot; --enable_clip &quot;~/Desktop/Work-Images/07-D-Case12/Mask_reclass1_Identity.shp&quot;  --enable_SURF
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/coregistration.py&quot; &quot;HOMEPATH%/Desktop/Work-Images/07-D-Case12/2007-07-24&quot; &quot;HOMEPATH%/Desktop/Work-Images/07-D-Case12&quot; --enable_clip &quot;HOMEPATH%/Desktop/Work-Images/07-D-Case12/Mask_reclass1_Identity.shp&quot;  --enable_SURF
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="merge">
+<h5>Merge<a class="headerlink" href="#merge" title="Permalink to this headline">¶</a></h5>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>merge.py <em>output_path [-i INPUT1, INPUT2, ...]</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>A tiff image union of the input images is generated and named according to the specified output path</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd>merge.py is a merging tool. It is designed to take as input more than one image and merge them.</dd>
+<dt><strong>PARAMETERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>output_path</em></dt>
+<dd>Output raster</dd>
+<dt><em>-i INPUT1, INPUT2, ...</em></dt>
+<dd>Input rasters</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/merge.py &quot;~/Desktop/Work-Tests/merge.tiff&quot; -i &quot;~/Desktop/Work-Images/Merge_cas/merge_01.tiff&quot; &quot;~/Desktop/Work-Images/Merge_cas/merge_02.tiff&quot; &quot;~/Desktop/Work-Images/Merge_cas/merge_03.tiff&quot;
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/merge.py&quot; &quot;HOMEPATH%/Desktop/Work-Tests/merge.tiff&quot; -i &quot;HOMEPATH%/Desktop/Work-Images/Merge_cas/merge_01.tiff&quot; &quot;HOMEPATH%/Desktop/Work-Images/Merge_cas/merge_02.tiff&quot; &quot;HOMEPATH%/Desktop/Work-Images/Merge_cas/merge_03.tiff&quot;
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="stack-satellite">
+<h5>Stack Satellite<a class="headerlink" href="#stack-satellite" title="Permalink to this headline">¶</a></h5>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>stacksatellite.py <em>sat_folder segmentation_name n_classes [&#8211;coregistration] [&#8211;builtup_index_method] [&#8211;pca_index_method] [&#8211;pca_classification_method] [&#8211;dissimilarity_method] [&#8211;pca_ob_method] [&#8211;ref_dir REFERENCE_DIRECTORY] [&#8211;restrict_to_city SHAPEFILE] [&#8211;segmentation_parameters PARAMETER1 PARAMETER2 PARAMETER3 PARAMETER4]</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>According with methods and options selected, outputs are generated in the satellite folder or single dataset folder (year folder). Raster images (<a href="#id3"><span class="problematic" id="id4">*</span></a>.tiff) are the output for pixel-based methods (builtup_index, pca_index and pca_classification) while shapefiles are the output for object-based methods.</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd><dl class="first last docutils">
+<dt>stacksatellite.py is a script designed to process a medium resolution dataset. The algorithm, according to methods and options selected, generates different outputs. sat_folder is the main directory containing sub-directories related to each year (the following image shows an example of satellite folder).</dt>
+<dd><img alt="_images/sat_folder.png" class="first last" src="_images/sat_folder.png" />
+</dd>
+</dl>
+</dd>
+<dt><strong>PARAMETERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>sat_folder</em></dt>
+<dd>Main folder path</dd>
+<dt><em>segmentation_name</em></dt>
+<dd>&#8220;Edison&#8221; or &#8220;Meanshift&#8221;</dd>
+<dt><em>n_classes</em></dt>
+<dd>Number of classes in unsupervised classification</dd>
+<dt><em>&#8211;coregistration</em></dt>
+<dd>Co-Registration option</dd>
+<dt><em>&#8211;builtup_index_method</em></dt>
+<dd>Built-up Index method</dd>
+<dt><em>&#8211;pca_index_method</em></dt>
+<dd>PCA index method</dd>
+<dt><em>&#8211;pca_classification_method</em></dt>
+<dd>PCA classification method</dd>
+<dt><em>&#8211;dissimilarity_method</em></dt>
+<dd>Dissimilarity method</dd>
+<dt><em>&#8211;pca_ob_method</em></dt>
+<dd>PCA object method</dd>
+<dt><em>&#8211;restrict_to_city SHAPEFILE</em></dt>
+<dd>Tiling shapefile.</dd>
+<dt><em>&#8211;segmentation_paramaters PARAMETER1 PARAMETER2 PARAMETER3 PARAMETER4</em></dt>
+<dd><dl class="first last docutils">
+<dt>Edison:</dt>
+<dd><ul class="first last simple">
+<li>PARAMETER1: spatial_radius</li>
+<li>PARAMETER2: range_radius</li>
+<li>PARAMETER3: min_size</li>
+<li>PARAMETER4: scale</li>
+</ul>
+</dd>
+<dt>Meanshift:</dt>
+<dd><ul class="first last simple">
+<li>PARAMETER1: spatial_radius</li>
+<li>PARAMETER2: range_radius</li>
+<li>PARAMETER3: threshold</li>
+<li>PARAMETER4: max_iter</li>
+<li>PARAMETER5: min_size</li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/stacksatellite.py &quot;~/Desktop/Work-Images/07-D-Case12&quot; &quot;Edison&quot; &quot;5&quot;  --restrict_to_city &quot;~/Desktop/Work-Images/07-D-Case12/Mask_reclass1_Identity.shp&quot; --coregistration --dissimilarity_method --segmentation_paramaters 5 15 100 1
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/stacksatellite.py&quot; &quot;HOMEPATH%/Desktop/Work-Images/07-D-Case12&quot; &quot;Edison&quot; &quot;5&quot;  --restrict_to_city &quot;HOMEPATH%/Desktop/Work-Images/07-D-Case12/Mask_reclass1_Identity.shp&quot; --coregistration --dissimilarity_method --segmentation_paramaters 5 15 100 1
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="change-detection">
+<h5>Change Detection<a class="headerlink" href="#change-detection" title="Permalink to this headline">¶</a></h5>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>change_detection.py <em>main_folder extraction field [&#8211;spatial_filter]</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>Generate a &#8220;change_detection_pca.shp&#8221; or &#8220;change_detection_dissimilarity.shp&#8221; file as output into the &#8220;main_folder&#8221; according to the extraction option.</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd><p class="first">change_detection.py is a script designed to detect changes without user supervision. The algorithm works on the results generate by the stack satellite script.
+&#8220;Change Detection&#8221; algorithm compares built-up extractions (object-based methods) from different dates and filters results in 3 steps:</p>
+<blockquote class="last">
+<div><ol class="arabic simple">
+<li>count changes through years in order to analyze the results and assign C_Factor 0 to no changes, C_Factor 1 to one correct change and from 0.5 to 1 to no possible change or more than 1 change.</li>
+<li>time- and continuity-wise change analysis by taking 4-years-span windows to correct sequence with 1 or more possible changes.</li>
+<li>applied to undetermined changes coming from step 2, it is designed to process features around the undetermined ones in order to find a spatial similarity with the neighbors.</li>
+</ol>
+</div></blockquote>
+</dd>
+<dt><strong>PARAMATERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>main_folder</em></dt>
+<dd>&#8220;Stack Satellite style&#8221; folder processed by the stacksatellite.py script.</dd>
+<dt><em>extraction</em></dt>
+<dd>Select &#8220;PCA&#8221; or &#8220;Dissimilarity&#8221; built-up extraction.</dd>
+<dt><em>field</em></dt>
+<dd>Attribute in the pca_class or dissimilarity_class shapefiles related to built-up areas. You have to manually edit just the first feature of the shape by writing the classes related to built-up separated by comma (include screen shot as example).</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/change_detection.py &quot;~/Work-Images/Change_detection_Izmir&quot; &quot;PCA&quot; &quot;UrbanClass&quot;
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/change_detection.py&quot; &quot;HOMEPATH%/Desktop/Work-Images/Change_detection_Izmir&quot; &quot;PCA&quot; &quot;UrbanClass&quot;
+</pre></div>
+</div>
+</div></blockquote>
+<img alt="_images/change_detection.png" src="_images/change_detection.png" />
+</div>
+</div>
+<div class="section" id="high-resolution">
+<h4>High Resolution<a class="headerlink" href="#high-resolution" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="footprints">
+<h5>Footprints<a class="headerlink" href="#footprints" title="Permalink to this headline">¶</a></h5>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>footprints.py <em>pansharp_file training_set training_attribute output_shape [&#8211;classes CLASS1, CLASS2, ...] [&#8211;optimizer}</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>Generate a shapefile (<a href="#id5"><span class="problematic" id="id6">*</span></a>.shp) named as the output_shape parameter.</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd><dl class="first last docutils">
+<dt>footprints.py is an algorithm developed in order to extract building footprints from supervised classification. Inputs are a pan-sharpened image and a training set shapefile (for the supervised classification). The list of classes related to buildings is also requested. The process is made of 5 steps:</dt>
+<dd><ol class="first last arabic simple">
+<li>Optional OTB Smooth Filter.</li>
+<li>OTB supervised classification (Support Vector Machine, SVM).</li>
+<li>Conversion of classification output to shapefile.</li>
+<li>Masking and filtering of the classes related to buildings.</li>
+<li>Morphological filtering.</li>
+</ol>
+</dd>
+</dl>
+</dd>
+<dt><strong>PARAMETERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>pansharp_file</em></dt>
+<dd>Pan-sharpened input raster</dd>
+<dt><em>training_set</em></dt>
+<dd>Training set as shapefile</dd>
+<dt><em>training_attribute</em></dt>
+<dd>Training Field identifier</dd>
+<dt><em>output_shape</em></dt>
+<dd>Output shapefile</dd>
+<dt><em>&#8211;classes CLASS1, CLASS2, ...</em></dt>
+<dd>Buildings class selection</dd>
+<dt><em>&#8211;optimizer</em></dt>
+<dd>Enable smooth filter</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/footprints.py &quot;~/Desktop/Work-Images/Exercises/7/pansharp.tif&quot; &quot;~/Desktop/Work-Images/Exercises/6/Izmir_low_residential_small_patches_footprints_rpj.shp&quot; &quot;Class&quot; &quot;~/Desktop/Work-Tests/building_extraction.shp&quot;  -c &quot;3&quot; &quot;1&quot;
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/footprints.py&quot; &quot;HOMEPATH%/Desktop/Work-Images/Exercises/7/pansharp.tif&quot; &quot;HOMEPATH%/Desktop/Work-Images/Exercises/6/Izmir_low_residential_small_patches_footprints_rpj.shp&quot; &quot;Class&quot; &quot;HOMEPATH%/Desktop/Work-Tests/building_extraction.shp&quot;  -c &quot;3&quot; &quot;1&quot;
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="density">
+<h5>Density<a class="headerlink" href="#density" title="Permalink to this headline">¶</a></h5>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>density.py <em>buildingShape radius outputShape</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>Generate a shapefile (<a href="#id7"><span class="problematic" id="id8">*</span></a>.shp) into outputShape path.</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd>density.py is a script to compute the building density. It considers a circular window around each feature and calculates how many other features intersect it adding value into &#8220;N_Building&#8221; row into shapefile. &#8220;Density&#8221; attribute is also computed using <em>Features Sum Area/Window Area</em>.</dd>
+<dt><strong>PARAMATERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>buildingShape</em></dt>
+<dd>Building shapefile path</dd>
+<dt><em>radius</em></dt>
+<dd>Radius of windows</dd>
+<dt><em>outputShape</em></dt>
+<dd>Output shapefile</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/density.py &quot;~/Desktop/Work-Tests/building_extraction.shp&quot; &quot;10.0&quot; &quot;~/Desktop/Work-Tests/density.shp&quot;
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/density.py&quot; &quot;HOMEPATH%/Desktop/Work-Tests/building_extraction.shp&quot; &quot;10.0&quot; &quot;HOMEPATH%/Desktop/Work-Tests/density.shp&quot;
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="height">
+<h5>Height<a class="headerlink" href="#height" title="Permalink to this headline">¶</a></h5>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>height.py <em>input_shadow input_buildings date output_shape idfield window_resize</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>Generate a shapefile (<a href="#id9"><span class="problematic" id="id10">*</span></a>.shp) into outputShape path.</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd>height.py is an algorithm designed to estimate the height of buildings from shadows and acquisition date. The result is automatically assigned to related footprints.</dd>
+<dt><strong>PARAMATERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>input_shadow</em></dt>
+<dd>Shadows shapefile path</dd>
+<dt><em>input_buildings</em></dt>
+<dd>Building shapefile path</dd>
+<dt><em>date</em></dt>
+<dd>Acquisition date (hour in EDT)</dd>
+<dt><em>output_shape</em></dt>
+<dd>Output shapefile</dd>
+<dt><em>idfield</em></dt>
+<dd>Shadow ID field</dd>
+<dt><em>window_resize</em></dt>
+<dd>Searching window radius</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/height.py &quot;~/Desktop/Work-Tests/building_extraction.shp&quot; &quot;~/Desktop/Work-Tests/building_shadows.shp&quot; &quot;2007/1/17 15:34:00&quot; &quot;height.shp&quot; &quot;ID&quot; &quot;1.0&quot;
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/height.py&quot; &quot;HOMEPATH%/Desktop/Work-Tests/building_extraction.shp&quot; &quot;HOMEPATH%/Desktop/Work-Tests/building_shadows.shp&quot; &quot;2007/1/17 15:34:00&quot; &quot;height.shp&quot; &quot;ID&quot; &quot;1.0&quot;
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="regularity">
+<h5>Regularity<a class="headerlink" href="#regularity" title="Permalink to this headline">¶</a></h5>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>regularity.py <em>input_buildings output_shape</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>Generate a shapefile (<a href="#id11"><span class="problematic" id="id12">*</span></a>.shp) into outputShape path.</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd>regularity.py can be used to determine the regularity and alignment of buildings. A polygon is considered regular when the ratio between the two main directions is less than 4.</dd>
+<dt><strong>PARAMATERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>input_buildings</em></dt>
+<dd>Input buildings shapefile path</dd>
+<dt><em>output_shape</em></dt>
+<dd>Output shapefile</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/regularity.py &quot;~/Desktop/Work-Tests/building_extraction.shp&quot; &quot;~/Desktop/Work-Tests/regularity.shp&quot;
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/regularity.py&quot; &quot;HOMEPATH%/Desktop/Work-Tests/building_extraction.shp&quot; &quot;HOMEPATH%/Desktop/Work-Tests/regularity.shp&quot;
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="test-features">
+<h4>Test Features<a class="headerlink" href="#test-features" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt><strong>SYNOPSIS:</strong></dt>
+<dd>test_features.py <em>input_file segmentation_shape output_shape field [&#8211;max_br] [&#8211;mean] [&#8211;min_br] [&#8211;mode] [&#8211;ndvi_std] [&#8211;ndvi_mean] [&#8211;std] [&#8211;weigh_br] [&#8211;ASM] [&#8211;contrast] [&#8211;correlation] [&#8211;dissimilarity] [&#8211;energy] [&#8211;homogeneity] [&#8211;multi]</em></dd>
+<dt><strong>OUTPUT:</strong></dt>
+<dd>A shapefile is generated in output_shape path</dd>
+<dt><strong>DESCRIPTION:</strong></dt>
+<dd>test_features.py is a script made to compute a set of features related to segments. Statistics are calculated based on the input raster file using a segmentation shapefile as mask. Computed features are appended as attribute to the shapefile.</dd>
+<dt><strong>PARAMATERS</strong></dt>
+<dd><dl class="first last docutils">
+<dt><em>input_file</em></dt>
+<dd>Input raster file</dd>
+<dt><em>segmentation_shape</em></dt>
+<dd>Segmentation shape mask</dd>
+<dt><em>output_shape</em></dt>
+<dd>Output shapefile</dd>
+<dt><em>field</em></dt>
+<dd>Identifier shapefile ID</dd>
+<dt><em>&#8211;max_br</em></dt>
+<dd>Maximum BR</dd>
+<dt><em>&#8211;mean</em></dt>
+<dd>Mean</dd>
+<dt><em>&#8211;min_br</em></dt>
+<dd>Minimun BR</dd>
+<dt><em>&#8211;mode</em></dt>
+<dd>Mode</dd>
+<dt><em>&#8211;ndvi_std</em></dt>
+<dd>NDVI Standard Deviation</dd>
+<dt><em>&#8211;ndvi_mean</em></dt>
+<dd>NDVI Mean</dd>
+<dt><em>&#8211;std</em></dt>
+<dd>Standard Deviation</dd>
+<dt><em>&#8211;weigh_br</em></dt>
+<dd>Weight BR</dd>
+<dt><em>&#8211;ASM</em></dt>
+<dd>ASM</dd>
+<dt><em>&#8211;contrast</em></dt>
+<dd>Contrast</dd>
+<dt><em>&#8211;correlation</em></dt>
+<dd>Correlation</dd>
+<dt><em>&#8211;energy</em></dt>
+<dd>Energy</dd>
+<dt><em>&#8211;homogeneity</em></dt>
+<dd>Homogeneity</dd>
+<dt><em>&#8211;multi</em></dt>
+<dd>Active multiprocess option (hight CPU usage)</dd>
+</dl>
+</dd>
+</dl>
+<p><strong>EXAMPLES</strong></p>
+<blockquote>
+<div><p><em>Unix</em></p>
+<div class="highlight-python"><div class="highlight"><pre>~/.qgis2/python/plugins/sensum_plugin/scripts/test_features.py &quot;~/Desktop/Work-Tests/input.tiff&quot; &quot;~/Desktop/Work-Tests/building_extraction.shp&quot; &quot;~/Desktop/Work-Tests/features_calculation.shp&quot; &quot;DN&quot; --max_br --mode --contrast --energy
+</pre></div>
+</div>
+<p><em>MS Windows</em></p>
+<div class="highlight-python"><div class="highlight"><pre>C:/Python27/python.exe &quot;HOMEPATH%/.qgis2/python/plugins/sensum_plugin/scripts/test_features.py&quot; &quot;HOMEPATH%/Desktop/Work-Tests/input.tiff&quot; &quot;HOMEPATH%/Desktop/Work-Tests/building_extraction.shp&quot; &quot;HOMEPATH%/Desktop/Work-Tests/features_calculation.shp&quot; &quot;DN&quot; --max_br --mode --contrast --energy
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="the-developer-s-guide">
+<h2>The Developer&#8217;s Guide<a class="headerlink" href="#the-developer-s-guide" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<span id="document-lib"></span><div class="section" id="the-developer-s-guide">
+<h3>The Developer&#8217;s Guide<a class="headerlink" href="#the-developer-s-guide" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="introduction">
+<h4>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt><strong>General Knowledge</strong></dt>
+<dd>Sensum Earth Observation Tools are written in Python. They make use of Gdal library to read and write rasters files as arrays, handled by Scipy, Numpy, Python math and OpenCV libraries.
+OGR is used to read, write and handle vector files. OTB and skimage are used for classification and segmentation algorithms. The Plugin UI is written in PyQT using the qgis.core library to interact with QGIS interface.</dd>
+<dt><strong>Structure</strong></dt>
+<dd><p class="first">Sensum Library is composed by modules divided according to their scope. To import a Sensum module you have to import the config.py script first in order to automatically set all the necessary variables and configuration settings:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">config</span>
+</pre></div>
+</div>
+<p>You can import a sensum library module with the following line:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">sensum_library.MODULE_NAME</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="section" id="conversion-features">
+<h4>Conversion, Features<a class="headerlink" href="#conversion-features" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt><strong>Conventions</strong></dt>
+<dd><dl class="first last docutils">
+<dt>This is the main module to read/write and handle rasters. It is composed by a set of functions with a set of convenction:</dt>
+<dd><ul class="first last simple">
+<li>0 value is used to set defaults value in a lot of functions parameters.</li>
+<li><em>band_list</em>: is a N-D list of matrices containing pixel values read with gdal ReadAsArray method, where N = number of bands</li>
+<li><em>input/output_raster</em>: path of raster file</li>
+<li><em>input/output_shape</em>: path of vector file</li>
+</ul>
+</dd>
+</dl>
+</dd>
+<dt><strong>Main Functions</strong></dt>
+<dd>Main functions are <a class="reference external" href="modules.html#sensum_library.conversion.read_image">read_image</a> , <a class="reference external" href="modules.html#sensum_library.conversion.write_image">write_image</a> used to read and write rasters files.</dd>
+</dl>
+</div>
+<div class="section" id="classification-segmentation">
+<h4>Classification, Segmentation<a class="headerlink" href="#classification-segmentation" title="Permalink to this headline">¶</a></h4>
+<p>Classification and segmentation modules include functions to define hubs between python and OTB and skimage in order to take advantage of classification and segmentation algorithms. In some scripts or plugin parts a system call for external compiled OTB executable is included in order to get the process progress bar. This is achieved using the executeOtb function:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></div></td><td class="code"><div class="highlight"><pre>    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s">&quot;posix&quot;</span><span class="p">:</span>
+        <span class="n">bit</span> <span class="o">=</span> <span class="p">(</span><span class="s">&quot;64&quot;</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="s">&quot;C:/OSGeo4W64&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">osgeopath</span> <span class="o">=</span> <span class="s">&quot;C:/OSGeo4W{}/bin/&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">bit</span><span class="p">)</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="n">osgeopath</span> <span class="o">+</span> <span class="n">command</span>
+    <span class="c">#QMessageBox.information(None, &quot;Info&quot;, command)    </span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+        <span class="n">command</span><span class="p">,</span>
+        <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+        <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+        <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span>
+        <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">stdout</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">readline</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s">&#39;[*&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;[*&#39;</span><span class="p">)</span>
+            <span class="n">perc</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">4</span><span class="p">:</span><span class="n">idx</span> <span class="o">-</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">perc</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">progress</span><span class="p">:</span>
+                <span class="n">progress</span><span class="o">.</span><span class="n">progressBar</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">perc</span><span class="p">)</span>
+                <span class="n">progress</span><span class="o">.</span><span class="n">label_title</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="preprocess-secondary-indicators">
+<h4>Preprocess, Secondary Indicators<a class="headerlink" href="#preprocess-secondary-indicators" title="Permalink to this headline">¶</a></h4>
+<p>Contains a series of scripts and tools functions.</p>
+</div>
+<div class="section" id="multi">
+<h4>Multi<a class="headerlink" href="#multi" title="Permalink to this headline">¶</a></h4>
+<p><strong>Intro</strong>
+Multiprocess module is dedicated to multiprocess application. Python provides a powerful built-in multiprocess library; the Sensum multiprocess module uses this library to implement multiprocess applications through a container Class. This solution was specifically designed to provide clean and easy implementation also for non-expert developers.</p>
+<p><strong>Description</strong></p>
+<blockquote>
+<div>Multi() class defines N concurrent processes with N = number of CPU core * 2.</div></blockquote>
+<dl class="docutils">
+<dt><strong>Example</strong></dt>
+<dd><p class="first">We want to implement with multiprocess a simple function for get the sum between a number and his double within a range from 0 to 100:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">task</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="n">a</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">101</span><span class="p">):</span>
+    <span class="k">print</span> <span class="n">task</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To implement task() as multiprocess we need to reclass it as a callable Class:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">a</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span>
+</pre></div>
+</div>
+<p>Unlike function declaration, we need to return also the index since results will not be sorted because multiprocess execution is asynchronous. Now we can implement Task() into the for statement:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">sensum_library.multiprocess</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">MyMulti</span> <span class="o">=</span> <span class="n">Multi</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">101</span><span class="p">):</span>
+    <span class="n">MyMulti</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">Task</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+<span class="n">MyMulti</span><span class="o">.</span><span class="n">kill</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Use the following lines to get the results, sort and print them:</p>
+<div class="last highlight-python"><div class="highlight"><pre><span class="n">results</span> <span class="o">=</span> <span class="p">[</span> <span class="n">MyMulti</span><span class="o">.</span><span class="n">result</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="mi">101</span><span class="p">)</span> <span class="p">]</span>
+<span class="n">results</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[</span> <span class="n">data</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">data</span> <span class="ow">in</span> <span class="n">results</span> <span class="p">]</span>
+
+<span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+    <span class="k">print</span> <span class="n">data</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>Following the complete code example:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="k">class</span> <span class="nc">Task</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">a</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">b</span>
+        <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c"># pretend to take some time to do the work</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span>
+        <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+
+    <span class="kn">import</span> <span class="nn">sys</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;C:/OSGeo4W/apps/Python27/Lib/site-packages&#39;</span><span class="p">)</span>
+
+    <span class="n">new_proc</span> <span class="o">=</span> <span class="n">Multi</span><span class="p">()</span>
+
+    <span class="n">n_jobs</span> <span class="o">=</span> <span class="mi">10</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">n_jobs</span><span class="p">):</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+<div class="section" id="scripts">
+<h4>Scripts<a class="headerlink" href="#scripts" title="Permalink to this headline">¶</a></h4>
+<p>For more info about the script system <a class="reference external" href="user.html#introduction">click here</a></p>
+<p><strong>Progress Bar</strong></p>
+<p>This is a class used to draw a textual process bar compatible with <a class="reference external" href="lib.html#plugin">plugin parser</a>:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">Bar</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">max</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">status</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="nb">max</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="n">_current</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">status</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="n">status</span>
+        <span class="k">if</span> <span class="n">_current</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current</span><span class="p">:</span>
+            <span class="n">wildcards</span> <span class="o">=</span> <span class="n">spaces</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">_current</span><span class="p">):</span> <span class="n">wildcards</span> <span class="o">=</span> <span class="n">wildcards</span> <span class="o">+</span> <span class="s">&quot;*&quot;</span>
+            <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dimension</span><span class="o">-</span><span class="n">_current</span><span class="p">):</span> <span class="n">wildcards</span> <span class="o">=</span> <span class="n">wildcards</span> <span class="o">+</span> <span class="s">&quot; &quot;</span>
+            <span class="n">bar</span> <span class="o">=</span> <span class="s">&quot;</span><span class="se">\r</span><span class="s">STATUS: &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">+</span> <span class="s">&quot; [&quot;</span> <span class="o">+</span> <span class="n">wildcards</span> <span class="o">+</span> <span class="n">spaces</span> <span class="o">+</span> <span class="s">&quot;]&quot;</span>
+</pre></div>
+</td></tr></table></div>
+<p>Use is simple:</p>
+<div class="highlight-python"><div class="highlight"><pre>n_list = range(100,200)
+status = Bar(len(n_list),&quot;Power N&quot;)
+for i,value in n_list
+    status(i)
+    print value*value
+</pre></div>
+</div>
+</div>
+<div class="section" id="plugin">
+<h4>Plugin<a class="headerlink" href="#plugin" title="Permalink to this headline">¶</a></h4>
+<dl class="docutils">
+<dt><strong>PyQGIS Developer Cookbook</strong></dt>
+<dd>For more details go to <a class="reference external" href="http://docs.qgis.org/2.0/en/docs/pyqgis_developer_cookbook/">http://docs.qgis.org/2.0/en/docs/pyqgis_developer_cookbook/</a></dd>
+</dl>
+<p><strong>Call Scripts</strong>
+To call scripts, the Sensum Plugin uses a function also able to parse the textual progress bar generated by the script:</p>
+<div class="highlight-python"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35</pre></div></td><td class="code"><div class="highlight"><pre><span class="k">def</span> <span class="nf">executeScript</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">noerror</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">!=</span> <span class="s">&quot;posix&quot;</span> <span class="ow">and</span> <span class="n">noerror</span><span class="p">:</span>
+        <span class="c"># Found at http://stackoverflow.com/questions/5069224/handling-subprocess-crash-in-windows</span>
+        <span class="c"># Don&#39;t display the Windows GPF dialog if the invoked program dies.</span>
+        <span class="c"># See comp.os.ms-windows.programmer.win32</span>
+        <span class="c"># How to suppress crash notification dialog?, Jan 14,2004 -</span>
+        <span class="c"># Raymond Chen&#39;s response [1]</span>
+
+        <span class="kn">import</span> <span class="nn">ctypes</span>
+        <span class="n">SEM_NOGPFAULTERRORBOX</span> <span class="o">=</span> <span class="mh">0x0002</span> <span class="c"># From MSDN</span>
+        <span class="n">ctypes</span><span class="o">.</span><span class="n">windll</span><span class="o">.</span><span class="n">kernel32</span><span class="o">.</span><span class="n">SetErrorMode</span><span class="p">(</span><span class="n">SEM_NOGPFAULTERRORBOX</span><span class="p">);</span>
+        <span class="n">subprocess_flags</span> <span class="o">=</span> <span class="mh">0x8000000</span> <span class="c">#win32con.CREATE_NO_WINDOW?</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">subprocess_flags</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">command</span> <span class="o">=</span> <span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span><span class="o">+</span><span class="n">command</span> <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="s">&quot;posix&quot;</span> <span class="k">else</span> <span class="s">&#39;C:/Python27/python.exe &quot;&#39;</span><span class="o">+</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span><span class="o">+</span><span class="n">command</span><span class="p">)</span>
+    <span class="n">QMessageBox</span><span class="o">.</span><span class="n">information</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="s">&quot;Info&quot;</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
+    <span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">(</span>
+        <span class="n">command</span><span class="p">,</span>
+        <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+        <span class="n">stdin</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span>
+        <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">STDOUT</span><span class="p">,</span>
+        <span class="n">creationflags</span><span class="o">=</span><span class="n">subprocess_flags</span><span class="p">,</span>
+        <span class="n">universal_newlines</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">stdout</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">iter</span><span class="p">(</span><span class="n">proc</span><span class="o">.</span><span class="n">readline</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="s">&#39;[*&#39;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;[*&#39;</span><span class="p">)</span>
+            <span class="n">perc</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">idx</span><span class="p">:(</span><span class="n">idx</span><span class="o">+</span><span class="mi">102</span><span class="p">)]</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&quot;*&quot;</span><span class="p">)</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;STATUS: &#39;</span><span class="p">)</span><span class="o">+</span><span class="mi">8</span><span class="p">:</span><span class="n">idx</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">perc</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">progress</span><span class="p">:</span>
+                <span class="n">progress</span><span class="o">.</span><span class="n">progressBar</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">perc</span><span class="p">)</span>
+                <span class="n">progress</span><span class="o">.</span><span class="n">label_title</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+        <span class="n">QtGui</span><span class="o">.</span><span class="n">qApp</span><span class="o">.</span><span class="n">processEvents</span><span class="p">()</span>
+</pre></div>
+</td></tr></table></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="functions-and-library-indexes">
+<h2>Functions and Library Indexes<a class="headerlink" href="#functions-and-library-indexes" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="py-modindex.html">Modules Index</a></li>
+<li><a class="reference external" href="genindex.html">Functions Index</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html#document-index">Table Of Contents</a></h3>
+  <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-install">Installation Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index.html#library-installation">Library Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#sensum-plugin-code">Sensum Plugin Code</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-user">The User&#8217;s Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#medium-resolution">Medium Resolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#high-resolution">High Resolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#test-features">Test Features</a></li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html#document-lib">The Developer&#8217;s Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#conversion-features">Conversion, Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#classification-segmentation">Classification, Segmentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#preprocess-secondary-indicators">Preprocess, Secondary Indicators</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#multi">Multi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#scripts">Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#plugin">Plugin</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="index.html#document-index">Sensum 1.2 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &copy; Copyright 2014, Eucentre.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3b1.
+    </div>
+  </body>
+</html>

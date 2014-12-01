@@ -693,9 +693,15 @@ class Sensum:
             dlgProgress.show()
             target_folder = str(ui.lineEdit_tobechange.text())
             reference_path = str(ui.lineEdit_reference.text())
-            options = [(ui.checkBox_resampling , "--enable_resampling"),(ui.checkBox_surf, "--enable_SURF" ),(ui.checkBox_fft, "--enable_FFT")]
+            options = [(ui.checkBox_surf, "--enable_SURF" ),(ui.checkBox_fft, "--enable_FFT")]
             options = " ".join([index for pushButton,index in options if pushButton.isChecked()])
-            select_crop = ("--enable_clip {} ".format(string_qmark(parse_input(ui.comboBox_input_shape.currentText()))) if str(ui.comboBox_select_crop.currentText()) == "Clip" else "--enable_grid {} {} ".format(ui.spinBox_rows.text(), ui.spinBox_cols.text()))
+            select_crop = ""
+            if str(ui.comboBox_select_crop.currentText()) == "Clip":
+                select_crop = "--enable_clip {} ".format(string_qmark(parse_input(ui.comboBox_input_shape.currentText())))
+            elif str(ui.comboBox_select_crop.currentText()) == "Grid":
+                select_crop = "--enable_grid {} {} ".format(ui.spinBox_rows.text(), ui.spinBox_cols.text())
+            elif str(ui.comboBox_select_crop.currentText()) == "Unsupervised Classification":
+                select_crop = "--enable_unsupervised {} ".format(ui.spinBox_nclasses.text())
             executeScript('/scripts/coregistration.py" \"{}\" \"{}\" {} {}'.format(reference_path,target_folder,select_crop,options),dlgProgress.ui)
             QMessageBox.information(None, "Info", 'Done!')
 
@@ -851,7 +857,8 @@ class Sensum:
             sat_folder = str(ui.lineEdit_tobechange.text())
             extraction = ( "Dissimilarity" if str(ui.comboBox_extraction.currentText()) == "Dissimilarity-Based" else "PCA")
             field = str(ui.lineEdit_field.text())
-            executeScript('/scripts/change_detection.py" \"{}\" \"{}\" \"{}\" '.format(sat_folder,extraction,field),dlgProgress.ui)
+            spatial_filter = (" --spatial_filter " if bool(ui.checkBox_spatial_filter.isChecked()) else "")
+            executeScript('/scripts/change_detection.py" \"{}\" \"{}\" \"{}\" \"{}\"'.format(sat_folder,extraction,field,spatial_filter),dlgProgress.ui)
             output_shape = sat_folder+"/change_detection.shp"
             QgsMapLayerRegistry.instance().addMapLayer(QgsVectorLayer(output_shape,os.path.splitext(os.path.basename(output_shape))[0], "ogr"))
             QMessageBox.information(None, "Info", 'Done!')
@@ -860,7 +867,7 @@ class Sensum:
         # Create the dialog (after translation) and keep reference
         self.dlg_change_dilkushi = ChangeDetectionDilkushiDialog()
         self.changeActive(self.dlg_change_dilkushi.ui.comboBox_multiband_pre)
-        self.changeActive(self.dlg_change_dilkushi.ui.comboBox_panchromatic_post)
+        self.changeActive(self.dlg_change_dilkushi.ui.comboBox_panchromatic_pre)
         self.changeActive(self.dlg_change_dilkushi.ui.comboBox_multiband_post)
         self.changeActive(self.dlg_change_dilkushi.ui.comboBox_panchromatic_post)
         self.changeActive(self.dlg_change_dilkushi.ui.comboBox_clip_shapefile)
@@ -882,7 +889,7 @@ class Sensum:
             multiband_image_post = parse_input(str(ui.comboBox_multiband_post.currentText()))
             panchromatic_image_post = parse_input(str(ui.comboBox_panchromatic_post.currentText()))
             clip_shapefile = parse_input(str(ui.comboBox_clip_shapefile.currentText()))
-            executeScript('/scripts/change_detection_dilkushi.py" \"{}\" \"{}\" \"{}\" \"{}\" \"{}\"" '.format(
+            executeScript('/scripts/change_detection_dilkushi.py" \"{}\" \"{}\" \"{}\" \"{}\" \"{}\"'.format(
                 multiband_image_pre,
                 panchromatic_image_pre,
                 multiband_image_post,

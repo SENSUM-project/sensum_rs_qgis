@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'uis/ui_coregistration.ui'
+# Form implementation generated from reading ui file 'ui_coregistration.ui'
 #
-# Created: Tue Sep  2 14:07:46 2014
-#      by: PyQt4 UI code generator 4.10.4
+# Created: Wed Nov 26 12:44:35 2014
+#      by: PyQt4 UI code generator 4.10.2
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -26,9 +26,9 @@ except AttributeError:
 class Ui_Coregistration(object):
     def setupUi(self, Coregistration):
         Coregistration.setObjectName(_fromUtf8("Coregistration"))
-        Coregistration.resize(496, 444)
-        Coregistration.setMinimumSize(QtCore.QSize(496, 444))
-        Coregistration.setMaximumSize(QtCore.QSize(496, 444))
+        Coregistration.resize(500, 463)
+        Coregistration.setMinimumSize(QtCore.QSize(500, 463))
+        Coregistration.setMaximumSize(QtCore.QSize(500, 463))
         self.buttonBox = QtGui.QDialogButtonBox(Coregistration)
         self.buttonBox.setGeometry(QtCore.QRect(260, 380, 171, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
@@ -71,8 +71,9 @@ class Ui_Coregistration(object):
         self.logo_unipv.setPixmap(QtGui.QPixmap(_fromUtf8(".sensum/unipv.png")))
         self.logo_unipv.setObjectName(_fromUtf8("logo_unipv"))
         self.comboBox_select_crop = QtGui.QComboBox(Coregistration)
-        self.comboBox_select_crop.setGeometry(QtCore.QRect(40, 240, 69, 22))
+        self.comboBox_select_crop.setGeometry(QtCore.QRect(40, 240, 161, 22))
         self.comboBox_select_crop.setObjectName(_fromUtf8("comboBox_select_crop"))
+        self.comboBox_select_crop.addItem(_fromUtf8(""))
         self.comboBox_select_crop.addItem(_fromUtf8(""))
         self.comboBox_select_crop.addItem(_fromUtf8(""))
         self.groupBox_clip = QtGui.QGroupBox(Coregistration)
@@ -90,9 +91,11 @@ class Ui_Coregistration(object):
         self.groupBox_grid.setObjectName(_fromUtf8("groupBox_grid"))
         self.spinBox_rows = QtGui.QSpinBox(self.groupBox_grid)
         self.spinBox_rows.setGeometry(QtCore.QRect(150, 40, 42, 22))
+        self.spinBox_rows.setProperty("value", 6)
         self.spinBox_rows.setObjectName(_fromUtf8("spinBox_rows"))
         self.spinBox_cols = QtGui.QSpinBox(self.groupBox_grid)
         self.spinBox_cols.setGeometry(QtCore.QRect(290, 40, 42, 22))
+        self.spinBox_cols.setProperty("value", 6)
         self.spinBox_cols.setObjectName(_fromUtf8("spinBox_cols"))
         self.label_tobechange_3 = QtGui.QLabel(self.groupBox_grid)
         self.label_tobechange_3.setGeometry(QtCore.QRect(110, 40, 31, 17))
@@ -100,15 +103,22 @@ class Ui_Coregistration(object):
         self.label_tobechange_4 = QtGui.QLabel(self.groupBox_grid)
         self.label_tobechange_4.setGeometry(QtCore.QRect(250, 40, 31, 17))
         self.label_tobechange_4.setObjectName(_fromUtf8("label_tobechange_4"))
-        self.checkBox_resampling = QtGui.QCheckBox(Coregistration)
-        self.checkBox_resampling.setGeometry(QtCore.QRect(160, 250, 81, 17))
-        self.checkBox_resampling.setObjectName(_fromUtf8("checkBox_resampling"))
         self.checkBox_surf = QtGui.QCheckBox(Coregistration)
         self.checkBox_surf.setGeometry(QtCore.QRect(260, 250, 70, 17))
         self.checkBox_surf.setObjectName(_fromUtf8("checkBox_surf"))
         self.checkBox_fft = QtGui.QCheckBox(Coregistration)
         self.checkBox_fft.setGeometry(QtCore.QRect(330, 250, 70, 17))
         self.checkBox_fft.setObjectName(_fromUtf8("checkBox_fft"))
+        self.groupBox_unsupervised_classification = QtGui.QGroupBox(Coregistration)
+        self.groupBox_unsupervised_classification.setGeometry(QtCore.QRect(20, 280, 451, 91))
+        self.groupBox_unsupervised_classification.setObjectName(_fromUtf8("groupBox_unsupervised_classification"))
+        self.spinBox_nclasses = QtGui.QSpinBox(self.groupBox_unsupervised_classification)
+        self.spinBox_nclasses.setGeometry(QtCore.QRect(230, 40, 42, 22))
+        self.spinBox_nclasses.setProperty("value", 5)
+        self.spinBox_nclasses.setObjectName(_fromUtf8("spinBox_nclasses"))
+        self.label_tobechange_6 = QtGui.QLabel(self.groupBox_unsupervised_classification)
+        self.label_tobechange_6.setGeometry(QtCore.QRect(170, 40, 51, 20))
+        self.label_tobechange_6.setObjectName(_fromUtf8("label_tobechange_6"))
 
         self.retranslateUi(Coregistration)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Coregistration.accept)
@@ -124,13 +134,15 @@ class Ui_Coregistration(object):
         self.label_title.setText(_translate("Coregistration", "<html><head/><body><p><span style=\" font-size:16pt;\">CO-REGISTRATION</span></p></body></html>", None))
         self.comboBox_select_crop.setItemText(0, _translate("Coregistration", "Clip", None))
         self.comboBox_select_crop.setItemText(1, _translate("Coregistration", "Grid", None))
+        self.comboBox_select_crop.setItemText(2, _translate("Coregistration", "Unsupervised Classification", None))
         self.groupBox_clip.setTitle(_translate("Coregistration", "Clip", None))
         self.label_tobechange_2.setText(_translate("Coregistration", "Input Shapefile", None))
         self.comboBox_input_shape.setItemText(0, _translate("Coregistration", "[Choose from a file..]", "Click to select File"))
         self.groupBox_grid.setTitle(_translate("Coregistration", "Grid", None))
         self.label_tobechange_3.setText(_translate("Coregistration", "Rows", None))
         self.label_tobechange_4.setText(_translate("Coregistration", "Cols", None))
-        self.checkBox_resampling.setText(_translate("Coregistration", "Resampling", None))
         self.checkBox_surf.setText(_translate("Coregistration", "SURF", None))
         self.checkBox_fft.setText(_translate("Coregistration", "FFT", None))
+        self.groupBox_unsupervised_classification.setTitle(_translate("Coregistration", "Unsupervised Classification", None))
+        self.label_tobechange_6.setText(_translate("Coregistration", "N classes", None))
 
