@@ -56,8 +56,13 @@ def regularity(buildingShape, pixelWidth, pixelHeight, outShape):
     outLayer = outDS.GetLayer()
     regularity_def = osgeo.ogr.FieldDefn('Regularity', osgeo.ogr.OFTString)
     alignment_def = osgeo.ogr.FieldDefn('Alignment', osgeo.ogr.OFTInteger)
+    #perimeter_def = osgeo.ogr.FieldDefn('Perimeter', osgeo.ogr.OFTReal)
+    #length_a_def = osgeo.ogr.FieldDefn('LengthA', osgeo.ogr.OFTReal)
+    #length_b_def = osgeo.ogr.FieldDefn('LengthB', osgeo.ogr.OFTReal)
+    #regnew_def = osgeo.ogr.FieldDefn('Reg_new', osgeo.ogr.OFTString)
     outLayer.CreateField(regularity_def)
     outLayer.CreateField(alignment_def)
+    
     status = Bar(buildingFeaturesCount, "Regularity")
     for i in range(buildingFeaturesCount):
         status(i+1)
@@ -87,8 +92,26 @@ def regularity(buildingShape, pixelWidth, pixelHeight, outShape):
         regularity = str(building_regularity(length_a,length_b))
         #Fill field
         outFeature = outLayer.GetFeature(i)
+        #geom = outFeature.GetGeometryRef()
+        #perimeter = geom.Boundary().Length()
+        #area = geom.Area()
+        #delta = math.sqrt((float(perimeter)*float(perimeter)/float(4)-4*area))
+        #length_a_new = float((float(perimeter)/float(2)) + delta) / float(2)
+        #length_b_new = float((float(perimeter)/float(2)) - delta) / float(2)
+        '''
+        if length_a_new > length_b_new:
+            if float(length_a_new)/float(length_b_new) > 4: reg_label = 'irregular'
+            else: reg_label = 'regular'
+        else:
+            if float(length_b_new)/float(length_a_new) > 4: reg_label = 'irregular'
+            else: reg_label = 'regular'
+        '''
         outFeature.SetField('Regularity',regularity)
         outFeature.SetField('Alignment',int(alpha))
+        #outFeature.SetField('Perimeter',float(perimeter))
+        #outFeature.SetField('LengthA',float(length_a_new))
+        #outFeature.SetField('LengthB',float(length_b_new))
+        #outFeature.SetField('Reg_new',str(reg_label))
         outLayer.SetFeature(outFeature)
     buildingDS.Destroy()
     return outDS

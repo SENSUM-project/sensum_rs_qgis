@@ -310,6 +310,7 @@ class Sensum:
         self.toolBar.addAction(self.action_change)
         self.iface.addPluginToMenu(u"&SENSUM", self.action_change)
 
+        '''
         ######################
         ## INDEXES
         ######################
@@ -335,6 +336,7 @@ class Sensum:
         # Add toolbar button and menu item
         self.toolBar.addAction(self.action_change_dilkushi)
         self.iface.addPluginToMenu(u"&SENSUM", self.action_change_dilkushi)
+        '''
 
     def unload(self):
         self.iface.removePluginMenu(u"&SENSUM", self.action_pansharp)
