@@ -9,12 +9,13 @@
 
 
 [general]
-name=Sensum QGIS Plugin
+name=SENSUM Earth Observation Tools
 qgisMinimumVersion=2.0
-description=Sensum QGIS Plugin
-version=0.1
-author=Universit&agrave degli studi di Pavia
-email=dgaleazzo@gmail.com,daniele.devecchi@eucentre.it
+description=QGIS plugin built upon the SENSUM Earth Observation Tools
+about=QGIS plugin built upon the SENSUM Earth Observation Tools. All the functions included are designed to extract vulnerability indicators. For more details, please refer to the HTML guide included. Developers: Mostapha Harb, Daniele De Vecchi and Daniel Aurelio Galeazzo. External Dependency: scipy, orfeotoolbox, skimage, pyephem.
+version=1.0
+author=Università degli studi di Pavia, EUCENTRE Foundation
+email=dgaleazzo@gmail.com,daniele.devecchi03@universitadipavia.it
 
 # end of mandatory metadata
 
@@ -24,11 +25,11 @@ email=dgaleazzo@gmail.com,daniele.devecchi@eucentre.it
 # changelog=
 
 # tags are comma separated with spaces allowed
-tags=
+tags=SENSUM, Vulnerability indicators, Image processing, Co-registration, Built-up extraction, Change detection, Landsat, Footprints, Height, Density, Regularity, Feature extraction
 
-homepage=
-tracker=
-repository=
+homepage=http://www.sensum-project.eu/
+tracker=https://github.com/SENSUM-project/sensum_rs_qgis/issues
+repository=https://github.com/SENSUM-project/sensum_rs_qgis
 icon=icon.png
 # experimental flag
 experimental=False

@@ -1,4 +1,24 @@
 #!/usr/bin/python
+'''
+/***************************************************************************
+ Sensum
+                                 A QGIS plugin
+ Sensum QGIS Plugin
+                              -------------------
+        begin                : 2014-05-27
+        copyright            : (C) 2014 by Eucentre
+        email                : dgaleazzo@gmail.com
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************
+'''
 import config
 import os,sys
 import shutil
@@ -42,18 +62,15 @@ def main():
     shadow_checker(input_buildings, input_shadow[:-4]+'_temp.shp', date, idfield=idfield, outputShape=output_shape, resize=window_resize)
     #shutil.rmtree(tmp_shadow_processed)
     os.remove(input_shadow[:-4]+'_temp.shp')
-    os.remove(input_shadow[:-4]+'_temp.shx')
-    os.remove(input_shadow[:-4]+'_temp.dbf')
-    os.remove(input_shadow[:-4]+'_temp.prj')
 
 def args():
     parser = argparse.ArgumentParser(description='Calculate Height')
-    parser.add_argument("input_shadow", help="????")
-    parser.add_argument("input_buildings", help="????")
-    parser.add_argument("date", help="????")
-    parser.add_argument("output_shape", help="????")
-    parser.add_argument("idfield", help="????")
-    parser.add_argument("window_resize", help="????")
+    parser.add_argument("input_shadow", help="Shadows shapefile path")
+    parser.add_argument("input_buildings", help="Building shapefile path")
+    parser.add_argument("date", help="Acquisition date (hour in EDT)")
+    parser.add_argument("output_shape", help="Output shapefile")
+    parser.add_argument("idfield", help="Shadow ID field")
+    parser.add_argument("window_resize", help="Searching window radius")
     args = parser.parse_args()
     return args
 
@@ -111,9 +128,7 @@ def height(shadowShape, pixelWidth, pixelHeight, date, outShape=''):
         a = utm2wgs84(easting, northing, zone)
         lon,lat = a[0],a[1]
         shadowLen = shadow_length(band_list,lat,lon,date)
-        shadowLen = shadowLen * pixelWidth
         buildingHeight = building_height(lat,lon,date,shadowLen)
-        if buildingHeight < 5.0: buildingHeight = 5.0
         #insert value to init shape
         outFeature = outLayer.GetFeature(i)
         outFeature.SetField('Shadow_Len',int(shadowLen))

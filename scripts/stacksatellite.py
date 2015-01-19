@@ -1,4 +1,24 @@
 #!/usr/bin/python
+'''
+/***************************************************************************
+ Sensum
+                                 A QGIS plugin
+ Sensum QGIS Plugin
+                              -------------------
+        begin                : 2014-05-27
+        copyright            : (C) 2014 by Eucentre
+        email                : dgaleazzo@gmail.com
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************
+'''
 import config
 import os,sys
 import shutil
@@ -61,18 +81,18 @@ def main():
 
 def args():
     parser = argparse.ArgumentParser(description='Stack Satellite')
-    parser.add_argument("sat_folder", help="????")
-    parser.add_argument("segmentation_name", help="????")
-    parser.add_argument("n_classes", help="????")
-    parser.add_argument("--coregistration", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--builtup_index_method", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--pca_index_method", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--pca_classification_method", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--dissimilarity_method", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--pca_ob_method", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--ref_dir", nargs=1, help="????")
-    parser.add_argument("--restrict_to_city", nargs=1, help="????")
-    parser.add_argument("--segmentation_paramaters", nargs="+", help="????")
+    parser.add_argument("sat_folder", help="Main folder path")
+    parser.add_argument("segmentation_name", help="“Edison” or “Meanshift”")
+    parser.add_argument("n_classes", help="Number of classes in unsupervised classification")
+    parser.add_argument("--coregistration", default=False, const=True, nargs='?', help="Co-Registration option")
+    parser.add_argument("--builtup_index_method", default=False, const=True, nargs='?', help="Built-up Index method")
+    parser.add_argument("--pca_index_method", default=False, const=True, nargs='?', help="PCA index method")
+    parser.add_argument("--pca_classification_method", default=False, const=True, nargs='?', help="PCA index method")
+    parser.add_argument("--dissimilarity_method", default=False, const=True, nargs='?', help="Dissimilarity method")
+    parser.add_argument("--pca_ob_method", default=False, const=True, nargs='?', help="PCA object method")
+    parser.add_argument("--ref_dir", nargs=1, help="Reference path")
+    parser.add_argument("--restrict_to_city", nargs=1, help="Tiling shapefile.")
+    parser.add_argument("--segmentation_paramaters", nargs="+", help="PARAMETER1 PARAMETER2 PARAMETER3 PARAMETER4")
     args = parser.parse_args()
     return args
 

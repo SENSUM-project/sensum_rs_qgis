@@ -1,4 +1,24 @@
 #!/usr/bin/python
+'''
+/***************************************************************************
+ Sensum
+                                 A QGIS plugin
+ Sensum QGIS Plugin
+                              -------------------
+        begin                : 2014-05-27
+        copyright            : (C) 2014 by Eucentre
+        email                : dgaleazzo@gmail.com
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************
+'''
 import config
 import os,sys
 import shutil
@@ -42,25 +62,25 @@ def main():
 
 def args():
     parser = argparse.ArgumentParser(description='Calculate Features')
-    parser.add_argument("input_file", help="????")
-    parser.add_argument("segmentation_shape", help="????")
-    parser.add_argument("output_shape", help="????")
-    parser.add_argument('field', help="????")
-    parser.add_argument("--max_br", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--mean", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--min_br", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--mode", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--ndvi_std", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--ndvi_mean", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--std", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--weigh_br", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--ASM", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--contrast", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--correlation", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--dissimilarity", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--energy", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--homogeneity", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--multi", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("input_file", help="Input raster file")
+    parser.add_argument("segmentation_shape", help="Segmentation shape mask")
+    parser.add_argument("output_shape", help="Output shapefile")
+    parser.add_argument('field', help="Identifier shapefile ID")
+    parser.add_argument("--max_br", default=False, const=True, nargs='?', help="Maximum BR")
+    parser.add_argument("--mean", default=False, const=True, nargs='?', help="Mean")
+    parser.add_argument("--min_br", default=False, const=True, nargs='?', help="Minimun BR")
+    parser.add_argument("--mode", default=False, const=True, nargs='?', help="Mode")
+    parser.add_argument("--ndvi_std", default=False, const=True, nargs='?', help="NDVI Standard Deviation")
+    parser.add_argument("--ndvi_mean", default=False, const=True, nargs='?', help="NDVI Mean")
+    parser.add_argument("--std", default=False, const=True, nargs='?', help="Standard Deviation")
+    parser.add_argument("--weigh_br", default=False, const=True, nargs='?', help="Weight BR")
+    parser.add_argument("--ASM", default=False, const=True, nargs='?', help="ASM")
+    parser.add_argument("--contrast", default=False, const=True, nargs='?', help="Contrast")
+    parser.add_argument("--correlation", default=False, const=True, nargs='?', help="Correlation")
+    parser.add_argument("--dissimilarity", default=False, const=True, nargs='?', help="Dissimilarity")
+    parser.add_argument("--energy", default=False, const=True, nargs='?', help="Energy")
+    parser.add_argument("--homogeneity", default=False, const=True, nargs='?', help="Homogeneity")
+    parser.add_argument("--multi", default=False, const=True, nargs='?', help="Active multiprocess option (hight CPU usage)")
     args = parser.parse_args()
     return args
 

@@ -53,7 +53,6 @@ import glob
 import collections
 import ephem
 import math
-import cv2
 from operator import itemgetter
 import operator
 from collections import defaultdict,Counter
@@ -89,23 +88,14 @@ def shadow_length(input_band,latitude,longitude,date):
     #TODO: length of shadow from were to were? Building location information needed?
     
     o = ephem.Observer()
-    #print latitude, longitude, date
     o.lat, o.long,o.date = latitude,longitude,date
     #print 'o.lat,o.long',o.lat,o.long
     sun = ephem.Sun(o) #not an error
     azimuth = sun.az
-    #print azimuth
-    angle= math.degrees(azimuth)     
-    #print angle   
-    #angle = 166.01 
+    angle= math.degrees(azimuth)         
     rot = ndimage.interpolation.rotate(input_band, angle)
-    #cv2.imwrite("F:\\Sensum_xp\\DLR_validation\\CGN\\new_shadows\\test\\"+ str(index)+'.png', rot)
-    #rot_angle = angle - 180
-    #print rot_angle
-    #rot = ndimage.interpolation.rotate(input_band, rot_angle, axes = (1,0))
     #print 'azimuth_angle',angle
-    #c=np.apply_along_axis(sum,1, rot)
-    c=np.apply_along_axis(sum,0, rot)
+    c=np.apply_along_axis(sum,1, rot)
     return max(c)
 
 
@@ -129,8 +119,8 @@ def building_height(latitude,longitude,date,shadow_len):
     sun = ephem.Sun(o) 
     A = sun.alt
     building_height = math.tan(A)*shadow_len
-    #zimuth = sun.az
-    #azimuth= math.degrees(azimuth)
+    azimuth = sun.az
+    azimuth= math.degrees(azimuth)
     building_height=round(building_height, 2)
     return building_height
 

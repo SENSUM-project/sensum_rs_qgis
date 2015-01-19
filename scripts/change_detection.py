@@ -1,4 +1,24 @@
 #!/usr/bin/python
+'''
+/***************************************************************************
+ Sensum
+                                 A QGIS plugin
+ Sensum QGIS Plugin
+                              -------------------
+        begin                : 2014-05-27
+        copyright            : (C) 2014 by Eucentre
+        email                : dgaleazzo@gmail.com
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************
+'''
 import config
 import os,sys
 import shutil
@@ -35,9 +55,9 @@ def main():
 
 def args():
     parser = argparse.ArgumentParser(description='Change Detection')
-    parser.add_argument("main_folder", help="????")
-    parser.add_argument("extraction", help="????")
-    parser.add_argument("field", help="????")
+    parser.add_argument("main_folder", help="“Stack Satellite style” folder processed by the stacksatellite.py script.")
+    parser.add_argument("extraction", help="Select “PCA” or “Dissimilarity” built-up extraction.")
+    parser.add_argument("field", help="Attribute in the pca_class or dissimilarity_class shapefiles related to built-up areas. You have to manually edit just the first feature of the shape by writing the classes related to built-up separated by comma.")
     parser.add_argument("--spatial_filter", default=False, const=True, nargs='?', help="????")
     args = parser.parse_args()
     return args

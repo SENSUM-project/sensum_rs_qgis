@@ -1,4 +1,24 @@
 #!/usr/bin/python
+'''
+/***************************************************************************
+ Sensum
+                                 A QGIS plugin
+ Sensum QGIS Plugin
+                              -------------------
+        begin                : 2014-05-27
+        copyright            : (C) 2014 by Eucentre
+        email                : dgaleazzo@gmail.com
+ ***************************************************************************/
+
+/***************************************************************************
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 2 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ ***************************************************************************
+'''
 import config
 import os,sys
 import shutil
@@ -54,14 +74,14 @@ def main():
 
 def args():
     parser = argparse.ArgumentParser(description='Calculate Features')
-    parser.add_argument("reference_path", help="????")
-    parser.add_argument("target_folder", help="????")
-    parser.add_argument("--enable_clip", nargs=1, help="????")
-    parser.add_argument("--enable_grid", nargs=2, help="????")
-    parser.add_argument("--enable_unsupervised", nargs = 1, help="????")
-    parser.add_argument("--enable_resampling", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--enable_SURF", default=False, const=True, nargs='?', help="????")
-    parser.add_argument("--enable_FFT", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("reference_path", help="Reference folder Path")
+    parser.add_argument("target_folder", help="Target folder with images to change")
+    parser.add_argument("--enable_clip", nargs=1, help="Enable definition of a region of interest using a shapefile")
+    parser.add_argument("--enable_grid", nargs=2, help="Enable an automatic tile extraction. Rows and columns of the desired tile are input parameters")
+    parser.add_argument("--enable_unsupervised", nargs = 1, help="Unsupervised Method")
+    parser.add_argument("--enable_resampling", default=False, const=True, nargs='?', help="Resampling Method")
+    parser.add_argument("--enable_SURF", default=False, const=True, nargs='?', help="Enable SURF method")
+    parser.add_argument("--enable_FFT", default=False, const=True, nargs='?', help="Enable FFT method")
     args = parser.parse_args()
     return args
 
