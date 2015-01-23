@@ -12,8 +12,8 @@
 name=SENSUM Earth Observation Tools
 qgisMinimumVersion=2.0
 description=QGIS plugin built upon the SENSUM Earth Observation Tools
-about=QGIS plugin built upon the SENSUM Earth Observation Tools. All the functions included are designed to extract vulnerability indicators. For more details, please refer to the HTML guide included. Developers: Mostapha Harb, Daniele De Vecchi and Daniel Aurelio Galeazzo. External Dependency: scipy, orfeotoolbox, skimage, pyephem.
-version=1.0
+about=QGIS plugin built upon the SENSUM Earth Observation Tools. All the functions included are designed to extract vulnerability indicators. For more details, please refer to the HTML guide included. Developers: Mostapha Harb, Daniele De Vecchi and Daniel Aurelio Galeazzo. External Dependency: scipy, orfeotoolbox, skimage, pyephem. Online documentation including installation guide: http://lhotse21.gfz-potsdam.de/sensum/sensum_rs_doc/. If you don't want to read the installation guide and you are new to Python, download the package from here (x64: https://drive.google.com/open?id=0B03Z4pB1hO6QTzlNejItb3p1a1k&authuser=0, x32: https://drive.google.com/open?id=0B03Z4pB1hO6QSG9FSF84NUJ0eWs&authuser=0) and double click "install". Feel free to contact us in case of issues!
+version=1.01
 author=Università degli studi di Pavia, EUCENTRE Foundation
 email=dgaleazzo@gmail.com,daniele.devecchi03@universitadipavia.it
 
