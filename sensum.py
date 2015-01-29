@@ -30,28 +30,7 @@ from sensumdialog import *
 import os,sys
 import os.path
 import shutil
-import time
-import tempfile
-import osgeo.gdal, gdal
-import osgeo.ogr
-import numpy as np
-import math
-import scipy.signal
-import scipy as sp
-import cv2
 import subprocess
-from osgeo.gdalconst import *
-from sensum_library.preprocess import *
-from sensum_library.classification import *
-from sensum_library.segmentation import *
-from sensum_library.conversion import *
-from sensum_library.segmentation_opt import *
-from sensum_library.features import *
-from sensum_library.secondary_indicators import *
-from sensum_library.multi import *
-from numpy.fft import fft2, ifft2, fftshift
-from skimage.morphology import square, closing
-import otbApplication
 from scripts.utils import *
 
 
