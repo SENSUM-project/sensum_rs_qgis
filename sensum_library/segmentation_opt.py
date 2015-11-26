@@ -41,10 +41,13 @@ License: This file is part of SensumTools.
 import config
 import os
 import sys
-import osgeo.gdal, gdal
-from gdalconst import *
+import osgeo.gdal
+from osgeo.gdalconst import *
 import numpy as np
-import otbApplication
+try:
+    import otbApplication
+except:
+    raise ValueError('Missing or corrupted OrfeoToolbox package')
 from skimage.segmentation import felzenszwalb, slic, quickshift
 from scipy import optimize
 import random

@@ -41,10 +41,17 @@ License: This file is part of SensumTools.
 import config
 import os
 import sys
-import osgeo.gdal, gdal
-from gdalconst import *
+import osgeo.gdal
+from osgeo.gdalconst import *
 import numpy as np
-import otbApplication
+try :
+    import cv2
+except:
+    raise ValueError('Missing or corrupted OpenCV package')
+try:
+    import otbApplication
+except:
+    raise ValueError('Missing or corrupted OrfeoToolbox package')
 from skimage.segmentation import felzenszwalb, slic, quickshift
 from scipy import optimize
 from scipy import ndimage
@@ -56,8 +63,8 @@ import math
 from operator import itemgetter
 import operator
 from collections import defaultdict,Counter
-import osr
-import osgeo.ogr, ogr
+import osgeo.osr
+import osgeo.ogr
 from conversion import *
 
 if os.name == 'posix':
@@ -88,14 +95,23 @@ def shadow_length(input_band,latitude,longitude,date):
     #TODO: length of shadow from were to were? Building location information needed?
     
     o = ephem.Observer()
+    #print latitude, longitude, date
     o.lat, o.long,o.date = latitude,longitude,date
     #print 'o.lat,o.long',o.lat,o.long
     sun = ephem.Sun(o) #not an error
     azimuth = sun.az
-    angle= math.degrees(azimuth)         
+    #print azimuth
+    angle= math.degrees(azimuth)     
+    #print angle   
+    #angle = 166.01 
     rot = ndimage.interpolation.rotate(input_band, angle)
+    #cv2.imwrite("F:\\Sensum_xp\\DLR_validation\\CGN\\new_shadows\\test\\"+ str(index)+'.png', rot)
+    #rot_angle = angle - 180
+    #print rot_angle
+    #rot = ndimage.interpolation.rotate(input_band, rot_angle, axes = (1,0))
     #print 'azimuth_angle',angle
-    c=np.apply_along_axis(sum,1, rot)
+    #c=np.apply_along_axis(sum,1, rot)
+    c=np.apply_along_axis(sum,0, rot)
     return max(c)
 
 
@@ -119,8 +135,8 @@ def building_height(latitude,longitude,date,shadow_len):
     sun = ephem.Sun(o) 
     A = sun.alt
     building_height = math.tan(A)*shadow_len
-    azimuth = sun.az
-    azimuth= math.degrees(azimuth)
+    #zimuth = sun.az
+    #azimuth= math.degrees(azimuth)
     building_height=round(building_height, 2)
     return building_height
 
@@ -453,9 +469,9 @@ class CircleDensity(object):
 
 def density(buildingShape,radius,outputShape=''):
 
-    '''Function for assign density value into each building.                                                             \
-    Build new dataset (or shapefile if outputShape argument declared) with field N_Building and Density which contains   \
-    respectively the number of building into the expressed radius and density parameter expressed in number of building  \
+    '''Function for assign density value into each building.                                                             
+    Build new dataset (or shapefile if outputShape argument declared) with field N_Building and Density which contains   
+    respectively the number of building into the expressed radius and density parameter expressed in number of building  
     for meter.
 
     :param buildingShape: path of buildings shapefile (str)
@@ -500,10 +516,12 @@ def density(buildingShape,radius,outputShape=''):
         outLayer.SetFeature(outFeature)
     return outDS
 
+'''
 #TODO need to check if pixelWidth and pixelHeight are necessary since if we know the coordinate system from shape we know the value of dimension in meter
-def height(shadowShape,pixelWidth,pixelHeight,outShape=''):
-    
-    '''Function for calculate and assign to shadows shapefile the height of building and length of shadow.            \
+#def height(shadowShape,pixelWidth,pixelHeight,outShape=''):
+'''
+
+'''Function for calculate and assign to shadows shapefile the height of building and length of shadow.            \
     Build new dataset (or shapefile if outputShape argument declared) with field Shadow_Len and Height which contains \
     respectively the height of relative building and the length of the shadow                                         \
     
@@ -513,6 +531,8 @@ def height(shadowShape,pixelWidth,pixelHeight,outShape=''):
     :param outputShape: path of output shapefile (char)
     :returns: Dataset of new features assigned (ogr.Dataset)
     '''
+
+'''
     driver = osgeo.ogr.GetDriverByName("ESRI Shapefile")
     shadowDS = driver.Open(shadowShape)
     pixelWidth = pixelWidth
@@ -564,7 +584,8 @@ def height(shadowShape,pixelWidth,pixelHeight,outShape=''):
         outFeature.SetField('Height',buildingHeight)
         outLayer.SetFeature(outFeature)
     return outDS
-
+    '''
+'''
 if __name__ == "__main__":
     if os.path.isfile("/home/gale/Izmir/final_building/tmp.shp"):
         os.remove("/home/gale/Izmir/final_building/tmp.shp")
@@ -572,3 +593,4 @@ if __name__ == "__main__":
         os.remove("/home/gale/Izmir/final_building/prova.shp")
     height("/home/gale/Izmir/final_building/shadows.shp",0.5,0.5,outShape='/home/gale/Izmir/final_building/tmp.shp')
     #shadow_checker("/home/gale/Izmir/final_building/pan_class_6.shp","/home/gale/Izmir/final_building/tmp.shp",'2012/8/11 7:35:00', outputShape="/home/gale/Izmir/final_building/prova.shp", idfield="ID", resize=1)
+'''

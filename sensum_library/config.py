@@ -11,6 +11,7 @@ if sys.platform == "linux2":
     logos_path = "{}/.sensum/".format(os.path.expanduser("~"))
 elif sys.platform == 'darwin':
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    sys.path.append("/opt/local/Library/Frameworks/Python.frameworks/Versions/2.7/lib/python2.7/site-packages")
     logos_path = "{}/.sensum/".format(os.path.expanduser("~"))
 else:
     bit = ("64" if os.path.isdir("C:/OSGeo4W64") else "")

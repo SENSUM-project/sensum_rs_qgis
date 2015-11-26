@@ -47,9 +47,16 @@ import osgeo.osr
 import osgeo.ogr
 import osgeo.gdal
 import math
-from gdalconst import *
+from osgeo.gdalconst import *
 import numpy as np
-import otbApplication
+try :
+    import cv2
+except:
+    raise ValueError('Missing or corrupted OpenCV package')
+try:
+    import otbApplication
+except:
+    raise ValueError('Missing or corrupted OrfeoToolbox package')
 if os.name == 'posix':
     separator = '/'
 else:
@@ -902,3 +909,70 @@ def extract_tiles(input_raster,start_col_coord,start_row_coord,end_col_coord,end
     
     band_list = []
     return data,start_col_coord,start_row_coord,end_col_coord,end_row_coord
+
+
+def split_shape_area(input_shape,option="memory",output_shape="out"):
+   
+    '''Extract a single feature from a shapefile
+    
+    :param input_layer: layer of a shapefile (shapefile layer)
+    :param index: index of the feature to extract (integer)
+    :param option: 'memory' or 'file' depending on the desired output (default is memory) (string)
+    :param output_shape: path and name of the output shapefile (temporary file) (*.shp) (string)
+    :returns:  an output shapefile is created
+    :raises: AttributeError, KeyError
+    Author: Daniele De Vecchi - Mostapha Harb
+    Last modified: 25/03/2014
+    ''' 
+
+    #TODO: Why do we need this function? Does not seems like a good idea to do this. Why not simply loop through the features?
+    driver = osgeo.ogr.GetDriverByName('ESRI Shapefile')
+    infile=driver.Open(input_shape,0)
+    input_layer=infile.GetLayer()
+    '''
+    if option == 'file':
+        driver = osgeo.ogr.GetDriverByName('ESRI Shapefile')
+    elif option == 'memory':
+        driver = osgeo.ogr.GetDriverByName('Memory')
+    '''
+    layer_defn = input_layer.GetLayerDefn()
+    outDS = driver.CreateDataSource(output_shape)
+    outlayer = outDS.CreateLayer('polygon', geom_type=osgeo.ogr.wkbPolygon)
+    dn_def = osgeo.ogr.FieldDefn('DN', osgeo.ogr.OFTInteger)
+    area_def = osgeo.ogr.FieldDefn('Area', osgeo.ogr.OFTReal)
+    outlayer.CreateField(dn_def)
+    outlayer.CreateField(area_def)
+    featureDefn = outlayer.GetLayerDefn()
+
+    # loop through the input features
+    infeature = input_layer.GetNextFeature()
+    max_area = 0
+    feature_count = 0
+    
+    while infeature:
+        geom = infeature.GetGeometryRef()
+        area = geom.Area()
+        #print area
+        dn = infeature.GetField('DN')
+        if dn!=0:
+            if area > max_area: 
+                max_area = area
+                selected_feature = feature_count
+        infeature = input_layer.GetNextFeature()
+        feature_count = feature_count + 1 
+
+    input_layer.ResetReading()
+    inFeature = input_layer.GetFeature(selected_feature) 
+    outfeature = osgeo.ogr.Feature(featureDefn)
+    geom = inFeature.GetGeometryRef()
+    area = geom.Area()
+    dn = inFeature.GetField('DN')
+    outfeature.SetGeometry(geom)
+    outfeature.SetField('DN',dn)
+    outfeature.SetField('Area',area)
+    outlayer.CreateFeature(outfeature)
+    outfeature.Destroy()
+    infile.Destroy()
+    inFeature.Destroy()
+    outDS.Destroy()
+    shutil.copyfile(input_shape[:-4]+'.prj',output_shape[:-4]+'.prj')

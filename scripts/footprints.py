@@ -1,31 +1,11 @@
 #!/usr/bin/python
-'''
-/***************************************************************************
- Sensum
-                                 A QGIS plugin
- Sensum QGIS Plugin
-                              -------------------
-        begin                : 2014-05-27
-        copyright            : (C) 2014 by Eucentre
-        email                : dgaleazzo@gmail.com
- ***************************************************************************/
-
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************
-'''
 import config
 import os,sys
 import shutil
 import time
 import tempfile
-import osgeo.gdal, gdal
-import osgeo.ogr, ogr
+import osgeo.gdal
+import osgeo.ogr
 from osgeo.gdalconst import *
 import numpy as np
 import math
@@ -51,18 +31,18 @@ def main():
     training_attribute = str(arg.training_attribute)
     building_classes = map(int, arg.classes)
     output_shape = str(arg.output_shape)
-    enable_smooth_filter = arg.optimazer
+    enable_smooth_filter = arg.optimizer
     print pansharp_file,training_set,training_attribute,building_classes,output_shape,enable_smooth_filter
     footprints(pansharp_file,training_set,training_attribute,building_classes,output_shape,enable_smooth_filter=enable_smooth_filter)
 
 def args():
     parser = argparse.ArgumentParser(description='Calculate Height')
-    parser.add_argument("pansharp_file", help="Pan-sharpened input raster")
-    parser.add_argument("training_set", help="Training set as shapefile")
-    parser.add_argument("training_attribute", help="Training Field identifier")
-    parser.add_argument("output_shape", help="Output shapefile")
-    parser.add_argument("-c", "--classes", nargs="+", help="[CLASS1, CLASS2, ...] Buildings class selection")
-    parser.add_argument("--optimizer", default=False, const=True, nargs='?', help="Enable smooth filter")
+    parser.add_argument("pansharp_file", help="????")
+    parser.add_argument("training_set", help="????")
+    parser.add_argument("training_attribute", help="????")
+    parser.add_argument("output_shape", help="????")
+    parser.add_argument("-c", "--classes", nargs="+", help="????")
+    parser.add_argument("--optimizer", default=False, const=True, nargs='?', help="????")
     args = parser.parse_args()
     return args
 
@@ -103,7 +83,7 @@ def footprints(pansharp_file,training_set,training_attribute,building_classes,ou
         geom = infeature.GetGeometryRef()
         area = geom.Area()
         dn = infeature.GetField('DN')
-        if dn in building_classes and area > 25 and area < 6000 :
+        if dn in building_classes and area > 25 and area < 7500 :
             outfeature = osgeo.ogr.Feature(feature_def)
             outfeature.SetGeometry(geom)
             outfeature.SetField('DN',dn)

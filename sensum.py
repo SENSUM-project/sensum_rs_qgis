@@ -33,6 +33,15 @@ import shutil
 import subprocess
 from scripts.utils import *
 
+from sensum_library.preprocess import *
+from sensum_library.classification import *
+from sensum_library.segmentation import *
+from sensum_library.conversion import *
+from sensum_library.segmentation_opt import *
+from sensum_library.features import *
+from sensum_library.secondary_indicators import *
+from sensum_library.multi import *
+
 
 try:
     _encoding = QtGui.QApplication.UnicodeUTF8
@@ -67,8 +76,11 @@ def executeScript(command, progress=None,noerror=True):
     else:
         subprocess_flags = 0
 
-    command = (os.path.dirname(os.path.abspath(__file__))+command if os.name == "posix" else 'C:/OSGeo4W64/bin/python.exe "'+os.path.dirname(os.path.abspath(__file__))+command)
-    #QMessageBox.information(None, "Info", command) #DEBUG
+    #command = 'python "' + (os.path.dirname(os.path.abspath(__file__))+command if os.name == "posix" else 'C:/Python27/python.exe "'+os.path.dirname(os.path.abspath(__file__))+command)
+    bit = ("64" if os.path.isdir("C:/OSGeo4W64") else "")
+    osgeopath = "C:/OSGeo4W{}/bin/".format(bit)
+    command = osgeopath + 'python "' +os.path.dirname(os.path.abspath(__file__))+command
+    QMessageBox.information(None, "Info", command)
     proc = subprocess.Popen(
         command,
         shell=True,
@@ -93,7 +105,7 @@ def executeOtb(command, progress=None,label = "OTB library recalled"):
         bit = ("64" if os.path.isdir("C:/OSGeo4W64") else "")
         osgeopath = "C:/OSGeo4W{}/bin/".format(bit)
         command = osgeopath + command
-    #QMessageBox.information(None, "Info", command) #DEBUG
+    QMessageBox.information(None, "Info", command)    
     proc = subprocess.Popen(
         command,
         shell=True,
@@ -144,6 +156,45 @@ class Sensum:
     def initGui(self):
 
         self.toolBar = self.iface.addToolBar("SENSUM")
+
+        ######################
+        ## PANSHARP
+        ######################
+        # Create action that will start plugin configuration
+        self.action_pansharp = QAction(
+            QIcon(":/plugins/sensum_plugin/icons/pansharp.png"),
+            u"Pansharp", self.iface.mainWindow())
+        # connect the action to the run method
+        self.action_pansharp.triggered.connect(self.pansharp)
+        # Add toolbar button and menu item
+        self.toolBar.addAction(self.action_pansharp)
+        self.iface.addPluginToMenu(u"&SENSUM", self.action_pansharp)
+        
+        ######################
+        ## CLASSIFICATION
+        ######################
+        # Create action that will start plugin configuration
+        self.action_classification = QAction(
+            QIcon(":/plugins/sensum_plugin/icons/classification.png"),
+            u"Classification", self.iface.mainWindow())
+        # connect the action to the run method
+        self.action_classification.triggered.connect(self.classification)
+        # Add toolbar button and menu item
+        self.toolBar.addAction(self.action_classification)
+        self.iface.addPluginToMenu(u"&SENSUM", self.action_classification)
+
+        ######################
+        ## SEGMENTATION
+        ######################
+        # Create action that will start plugin configuration
+        self.action_segmentation = QAction(
+            QIcon(":/plugins/sensum_plugin/icons/segmentation.png"),
+            u"Segmentation", self.iface.mainWindow())
+        # connect the action to the run method
+        self.action_segmentation.triggered.connect(self.segmentation)
+        # Add toolbar button and menu item
+        self.toolBar.addAction(self.action_segmentation)
+        self.iface.addPluginToMenu(u"&SENSUM", self.action_segmentation)
 
         ######################
         ## FEATURES
@@ -249,7 +300,41 @@ class Sensum:
         self.toolBar.addAction(self.action_change)
         self.iface.addPluginToMenu(u"&SENSUM", self.action_change)
 
+        '''
+        ######################
+        ## INDEXES
+        ######################
+        # Create action that will start plugin configuration
+        self.action_temporal = QAction(
+            QIcon(":/plugins/sensum_plugin/icons/temporal.png"),
+            u"Temporal Analysis", self.iface.mainWindow())
+        # connect the action to the run method
+        self.action_temporal.triggered.connect(self.temporal)
+        # Add toolbar button and menu item
+        self.toolBar.addAction(self.action_temporal)
+        self.iface.addPluginToMenu(u"&SENSUM", self.action_temporal)
+
+        ######################
+        ## CHANGE DETECTION DILKUSHI
+        ######################
+        # Create action that will start plugin configuration
+        self.action_change_dilkushi = QAction(
+            QIcon(":/plugins/sensum_plugin/icons/change_dilkushi.png"),
+            u"Change Dilkushi", self.iface.mainWindow())
+        # connect the action to the run method
+        self.action_change_dilkushi.triggered.connect(self.change_dilkushi)
+        # Add toolbar button and menu item
+        self.toolBar.addAction(self.action_change_dilkushi)
+        self.iface.addPluginToMenu(u"&SENSUM", self.action_change_dilkushi)
+        '''
+
     def unload(self):
+        self.iface.removePluginMenu(u"&SENSUM", self.action_pansharp)
+        self.iface.removeToolBarIcon(self.action_pansharp)
+        self.iface.removePluginMenu(u"&SENSUM", self.action_classification)
+        self.iface.removeToolBarIcon(self.action_classification)
+        self.iface.removePluginMenu(u"&SENSUM", self.action_segmentation)
+        self.iface.removeToolBarIcon(self.action_segmentation)
         self.iface.removePluginMenu(u"&SENSUM", self.action_features)
         self.iface.removeToolBarIcon(self.action_features)
         self.iface.removePluginMenu(u"&SENSUM", self.action_building_height)
@@ -262,9 +347,6 @@ class Sensum:
         self.iface.removeToolBarIcon(self.action_stacksatellite)
         self.iface.removePluginMenu(u"&SENSUM", self.action_density)
         self.iface.removeToolBarIcon(self.action_density)
-        self.iface.removePluginMenu(u"&SENSUM", self.action_regularity)
-        self.iface.removeToolBarIcon(self.action_density)
-        self.iface.removePluginMenu(u"&SENSUM", self.action_change)
 
     def changeActive(self,comboBox):
         comboBox.clear()
@@ -273,9 +355,266 @@ class Sensum:
         current_layer = self.iface.mapCanvas().currentLayer()
         layers = self.iface.mapCanvas().layers()
         for i,layer in enumerate(layers):
+            #if layer.type() == "RasterLayer":
             path = str(layer.dataProvider().dataSourceUri()).replace("|layerid=0","")
             comboBox.addItem(_fromUtf8(""))
             comboBox.setItemText(i+1, _translate("Pansharp", path, None))
+
+    # run method that performs all the real work
+    def pansharp(self):
+        # Create the dialog (after translation) and keep reference
+        self.dlg_pansharp = PansharpDialog()
+        self.changeActive(self.dlg_pansharp.ui.comboBox_multiband)
+        self.changeActive(self.dlg_pansharp.ui.comboBox_panchromatic)
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_pansharp.ui.comboBox_multiband))
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_pansharp.ui.comboBox_panchromatic))
+        dlgProgress = ProgressDialog()
+        # show the dialog
+        self.dlg_pansharp.show()
+        # Run the dialog event loop
+        result = self.dlg_pansharp.exec_()
+        if result == 1:
+            ui = self.dlg_pansharp.ui
+            dlgProgress.show()
+            multiband_image = parse_input(str(ui.comboBox_multiband.currentText()))
+            panchromatic_image = parse_input(str(ui.comboBox_panchromatic.currentText()))
+            output_image = str(ui.lineEdit_output.text())
+            rowsp,colsp,nbands,geo_transform,projection = read_image_parameters(panchromatic_image)
+            rowsxs,colsxs,nbands,geo_transform,projection = read_image_parameters(multiband_image)
+            scale_rows = round(float(rowsp)/float(rowsxs),0)
+            scale_cols = round(float(colsp)/float(colsxs),0)
+            executeOtb("otbcli_RigidTransformResample -progress 1 -in {} -out {} -transform.type id -transform.type.id.scalex {} -transform.type.id.scaley {}".format(multiband_image,multiband_image[:-4]+'_resampled.tif',scale_cols,scale_rows),progress=dlgProgress.ui,label="Resampling")
+            fix_tiling_raster(panchromatic_image,multiband_image[:-4]+'_resampled.tif')
+            executeOtb("otbcli_Pansharpening -progress 1 -inp {} -inxs {} -out {} uint16".format(panchromatic_image,multiband_image[:-4]+'_resampled.tif',output_image),progress=dlgProgress.ui,label="Pan-sharpening")
+            QgsMapLayerRegistry.instance().addMapLayer(QgsRasterLayer(output_image, QFileInfo(output_image).baseName()))
+            QMessageBox.information(None, "Info", 'Done!')
+
+    def classification(self):
+        # Create the dialog (after translation) and keep reference
+        self.dlg_classification = ClassificationDialog()
+        self.changeActive(self.dlg_classification.ui.comboBox_input)
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_classification.ui.comboBox_input))
+        dlgProgress = ProgressDialog()
+        # show the dialog
+        self.dlg_classification.show()
+        # Run the dialog event loop
+        result = self.dlg_classification.exec_()
+        # See if OK was pressed
+        if result == 1:
+            ui = self.dlg_classification.ui
+            dlgProgress.show()
+            input_image = parse_input(str(ui.comboBox_input.currentText()))
+            output_raster = str(ui.lineEdit_output.text())
+            input_classification_type = str(ui.comboBox_supervised.currentText())
+            if input_classification_type == "Supervised":
+                input_shape_list = [str(ui.lineEdit_training.text())]
+                input_classification_supervised_type = str(ui.comboBox_supervised_type.currentText())
+                training_field = str(ui.lineEdit_training_field.text())
+                input_raster_list = [input_image]
+                input_raster = input_image
+                root = ET.Element("FeatureStatistics")
+                print 'Number of provided raster files: ' + str(len(input_raster_list))
+                for i in range(len(input_raster_list)):
+                    rows,cols,nbands,geotransform,projection = read_image_parameters(input_raster_list[i])
+                    band_list = read_image(input_raster_list[i],np.uint16,0)
+                    statistic = ET.SubElement(root,"Statistic")
+                    statistic.set("name","mean")
+                    for b in range(nbands):
+                        statistic_vector = ET.SubElement(statistic,"StatisticVector")
+                        statistic_vector.set("value",str(round(np.mean(band_list[b]),4)))
+                for i in range(len(input_raster_list)):
+                    band_list = read_image(input_raster_list[i],np.uint16,0)
+                    statistic = ET.SubElement(root,"Statistic")
+                    statistic.set("name","stddev")
+                    for b in range(nbands):
+                        statistic_vector = ET.SubElement(statistic,"StatisticVector")
+                        statistic_vector.set("value",str(round(np.std(band_list[b])/2,4)))
+                tree = ET.ElementTree(root)
+                tree.write(input_raster_list[0][:-4]+'_statistics.xml')
+                input_text = input_raster_list[0][:-4]+'.txt'
+                executeOtb("otbcli_TrainImagesClassifier -progress 1 -io.il {} -io.vd {} -io.imstat {} -sample.mv 100 -sample.mt 100 -sample.vtr 0.5 -sample.edg 1 -sample.vfn {} -classifier {} -io.out {} -io.confmatout {} ".format(input_raster_list[0],input_shape_list[0],input_raster_list[0][:-4]+'_statistics.xml',training_field,input_classification_supervised_type,input_text,input_text[:-4] + "_ConfusionMatrix.csv"),progress=dlgProgress.ui,label="Training Classifier")
+                rows,cols,nbands,geotransform,projection = read_image_parameters(input_raster)
+                band_list = read_image(input_raster,np.uint16,0)
+                root = ET.Element("FeatureStatistics")
+                statistic = ET.SubElement(root,"Statistic")
+                statistic.set("name","mean")
+                for b in range(0,nbands):
+                    statistic_vector = ET.SubElement(statistic,"StatisticVector")
+                    statistic_vector.set("value",str(round(np.mean(band_list[b]),4)))
+                statistic = ET.SubElement(root,"Statistic")
+                statistic.set("name","stddev")
+                for b in range(0,nbands):
+                    statistic_vector = ET.SubElement(statistic,"StatisticVector")
+                    statistic_vector.set("value",str(round(np.std(band_list[b])/2,4)))
+                tree = ET.ElementTree(root)
+                tree.write(input_raster[:-4]+'_statistics.xml')
+                executeOtb("otbcli_ImageClassifier -progress 1 -in {} -imstat {} -model {} -out {}".format(input_raster,input_raster[:-4]+'_statistics.xml',input_text,output_raster),progress=dlgProgress.ui,label="Classification")
+            else:
+                n_classes = int(ui.spinBox_nclasses.text())
+                n_iterations = int(ui.spinBox_niteration.text())
+                executeOtb("otbcli_KMeansClassification -progress 1 -in {} -ts 1000 -nc {} -maxit {} -ct 0.0001 -out {}".format( input_image, n_classes, n_iterations, output_raster),progress=dlgProgress.ui,label="Unsupervised classification")
+            QgsMapLayerRegistry.instance().addMapLayer(QgsRasterLayer(output_raster, QFileInfo(output_raster).baseName()))
+            QMessageBox.information(None, "Info", 'Done!')
+
+    def segmentation(self):
+        # Create the dialog (after translation) and keep reference
+        self.dlg_segmantation = SegmentationDialog()
+        self.changeActive(self.dlg_segmantation.ui.comboBox_input)
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_segmantation.ui.comboBox_input))
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_segmantation.ui.comboBox_optimizer_input))
+        dlgProgress = ProgressDialog()
+        # show the dialog
+        self.dlg_segmantation.show()
+        # Run the dialog event loop
+        result = self.dlg_segmantation.exec_()
+        # See if OK was pressed
+        if result == 1:
+            ui = self.dlg_segmantation.ui
+            dlgProgress.show()
+            input_image = parse_input(str(ui.comboBox_input.currentText()))
+            output_shape = str(ui.lineEdit_output.text())
+            checked_optimizer = bool(ui.checkBox_optimizer.isChecked())
+            segm_mode = str(ui.comboBox_method.currentText())
+            if checked_optimizer:
+                optimizer_shape = parse_input(str(ui.comboBox_optimizer_input.currentText()))
+                nloops = int(ui.spinBox_nloops.text())
+                select_criteria = int(ui.spinBox_criteria.text())
+                floaters = bool(ui.radioButton_floaters.isChecked())
+                segm_mode_optimizer = segm_mode
+                if floaters and segm_mode == "Baatz":
+                    segm_mode_optimizer = "Baatz"
+                elif floaters == 0 and segm_mode == "Baatz":
+                    segm_mode_optimizer = "Baatz_integers"
+                elif floaters and segm_mode == "Region Growing":
+                    segm_mode_optimizer = "Region_growing"
+                elif floaters == 0 and segm_mode == "Region Growing":
+                    segm_mode_optimizer = "Region_growing_integers"
+                elif segm_mode == "Morphological Profiles":
+                    segm_mode_optimizer = "Mprofiles"
+                band_list = read_image(input_image,np.uint16,0)
+                rows,cols,nbands,geo_transform,projection = read_image_parameters(input_image)
+                #Open reference shapefile
+                driver_shape = osgeo.ogr.GetDriverByName('ESRI Shapefile')
+                inDS = driver_shape.Open(optimizer_shape, 0)
+                if inDS is None:
+                    print 'Could not open file'
+                    sys.exit(1)
+                inLayer = inDS.GetLayer()
+                numFeatures = inLayer.GetFeatureCount()
+                print 'Number of reference features: ' + str(numFeatures)
+                patches_list = []
+                patches_geo_transform_list = []
+                reference_list = []
+                ref_geo_transform_list = []
+                dlgProgress.ui.progressBar.setMinimum(1)
+                dlgProgress.ui.progressBar.setMaximum(numFeatures)
+                for n in range(0,numFeatures):
+                    #separate each polygon creating a temp file
+                    temp = split_shape(inLayer,n)
+                    #conversion of the temp file to raster
+                    temp_layer = temp.GetLayer()
+                    reference_matrix, ref_geo_transform = polygon2array(temp_layer,geo_transform[1],abs(geo_transform[5])) 
+                    temp.Destroy()
+                    reference_list.append(reference_matrix)
+                    ref_geo_transform_list.append(ref_geo_transform)
+                    ext_patch_list,patch_geo_transform = create_extended_patch(band_list,reference_matrix,geo_transform,ref_geo_transform,0.3,False)
+                    patches_list.append(ext_patch_list)
+                    patches_geo_transform_list.append(patch_geo_transform)
+                    dlgProgress.ui.progressBar.setValue(dlgProgress.ui.progressBar.value()+1)
+                e = call_optimizer(segm_mode_optimizer,patches_list,reference_list,patches_geo_transform_list,ref_geo_transform_list,projection,select_criteria,nloops)
+                if segm_mode_optimizer == 'Felzenszwalb':
+                    input_band_list = read_image(input_image,0,0)
+                    rows_fz,cols_fz,nbands_fz,geotransform_fz,projection_fz = read_image_parameters(input_image)
+                    segments_fz = felzenszwalb_skimage(input_band_list, float(e[0]), float(e[1]), 0)
+                    write_image([segments_fz],0,0,output_shape[:-4]+'.TIF',rows_fz,cols_fz,geotransform_fz,projection_fz)
+                    rast2shp(output_shape[:-4]+'.TIF',output_shape)
+                if segm_mode_optimizer == 'Edison':
+                    paramaters = {"spatialr": round(e[0]), "ranger": round(e[1]), "minsize": 0, "scale": 0}
+                    segmentation_progress(input_image, output_shape, "edison", paramaters=paramaters,progress=dlgProgress.ui)
+                    #edison_otb(input_image,"vector",output_shape,int(round(e[0])),int(round(e[1])),0,0)
+                if segm_mode_optimizer == 'Meanshift':
+                    paramaters = {"spatialr": round(e[0]), "ranger": round(e[1]), "thres": 0, "maxiter": 0,"minsize": 0}
+                    segmentation_progress(input_image, output_shape, "meanshift", paramaters=paramaters,progress=dlgProgress.ui)
+                    #meanshift_otb(input_image,output_shape,'vector',int(round(e[0])),float(e[1]),0,0,0)
+                if segm_mode_optimizer == 'Watershed':
+                    paramaters = {"threshold": 0, "level": float(e[0])}
+                    segmentation_progress(input_image, output_shape, "watershed", paramaters=paramaters,progress=dlgProgress.ui)
+                    #watershed_otb(input_image,'vector',output_shape,0,float(e[0]))
+                if segm_mode_optimizer == 'Mprofiles':
+                    mprofiles_otb(input_image,output_shape,'vector',0,int(round(e[0])),0,0)
+                if segm_mode == 'Baatz':
+                    if floaters:
+                        segments_baatz = baatz_interimage(input_image,0,float(e[0]),float(e[1]),0,True)
+                    else:    
+                        segments_baatz = baatz_interimage(input_image,int(round(e[0])),Compact,Color,int(round(e[1])),True)
+                    rows,cols,nbands,geo_transform,projection = read_image_parameters(input_image)
+                    write_image([segments_baatz],0,0,output_shape[:-4]+'.TIF',rows,cols,geo_transform,projection)
+                    rast2shp(output_shape[:-4]+'.TIF',output_shape)
+                if segm_mode == 'Region_growing':
+                    if floaters:
+                        segments_regiongrowing = region_growing_interimage(input_image,int(round(e[0])),0,0,int(round(e[1])),True)
+                    else:
+                        segments_regiongrowing = region_growing_interimage(input_image,EuclideanT,float(e[0]),float(e[1]),Scale,True)
+                    rows,cols,nbands,geo_transform,projection = read_image_parameters(input_image)
+                    write_image([segments_regiongrowing],0,0,output_shape[:-4]+'.TIF',rows,cols,geo_transform,projection)
+                    rast2shp(output_shape[:-4]+'.TIF',output_shape)
+            else:
+                if segm_mode == "Felzenszwalb":
+                    min_size = int(ui.lineEdit_felzenszwalb_minsize.text())
+                    scale = float(ui.lineEdit_felzenszwalb_scale.text())
+                    sigma = float(ui.lineEdit_felzenszwalb_sigma.text())
+                    input_band_list = read_image(input_image,0,0)
+                    rows_fz,cols_fz,nbands_fz,geotransform_fz,projection_fz = read_image_parameters(input_image)
+                    segments_fz = felzenszwalb_skimage(input_band_list, scale, sigma, min_size)
+                    write_image([segments_fz],0,0,output_shape[:-4]+'.TIF',rows_fz,cols_fz,geotransform_fz,projection_fz)
+                    rast2shp(output_shape[:-4]+'.TIF',output_shape)
+                if segm_mode == "Edison":
+                    spatial_radius = int(ui.lineEdit_edison_radius.text())
+                    range_radius = int(ui.lineEdit_edison_range.text())
+                    min_size = int(ui.lineEdit_edison_size.text())
+                    scale = int(ui.lineEdit_edison_scale.text())
+                    paramaters = {"spatialr": spatial_radius, "ranger": range_radius, "minsize": min_size, "scale": scale}
+                    segmentation_progress(input_image, output_shape, "edison", paramaters=paramaters,progress=dlgProgress.ui)
+                elif segm_mode == "Baatz":
+                    EuclideanT = int(ui.lineEdit_baatz_euclidean.text())
+                    Compact = float(ui.lineEdit_baatz_compactness.text())
+                    Color = float(ui.lineEdit_baatz_color.text())
+                    Scale = int(ui.lineEdit_baatz_scale.text())
+                    segments_baatz = baatz_interimage(input_image,EuclideanT,Compact,Color,Scale,True)
+                    rows,cols,nbands,geo_transform,projection = read_image_parameters(input_image)
+                    write_image([segments_baatz],0,0,output_shape[:-4]+'.TIF',rows,cols,geo_transform,projection)
+                    rast2shp(output_shape[:-4]+'.TIF',output_shape)
+                elif segm_mode == "Meanshift":
+                    SpatialR = int(ui.lineEdit_meanshift_radius.text())
+                    RangeR = float(ui.lineEdit_meanshift_range.text())
+                    Thres = float(ui.lineEdit_meanshift_threshold.text())
+                    MaxIter = int(ui.lineEdit_meanshift_iterations.text())
+                    MinimumS = int(ui.lineEdit_meanshift_minsize.text())
+                    paramaters = {"spatialr": SpatialR, "ranger": RangeR, "thres": Thres, "maxiter": MaxIter,"minsize": MinimumS}
+                    segmentation_progress(input_image, output_shape, "meanshift", paramaters=paramaters,progress=dlgProgress.ui)
+                elif segm_mode == "Watershed":
+                    Thres = float(ui.lineEdit_watershed_threshold.text())
+                    Level = float(ui.lineEdit_watershed_level.text())
+                    paramaters = {"threshold": Thres, "level": Level}
+                    segmentation_progress(input_image, output_shape, "watershed", paramaters=paramaters,progress=dlgProgress.ui)
+                elif segm_mode == "Morphological Profiles":
+                    Size = int(ui.lineEdit_morphological_radius.text())
+                    Sigma = float(ui.lineEdit_morphological_sigma.text())
+                    Start = float(ui.lineEdit_morphological_start.text())
+                    Step = int(ui.lineEdit_morphological_step.text())
+                    paramaters = {"size": Size, "sigma": Sigma, "start": Start, "step": Step}
+                    segmentation_progress(input_image, output_shape, "mprofiles", paramaters=paramaters,progress=dlgProgress.ui)
+                elif segm_mode == "Region Growing":
+                    EuclideanT = int(ui.lineEdit_region_euclidean.text())
+                    Compact = float(ui.lineEdit_region_compactness.text())
+                    Color = float(ui.lineEdit_region_color.text())
+                    Scale = int(ui.lineEdit_region_scale.text())
+                    segments_regiongrowing = region_growing_interimage(input_image,EuclideanT,Compact,Color,Scale,True)
+                    rows,cols,nbands,geo_transform,projection = read_image_parameters(input_image)
+                    write_image([segments_regiongrowing],0,0,output_shape[:-4]+'.TIF',rows,cols,geo_transform,projection)
+                    rast2shp(output_shape[:-4]+'.TIF',output_shape)
+            QgsMapLayerRegistry.instance().addMapLayer(QgsVectorLayer(output_shape,os.path.splitext(os.path.basename(output_shape))[0], "ogr"))
+            QMessageBox.information(None, "Info", 'Done!')
 
     def features(self):
         # Create the dialog (after translation) and keep reference
@@ -357,6 +696,7 @@ class Sensum:
                 select_crop = "--enable_unsupervised {} ".format(ui.spinBox_nclasses.text())
             executeScript('/scripts/coregistration.py" \"{}\" \"{}\" {} {}'.format(reference_path,target_folder,select_crop,options),dlgProgress.ui)
             QMessageBox.information(None, "Info", 'Done!')
+
 
     def footprints(self):
         # Create the dialog (after translation) and keep reference
@@ -454,6 +794,46 @@ class Sensum:
             QgsMapLayerRegistry.instance().addMapLayer(QgsVectorLayer(outputShape,os.path.splitext(os.path.basename(outputShape))[0], "ogr"))
             QMessageBox.information(None, "Info", 'Done!')
     
+    def temporal(self):
+        # Create the dialog (after translation) and keep reference
+        self.dlg_temporal = TemporalDialog()
+        self.changeActive(self.dlg_temporal.ui.comboBox_mask)
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_temporal.ui.comboBox_mask))
+        QObject.connect(self.dlg_temporal.ui.pushButton_plot, SIGNAL("clicked()"), self.temporal_plot)
+        dlgProgress = ProgressDialog()
+        # show the dialog
+        self.dlg_temporal.show()
+        # Run the dialog event loop
+        result = self.dlg_temporal.exec_()
+        #self.temporal_plot()
+        # See if OK was pressed
+        if result == 1:
+            ui = self.dlg_temporal.ui
+            dlgProgress.show()
+            sat_folder = str(ui.lineEdit_folder.text())
+            input_mask = parse_input(str(ui.comboBox_mask.currentText()))
+            n_classes = str(ui.spinBox_nclass.text())
+            indexes = [(ui.checkBox_1,"Index1"),(ui.checkBox_2,"Index2"),(ui.checkBox_3,"Index3"),(ui.checkBox_4,"Index4"),(ui.checkBox_5,"Index5"),(ui.checkBox_6,"Index6"),(ui.checkBox_7,"Index7"),(ui.checkBox_8,"Index8"),(ui.checkBox_9,"Index9"),(ui.checkBox_10,"Index10"),(ui.checkBox_11,"Index11"),(ui.checkBox_12,"Index12")]
+            indexes_list = " ".join([index for pushButton,index in indexes if pushButton.isChecked()])
+            executeScript('/scripts/temporal.py" \"{}\" \"{}\" \"{}\" -i {}'.format(sat_folder,input_mask,n_classes,indexes_list),dlgProgress.ui)
+            #executeScript('/scripts/temporal.py" \"{}\" \"{}\" \"{}\"'.format(sat_folder,input_mask,n_classes),dlgProgress.ui)
+
+    def temporal_plot(self):
+        # Create the dialog (after translation) and keep reference
+        self.dlg_temporal_plot = TemporalPlotDialog()
+        QObject.connect(self.dlg_temporal_plot.ui.pushButton_plot, SIGNAL("clicked()"), self.temporale_plot_run)
+        # show the dialog
+        self.dlg_temporal_plot.show()
+        # Run the dialog event loop
+        result = self.dlg_temporal_plot.exec_()
+
+    def temporale_plot_run(self):
+        ui = self.dlg_temporal_plot.ui
+        sat_folder = str(ui.lineEdit_folder.text())
+        index = str(ui.comboBox_index.currentText())
+        input_mask = parse_input(str(ui.lineEdit_output.text()))
+        executeScript('/scripts/temporal.py" \"{}\" \"{}\" \"{}\" -i {} --plot'.format(sat_folder,input_mask,0,index))
+
     def change(self):
         # Create the dialog (after translation) and keep reference
         self.dlg_change = ChangeDialog()
@@ -470,9 +850,43 @@ class Sensum:
             extraction = ( "Dissimilarity" if str(ui.comboBox_extraction.currentText()) == "Dissimilarity-Based" else "PCA")
             field = str(ui.lineEdit_field.text())
             spatial_filter = (" --spatial_filter " if bool(ui.checkBox_spatial_filter.isChecked()) else "")
-            executeScript('/scripts/change_detection.py" \"{}\" \"{}\" \"{}\" \"{}\"'.format(sat_folder,extraction,field,spatial_filter),dlgProgress.ui)
+            executeScript('/scripts/change_detection.py" \"{}\" \"{}\" \"{}\" {}'.format(sat_folder,extraction,field,spatial_filter),dlgProgress.ui)
             output_shape = sat_folder+"/change_detection.shp"
             QgsMapLayerRegistry.instance().addMapLayer(QgsVectorLayer(output_shape,os.path.splitext(os.path.basename(output_shape))[0], "ogr"))
+            QMessageBox.information(None, "Info", 'Done!')
+
+    def change_dilkushi(self):
+        # Create the dialog (after translation) and keep reference
+        self.dlg_change_dilkushi = ChangeDetectionDilkushiDialog()
+        self.changeActive(self.dlg_change_dilkushi.ui.comboBox_multiband_pre)
+        self.changeActive(self.dlg_change_dilkushi.ui.comboBox_panchromatic_pre)
+        self.changeActive(self.dlg_change_dilkushi.ui.comboBox_multiband_post)
+        self.changeActive(self.dlg_change_dilkushi.ui.comboBox_panchromatic_post)
+        self.changeActive(self.dlg_change_dilkushi.ui.comboBox_clip_shapefile)
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_change_dilkushi.ui.comboBox_multiband_pre))
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_change_dilkushi.ui.comboBox_panchromatic_pre))
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_change_dilkushi.ui.comboBox_multiband_post))
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_change_dilkushi.ui.comboBox_panchromatic_post))
+        QObject.connect(self.iface.mapCanvas(), SIGNAL( "layersChanged()" ), lambda: self.changeActive(self.dlg_change_dilkushi.ui.comboBox_clip_shapefile))
+        dlgProgress = ProgressDialog()
+        # show the dialog
+        self.dlg_change_dilkushi.show()
+        # Run the dialog event loop
+        result = self.dlg_change_dilkushi.exec_()
+        if result == 1:
+            ui = self.dlg_change_dilkushi.ui
+            dlgProgress.show()
+            multiband_image_pre = parse_input(str(ui.comboBox_multiband_pre.currentText()))
+            panchromatic_image_pre = parse_input(str(ui.comboBox_panchromatic_pre.currentText()))
+            multiband_image_post = parse_input(str(ui.comboBox_multiband_post.currentText()))
+            panchromatic_image_post = parse_input(str(ui.comboBox_panchromatic_post.currentText()))
+            clip_shapefile = parse_input(str(ui.comboBox_clip_shapefile.currentText()))
+            executeScript('/scripts/change_detection_dilkushi.py" \"{}\" \"{}\" \"{}\" \"{}\" \"{}\"'.format(
+                multiband_image_pre,
+                panchromatic_image_pre,
+                multiband_image_post,
+                panchromatic_image_post,
+                clip_shapefile),dlgProgress.ui)
             QMessageBox.information(None, "Info", 'Done!')
 
     def regularity(self):

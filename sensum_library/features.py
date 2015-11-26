@@ -46,31 +46,15 @@ import scipy.stats
 import os,sys
 import collections
 from operator import itemgetter, attrgetter
-sys.path.append("C:\\OSGeo4W64\\apps\\Python27\\Lib\\site-packages")
-sys.path.append("C:\\OSGeo4W64\\apps\\orfeotoolbox\\python")
-os.environ["PATH"] = os.environ["PATH"] + "C:\\OSGeo4W64\\bin"
+#sys.path.append("C:\\OSGeo4W64\\apps\\Python27\\Lib\\site-packages")
+#sys.path.append("C:\\OSGeo4W64\\apps\\orfeotoolbox\\python")
+#os.environ["PATH"] = os.environ["PATH"] + "C:\\OSGeo4W64\\bin"
 from skimage.feature import greycomatrix
 from skimage.feature import greycoprops
 from conversion import *
 from classification import *
 import multiprocessing
 import time
-
-
-#os.chdir('F:\\Sensum_xp\\Izmir\\')
-
-input_raster = 'building_extraction_sup\\pansharp.TIF'
-input_shape = 'building_extraction_sup\\segmentation_watershed_default_training.shp'
-input_raster_2 = 'wetransfer-749d73\\pansharp.TIF'
-input_shape_2 = 'wetransfer-749d73\\watershed_001_training.shp'
-input_raster_3 = '/home/gale/Izmir/11MAY06080935-M2AS-053497864010_01_P002.TIF'
-input_txt = 'building_extraction_sup\\svm.txt'
-data_type = np.float32
-output_raster_opencv = 'building_extraction_sup\\opencv_supervised.TIF'
-output_raster_opencv_2 = 'wetransfer-749d73\\opencv_supervised.TIF'
-output_raster_otb = 'building_extraction_sup\\otb_unsupervised.TIF'
-output_raster_sup = 'wetransfer-749d73\\test_supervised_svm.TIF'
-training_field = 'Class'
 
 if os.name == 'posix':
     separator = '/'
@@ -489,85 +473,6 @@ class Task_moving(object):
     def __str__(self):
          return str(self.i)
     
-'''   
-if __name__ == '__main__':
-    print time.asctime( time.localtime(time.time()) )
-    # Establish communication queues
-    tasks = multiprocessing.JoinableQueue()
-    results = multiprocessing.Queue()
-    
-    # Start consumers
-    num_consumers = multiprocessing.cpu_count()  * 2
-    print 'Creating %d consumers' % num_consumers
-    consumers = [ Consumer(tasks, results)
-                  for i in xrange(num_consumers) ]
-    for w in consumers:
-        w.start()
-        
-    
-    input_band_list = read_image(input_raster_3,np.int32,0)
-#    texture_moving_window(input_band_list,7,'dissimilarity',64) 
-    
-    window_dimension = 5
-    index = 'dissimilarity'
-    quantization_factor = 64
-    
-    band_list_q = linear_quantization(input_band_list,quantization_factor)
-    output_list = []
-    
-               
-    feat1 = 0.0
-    
-    rows,cols=input_band_list[0].shape
-    output_ft_1 = np.zeros((len(input_band_list),rows,cols)).astype(np.float32)
-    
-    print input_band_list[0].shape
-    if (rows%window_dimension)!=0:
-        rows_w = rows-1
-    else:
-        rows_w = rows
-    if (cols%window_dimension)!=0:
-        cols_w = cols-1
-    else:
-        cols_w = cols
-    print rows,cols
-
-#    
-#    rows_w = 50
-    
-    for i in range(0,rows_w):
-        tasks.put(Task_moving(i, rows_w, cols_w, input_band_list,band_list_q,window_dimension,index,quantization_factor))
-        
-        
-     # Add a poison pill for each consumer
-    for i in xrange(num_consumers):
-        tasks.put(None)
-        #print tasks
-    # Wait for all of the tasks to finish
-    tasks.join()
-    
-    # Start printing results
-    while rows_w:
-        res = results.get()
-        if res.size != 1:
-            res = res.reshape(res.size/4,4)
-            for i in range(res.size/4):
-                tmp = res[i]
-                b,index_row,index_col,feat1 = tmp[0],tmp[1],tmp[2],tmp[3]
-                #print b,index_row,index_col,feat1
-                output_ft_1[b][index_row][index_col]=float(feat1)
-                #print output_ft_1[b][index_row][index_col]
-        rows_w -= 1
-    
-    #print output_ft_1[b]
-    
-    for b in range(0,len(input_band_list)):
-        output_list.append(output_ft_1[b][:][:])
-        
-    print time.asctime( time.localtime(time.time()) )
-    print output_list
-'''
-
 
 def value_to_segments(input_raster,input_shape,output_shape,operation = 'Mode'):
     
@@ -729,4 +634,64 @@ def tile_statistics(band_mat,start_col_coord,start_row_coord,end_col_coord,end_r
         confidence = 1
 
     return (start_col_coord,start_row_coord,end_col_coord,end_row_coord,confidence,min_value_freq,max_value_freq,std_value,diff_value)
+
+
+def classification_statistics(input_raster_classification,input_raster):
+
+    '''
+    Compute statistics related to the input unsupervised classification
+
+    :param input_raster_classification: path and name of the input raster file with classification(*.TIF,*.tiff) (string)
+    :param input_raster: path and name of the input raster file (*.TIF,*.tiff) (string)
+
+    :returns: a list of statistics (value/class,min_value,max_value,diff_value,std_value,min_value_freq,max_value_freq,tot_count)
+
+    Author: Daniele De Vecchi
+    Last modified: 25/08/2014
+    '''
+
+    band_list_classification = read_image(input_raster_classification,np.uint8,0)
+    rows_class,cols_class,nbands_class,geotransform_class,projection_class = read_image_parameters(input_raster_classification)
+
+    band_list = read_image(input_raster,np.uint8,0)
+    rows,cols,nbands,geotransform,projection = read_image_parameters(input_raster)
+
+    max_class = np.max(band_list_classification[0])
+    stat_list = []
+    for value in range(0,max_class+1):
+        #print '----------------------------'
+        #print 'Class ' + str(value)
+        mask = np.equal(band_list_classification[0],value)
+        data = np.extract(mask,band_list[0])
+
+        #Statistics
+        #Histogram definition
+        data_flat = data.flatten()
+        data_counter = collections.Counter(data_flat)
+        data_common = (data_counter.most_common(20)) #20 most common values
+        data_common_sorted = sorted(data_common,key=itemgetter(0)) #reverse=True for inverse order
+        hist_value = [elt for elt,count in data_common_sorted]
+        hist_count = [count for elt,count in data_common_sorted]
+
+        #Define the level of confidence according to the computed statistics 
+        min_value = hist_value[0]
+        max_value = hist_value[-1]
+        std_value = np.std(hist_count)
+        diff_value = max_value - min_value
+        min_value_count = hist_count[0]
+        max_value_count = hist_count[-1] 
+        tot_count = np.sum(hist_count)
+        min_value_freq = (float(min_value_count) / float(tot_count)) * 100
+        max_value_freq = (float(max_value_count) / float(tot_count)) * 100
+
+        #print 'Min value: ' + str(min_value)
+        #print 'Max value: ' + str(max_value)
+        #print 'Diff value: ' + str(diff_value)
+        #print 'Standard Deviation: ' + str(std_value)
+        #print 'Min value frequency: ' + str(min_value_freq)
+        #print 'Max value frequency: ' + str(max_value_freq)
+        #print 'Total values: ' + str(tot_count)
+        #print '----------------------------'
+        stat_list.append((value,min_value,max_value,diff_value,std_value,min_value_freq,max_value_freq,tot_count))
+    return stat_list
 

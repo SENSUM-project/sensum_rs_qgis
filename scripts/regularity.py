@@ -1,31 +1,11 @@
 #!/usr/bin/python
-'''
-/***************************************************************************
- Sensum
-                                 A QGIS plugin
- Sensum QGIS Plugin
-                              -------------------
-        begin                : 2014-05-27
-        copyright            : (C) 2014 by Eucentre
-        email                : dgaleazzo@gmail.com
- ***************************************************************************/
-
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************
-'''
 import config
 import os,sys
 import shutil
 import time
 import tempfile
-import osgeo.gdal, gdal
-import osgeo.ogr, ogr
+import osgeo.gdal
+import osgeo.ogr
 from osgeo.gdalconst import *
 import numpy as np
 import math
@@ -52,8 +32,8 @@ def main():
 
 def args():
     parser = argparse.ArgumentParser(description='Calculate Height')
-    parser.add_argument("input_buildings", help="Input buildings shapefile path")
-    parser.add_argument("output_shape", help="Output shapefile")
+    parser.add_argument("input_buildings", help="????")
+    parser.add_argument("output_shape", help="????")
     args = parser.parse_args()
     return args
 
@@ -76,8 +56,17 @@ def regularity(buildingShape, pixelWidth, pixelHeight, outShape):
     outLayer = outDS.GetLayer()
     regularity_def = osgeo.ogr.FieldDefn('Regularity', osgeo.ogr.OFTString)
     alignment_def = osgeo.ogr.FieldDefn('Alignment', osgeo.ogr.OFTInteger)
+    #perimeter_def = osgeo.ogr.FieldDefn('Perimeter', osgeo.ogr.OFTReal)
+    length_a_def = osgeo.ogr.FieldDefn('LengthA', osgeo.ogr.OFTReal)
+    length_b_def = osgeo.ogr.FieldDefn('LengthB', osgeo.ogr.OFTReal)
+    ratio_def = osgeo.ogr.FieldDefn('Ratio', osgeo.ogr.OFTReal)
+    #regnew_def = osgeo.ogr.FieldDefn('Reg_new', osgeo.ogr.OFTString)
     outLayer.CreateField(regularity_def)
     outLayer.CreateField(alignment_def)
+    outLayer.CreateField(length_a_def)
+    outLayer.CreateField(length_b_def)
+    outLayer.CreateField(ratio_def)
+    
     status = Bar(buildingFeaturesCount, "Regularity")
     for i in range(buildingFeaturesCount):
         status(i+1)
@@ -107,8 +96,31 @@ def regularity(buildingShape, pixelWidth, pixelHeight, outShape):
         regularity = str(building_regularity(length_a,length_b))
         #Fill field
         outFeature = outLayer.GetFeature(i)
+        #geom = outFeature.GetGeometryRef()
+        #perimeter = geom.Boundary().Length()
+        #area = geom.Area()
+        #delta = math.sqrt((float(perimeter)*float(perimeter)/float(4)-4*area))
+        #length_a_new = float((float(perimeter)/float(2)) + delta) / float(2)
+        #length_b_new = float((float(perimeter)/float(2)) - delta) / float(2)
+        '''
+        if length_a_new > length_b_new:
+            if float(length_a_new)/float(length_b_new) > 4: reg_label = 'irregular'
+            else: reg_label = 'regular'
+        else:
+            if float(length_b_new)/float(length_a_new) > 4: reg_label = 'irregular'
+            else: reg_label = 'regular'
+        '''
         outFeature.SetField('Regularity',regularity)
         outFeature.SetField('Alignment',int(alpha))
+        #outFeature.SetField('Perimeter',float(perimeter))
+        outFeature.SetField('LengthA',float(length_a))
+        outFeature.SetField('LengthB',float(length_b))
+        if length_b > length_a:
+            ratio = float(length_b) / float(length_a)
+        else:
+            ratio = float(length_a) / float(length_b)
+        outFeature.SetField('Ratio',float(ratio))
+        #outFeature.SetField('Reg_new',str(reg_label))
         outLayer.SetFeature(outFeature)
     buildingDS.Destroy()
     return outDS

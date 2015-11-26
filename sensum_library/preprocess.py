@@ -44,11 +44,17 @@ import config
 import os
 import sys
 import osgeo.gdal
-from gdalconst import *
-import cv2
+from osgeo.gdalconst import *
 import numpy as np
 import osgeo.ogr
-import otbApplication
+try :
+    import cv2
+except:
+    raise ValueError('Missing or corrupted OpenCV package')
+try:
+    import otbApplication
+except:
+    raise ValueError('Missing or corrupted OrfeoToolbox package')
 import shutil
 import collections
 from operator import itemgetter, attrgetter

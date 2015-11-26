@@ -43,9 +43,16 @@ import config
 import os
 import sys
 import osgeo.gdal
-from gdalconst import *
+from osgeo.gdalconst import *
 import numpy as np
-import otbApplication
+try :
+    import cv2
+except:
+    raise ValueError('Missing or corrupted OpenCV package')
+try:
+    import otbApplication
+except:
+    raise ValueError('Missing or corrupted OrfeoToolbox package')
 from skimage.segmentation import felzenszwalb, quickshift
 from scipy import optimize
 import random

@@ -1,6 +1,6 @@
 import config
-import gdal
-import ogr
+import osgeo.gdal
+import osgeo.ogr
 import os
 import psycopg2
 

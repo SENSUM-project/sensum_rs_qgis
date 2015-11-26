@@ -46,9 +46,16 @@ import scipy.stats
 import osgeo.gdal
 import osgeo.ogr
 import shutil
-import cv2
+try :
+    import cv2
+except:
+    raise ValueError('Missing or corrupted OpenCV package')
+try:
+    import otbApplication
+except:
+    raise ValueError('Missing or corrupted OrfeoToolbox package')
+    
 import xml.etree.cElementTree as ET
-import otbApplication
 from conversion import *
 import time
 import operator

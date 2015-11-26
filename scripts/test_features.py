@@ -1,31 +1,11 @@
 #!/usr/bin/python
-'''
-/***************************************************************************
- Sensum
-                                 A QGIS plugin
- Sensum QGIS Plugin
-                              -------------------
-        begin                : 2014-05-27
-        copyright            : (C) 2014 by Eucentre
-        email                : dgaleazzo@gmail.com
- ***************************************************************************/
-
-/***************************************************************************
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- ***************************************************************************
-'''
 import config
 import os,sys
 import shutil
 import time
 import tempfile
-import osgeo.gdal, gdal
-import osgeo.ogr, ogr
+import osgeo.gdal
+import osgeo.ogr
 from osgeo.gdalconst import *
 import numpy as np
 import math
@@ -34,6 +14,7 @@ import warnings
 from utils import Bar
 
 sys.path.append(os.path.split(os.path.dirname(os.path.abspath(__file__)))[0])
+
 from sensum_library.preprocess import *
 from sensum_library.classification import *
 from sensum_library.segmentation import *
@@ -41,7 +22,6 @@ from sensum_library.conversion import *
 from sensum_library.segmentation_opt import *
 from sensum_library.features import *
 from sensum_library.secondary_indicators import *
-from sensum_library.multi import *
 
 def main():
     warnings.filterwarnings("ignore")
@@ -62,25 +42,25 @@ def main():
 
 def args():
     parser = argparse.ArgumentParser(description='Calculate Features')
-    parser.add_argument("input_file", help="Input raster file")
-    parser.add_argument("segmentation_shape", help="Segmentation shape mask")
-    parser.add_argument("output_shape", help="Output shapefile")
-    parser.add_argument('field', help="Identifier shapefile ID")
-    parser.add_argument("--max_br", default=False, const=True, nargs='?', help="Maximum BR")
-    parser.add_argument("--mean", default=False, const=True, nargs='?', help="Mean")
-    parser.add_argument("--min_br", default=False, const=True, nargs='?', help="Minimun BR")
-    parser.add_argument("--mode", default=False, const=True, nargs='?', help="Mode")
-    parser.add_argument("--ndvi_std", default=False, const=True, nargs='?', help="NDVI Standard Deviation")
-    parser.add_argument("--ndvi_mean", default=False, const=True, nargs='?', help="NDVI Mean")
-    parser.add_argument("--std", default=False, const=True, nargs='?', help="Standard Deviation")
-    parser.add_argument("--weigh_br", default=False, const=True, nargs='?', help="Weight BR")
-    parser.add_argument("--ASM", default=False, const=True, nargs='?', help="ASM")
-    parser.add_argument("--contrast", default=False, const=True, nargs='?', help="Contrast")
-    parser.add_argument("--correlation", default=False, const=True, nargs='?', help="Correlation")
-    parser.add_argument("--dissimilarity", default=False, const=True, nargs='?', help="Dissimilarity")
-    parser.add_argument("--energy", default=False, const=True, nargs='?', help="Energy")
-    parser.add_argument("--homogeneity", default=False, const=True, nargs='?', help="Homogeneity")
-    parser.add_argument("--multi", default=False, const=True, nargs='?', help="Active multiprocess option (hight CPU usage)")
+    parser.add_argument("input_file", help="????")
+    parser.add_argument("segmentation_shape", help="????")
+    parser.add_argument("output_shape", help="????")
+    parser.add_argument('field', help="????")
+    parser.add_argument("--max_br", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("--mean", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("--min_br", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("--mode", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("--ndvi_std", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("--ndvi_mean", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("--std", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("--weigh_br", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("--ASM", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("--contrast", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("--correlation", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("--dissimilarity", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("--energy", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("--homogeneity", default=False, const=True, nargs='?', help="????")
+    parser.add_argument("--multi", default=False, const=True, nargs='?', help="????")
     args = parser.parse_args()
     return args
 
@@ -89,10 +69,10 @@ def test_features(input_file,segmentation_shape,output_shape,indexes_list_spectr
     ndvi_comp = []
     wb_comp = []
     #Read original image - base layer
-    input_list = read_image(input_file,np.uint16,0)
+    input_list = read_image(input_file,np.float32,0)
     #input_list_tf = read_image(input_file,np.uint8,0) #different data type necessary for texture features
     rows,cols,nbands,geo_transform,projection = read_image_parameters(input_file)
-    input_list_tf = linear_quantization(input_list,64)
+    #input_list_tf = linear_quantization(input_list,64)
     print indexes_list_spectral
     #Conversion of the provided segmentation shapefile to raster for further processing
     shp2rast(segmentation_shape, segmentation_shape[:-4]+'.TIF', rows, cols, field)
