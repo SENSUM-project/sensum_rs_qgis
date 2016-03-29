@@ -23,7 +23,8 @@ else:
     logos_path = osgeopath+"bin/.sensum/"
 if not os.path.exists(logos_path):
     os.mkdir(logos_path)
-os.chdir(osgeopath+'bin/')
+if sys.platform == 'win32':
+    os.chdir(osgeopath+'bin/')
 if (os.path.isfile("{}sensum.png".format(logos_path)) and os.path.isfile("{}unipv.png".format(logos_path)) and os.path.isfile("{}eucentre.png".format(logos_path))) == 0:
     current_dir = os.path.split(os.path.dirname(os.path.abspath(__file__)))[0]
     paths = (current_dir+"/icons/unipv.png",current_dir+"/icons/sensum.png",current_dir+"/icons/eucentre.png")
